@@ -1,0 +1,64 @@
+.admin-page-content h2 {
+    color: var(--blue);
+    font-weight: bold;
+    margin: 30px 40px 0px;
+}
+
+.table-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    margin: -20px 20px 10px;
+}
+
+.table-options .icon-link {
+    gap: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: var(--light-grey);
+    color: var(--dark-grey);
+    font-weight: bold;
+    border-bottom: 3px solid var(--dark-grey);
+    height: 20px;
+}
+
+td, th {
+    padding: 20px;
+    text-align: left;
+}
+
+tr:not(.no-content) {
+    color: var(--grey);
+    cursor: pointer;
+}
+
+tr.no-content td {
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background: var(--light-grey);
+}
+
+tbody tr:hover {
+    background: var(--light-blue);
+    box-shadow: 5px 0 1px var(--blue) inset;
+    color: var(--dark-grey);
+}
+
+.edit-tools {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+a.delete-row img, a.edit-row img {
+    height: 25px;
+    width: 25px;
+}

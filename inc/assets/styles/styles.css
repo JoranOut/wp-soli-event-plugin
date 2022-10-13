@@ -1,0 +1,70 @@
+:root {
+    --blue: rgb(0, 121, 254);
+    --light-blue: rgb(191, 214, 241);
+    --grey: rgb(159, 174, 195);
+    --dark-grey: rgb(126, 136, 154);
+    --light-grey: rgb(243, 243, 244);
+    --white: rgb(251, 251, 252);
+    /* https://codepen.io/sosuke/pen/Pjoqqp */
+    --filter-blue: invert(28%) sepia(78%) saturate(2481%) hue-rotate(201deg) brightness(103%) contrast(106%);
+    --filter-grey: invert(89%) sepia(2%) saturate(6278%) hue-rotate(185deg) brightness(81%) contrast(86%);
+
+}
+
+body {
+    background: var(--light-blue);
+}
+
+.grey-filter {
+    filter: var(--filter-grey);
+}
+
+.icon-link:hover > .grey-filter,
+.grey-filter:hover {
+    filter: var(--filter-blue);
+}
+
+.icon-link {
+    font-size: 1.3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.icon-link p {
+    color: var(--grey);
+    text-decoration: none;
+    margin: 0;
+}
+
+.icon-link:hover p {
+    color: var(--blue);
+}
+
+.icon-link img {
+    height: 30px;
+    width: 30px;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1;
+    gap: 20px;
+    padding: 20px;
+    justify-content: space-evenly;
+}
+
+section {
+    background: var(--white);
+    border-radius: 10px;
+    flex: 1;
+    overflow: hidden;
+}
+
+
+
