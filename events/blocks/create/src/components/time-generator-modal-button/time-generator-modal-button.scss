@@ -1,0 +1,55 @@
+.repeat-options {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+}
+
+.generate-dates {
+  .data-view-toggle {
+    color: grey;
+    border: 2px solid grey;
+    border-radius: 2px;
+
+
+    &.active {
+      border-color: dodgerblue;
+      color: dodgerblue;
+    }
+  }
+}
+
+.repeat-end-date {
+  display: flex;
+  flex-direction: column;
+  place-items: flex-start;
+  gap: 0;
+  margin-bottom: 1em;
+
+  p {
+    margin: 0;
+  }
+}
+
+.components-modal__frame {
+  min-height: min(600px, 80%);
+}
+
+.example-data {
+  overflow-y: hidden;
+  max-height: 200px;
+  transition: max-height .5s ease-out;
+
+  &.full {
+    max-height: 2000px;
+  }
+}
+
+.expand-button {
+  padding: 0;
+  height: 18px;
+}
+
+.submit-button {
+  margin-top: 1em;
+}

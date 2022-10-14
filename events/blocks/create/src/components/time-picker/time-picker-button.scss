@@ -1,0 +1,28 @@
+
+.time-picker-button {
+  flex: 0 1 24px;
+
+  > [type=button] {
+    font-weight: bolder;
+    font-size: 18px;
+    padding: 0;
+  }
+
+  .components-time {
+    display: flex;
+    flex-direction: row;
+    background: white;
+    gap: 5px;
+    position: relative;
+    padding: 0;
+
+    .components-base-control {
+      border: none !important;
+      width: 35px;
+    }
+
+    * {
+      margin: 0 !important;
+    }
+  }
+}
