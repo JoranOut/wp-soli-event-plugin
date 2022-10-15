@@ -1,9 +1,10 @@
 import "./index.scss"
-import {ToggleControl, SelectControl, Modal, Button} from "@wordpress/components"
+import {ToggleControl, Button} from "@wordpress/components"
 import {useState} from '@wordpress/element';
 import DatePickerButton from "./components/date-picker/date-picker-button";
 import TimePickerButton from "./components/time-picker/time-picker-button";
 import TimeGeneratorModalButton from "./components/time-generator-modal-button/time-generator-modal-button";
+import DateList from "./components/date-list/date-list";
 
 wp.blocks.registerBlockType("text/create-event", {
     title: "Create Event", icon: "smiley", category: "text", attributes: {
@@ -47,17 +48,52 @@ function EditComponent(props) {
 }
 
 function RepeatingDate(props) {
-    const [open, setOpen] = useState(true);
-    const [dates, setDates] = useState([]);
+    const [isRepeating, setRepeating] = useState(true);
+    const [dates, setDates] = useState([
+        new Date('Fri Oct 14 2022 21:11:22'),
+        new Date('Fri Oct 21 2022 21:11:22'),
+        new Date('Fri Oct 28 2022 21:11:22'),
+        new Date('Fri Nov 04 2022 21:11:22'),
+        new Date('Fri Nov 11 2022 21:11:22'),
+        new Date('Fri Nov 18 2022 21:11:22')
+    ]);
+    const [trash, setTrash] = useState([]);
+
+    const undo = () => {
+        const item = trash.pop();
+        const datescp = [...dates];
+        datescp.splice(item.index, 0, item.date);
+        setDates(datescp);
+        setTrash(trash);
+    };
+
+    const reset = () => {
+        const datescp = [...dates];
+        for (let i = trash.length - 1 ; i >= 0 ; i--) {
+            const item = trash.pop();
+            datescp.splice(item.index, 0, item.date);
+        }
+        setDates(datescp);
+        setTrash(trash);
+    };
 
     return (<div>
         <ToggleControl
             label="Herhaaldatum"
-            checked={open}
-            onChange={() => setOpen((state) => !state)}
+            checked={isRepeating}
+            onChange={() => setRepeating((state) => !state)}
         />
-        <DateList dates={dates}/>
-        {open && (
+        {isRepeating && dates.length > 0 && <DateList
+            dates={dates}
+            onDelete={(i) => {
+                setTrash([...trash, {index: i, date: dates[i]}]);
+                setDates(dates.filter((d,index) => i !== index));
+            }}
+            showUndoAndReset={trash.length > 0}
+            onUndo={undo}
+            onReset={reset}
+        />}
+        {isRepeating && (
             <div className="repeat-options">
                 <Button>
                     Voeg een datum toe
@@ -65,34 +101,9 @@ function RepeatingDate(props) {
                 <p> - of - </p>
                 <TimeGeneratorModalButton
                     startDate={props.startDate}
-                    onSubmit={(dates) => {
-                        console.log(dates);
-                        setDates(dates);
-                    }}
+                    onSubmit={(dates) => setDates(dates)}
                 />
             </div>
         )}
     </div>);
-}
-
-function DateList(props) {
-    return (
-        <div>
-            {props.dates.map(date => {
-                return (
-                    <DateListItem date={date}/>
-                );
-            })}
-        </div>
-    );
-}
-
-function DateListItem(props) {
-    return (
-        <div className='date-list-item'>
-            {props.date.toLocaleString("nl-NL", {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-            })}
-        </div>
-    );
 }

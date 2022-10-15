@@ -19,3 +19,19 @@
     }
   }
 }
+
+.repeat-options {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+}
+
+.date-list + .repeat-options {
+  justify-content: center;
+
+  [type=button]:hover {
+    color: #da1b1b;
+    box-shadow: inset 0 0 0 1px #da1b1b;
+  }
+}

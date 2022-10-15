@@ -65,7 +65,7 @@ function TimeGeneratorModalButton(props) {
     const [endDate, setEndDate] = useState(null);
     const [generatedData, setGeneratedData] = useState([]);
 
-    const [isOpen, setOpen] = useState(true);
+    const [isOpen, setOpen] = useState(false);
     const openModal = () => setOpen(true);
     const closeModal = () => setOpen(false);
     const submit = () => {
