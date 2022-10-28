@@ -6,19 +6,27 @@
   Author: Joran Out
 */
 
-require_once 'events/events.php';
 require_once 'lib/virtual-page/VirtualPagesSetup.php';
 require_once 'lib/virtual-page/PageInterface.php';
+require_once 'events/events.php';
 use Soli\VirtualPages\VirtualPagesSetup;
 use Soli\VirtualPages\PageInterface;
+use Soli\Events\EventsDatesTableCreation;
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
 define( 'SOLI_ADMIN__PLUGIN_DIR_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SOLI_ADMIN__PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) );
 
+register_activation_hook( __FILE__, "onActivate" );
+
+function onActivate(){
+  $eventsDatabaseCreation = new Soli\Events\EventsDatesTableCreation();
+  $eventsDatabaseCreation->onActivate();
+}
 
 class SoliAdmin {
   function __construct() {
+
     $this->createPages();
   }
 
@@ -116,15 +124,13 @@ add_action( 'wp_enqueue_scripts', function () {
 });
 
 
-add_action( 'enqueue_block_editor_assets', 'custom_link_injection_to_gutenberg_toolbar' );
-
 function custom_link_injection_to_gutenberg_toolbar(){
   // Here you can also check several conditions,
   // for example if you want to add this link only on CPT  you can
   $screen= get_current_screen();
   // and then
-  if ( 'post' === $screen->post_type || 'page' === $screen->post_type ){
+  if ( 'post' === $screen->post_type || 'page' === $screen->post_type || 'soli_event' === $screen->post_type ){
     wp_enqueue_script( 'custom-link-in-toolbar', SOLI_ADMIN__PLUGIN_DIR_URL . '/inc/assets/scripts/custom-link-in-toolbar.js', array(), '1.0', true );
   }
-
 }
+add_action( 'enqueue_block_editor_assets', 'custom_link_injection_to_gutenberg_toolbar' );

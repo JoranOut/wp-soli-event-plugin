@@ -6,8 +6,8 @@ import TimePickerButton from "./components/time-picker/time-picker-button";
 import TimeGeneratorModalButton from "./components/time-generator-modal-button/time-generator-modal-button";
 import DateList from "./components/date-list/date-list";
 
-wp.blocks.registerBlockType("text/create-event", {
-    title: "Create Event", icon: "smiley", category: "text", attributes: {
+wp.blocks.registerBlockType("soli/create-event", {
+    title: "Create Event", icon: "smiley", category: "soli", attributes: {
         skyColor: {type: "string"}, grassColor: {type: "string"}
     }, edit: EditComponent, save: function (props) {
         return null
