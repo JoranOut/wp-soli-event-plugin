@@ -1,6 +1,6 @@
 export function generateWeeks(startDate, endDate){
     const dates = []
-    for (let d = startDate; d < endDate; d = incrementByWeek(d)) {
+    for (let d = incrementByWeek(startDate); d < endDate; d = incrementByWeek(d)) {
         dates.push(d);
     }
     return dates;
@@ -14,7 +14,7 @@ function incrementByWeek(date){
 
 export function generateBiWeekly(startDate, endDate){
     const dates = []
-    for (let d = startDate; d < endDate; d = incrementBiWeekly(d)) {
+    for (let d = incrementBiWeekly(startDate); d < endDate; d = incrementBiWeekly(d)) {
         dates.push(d);
     }
     return dates;
@@ -29,7 +29,7 @@ function incrementBiWeekly(date){
 
 export function generateMonths(startDate, endDate){
     const dates = []
-    for (let d = startDate; d < endDate; d = incrementByMonth(d)) {
+    for (let d = incrementByMonth(startDate); d < endDate; d = incrementByMonth(d)) {
         dates.push(d);
     }
     return dates;

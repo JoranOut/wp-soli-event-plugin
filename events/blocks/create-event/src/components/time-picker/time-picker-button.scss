@@ -1,0 +1,26 @@
+.time-picker-button {
+  display: flex;
+
+  .components-button {
+    font-size: 13pt;
+    padding: 0;
+  }
+
+  .img-button {
+    border-radius: 0 5px 5px 0;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+
+    &:hover {
+      img {
+        filter: brightness(0) saturate(100%) invert(33%) sepia(53%) saturate(2030%) hue-rotate(174deg) brightness(93%) contrast(102%);
+      }
+    }
+
+    img {
+      height: 17px;
+    }
+  }
+}

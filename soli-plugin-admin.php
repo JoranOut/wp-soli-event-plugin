@@ -18,15 +18,14 @@ define( 'SOLI_ADMIN__PLUGIN_DIR_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SOLI_ADMIN__PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) );
 
 register_activation_hook( __FILE__, "onActivate" );
-
 function onActivate(){
-  $eventsDatabaseCreation = new Soli\Events\EventsDatesTableCreation();
-  $eventsDatabaseCreation->onActivate();
+  $eventsDatesTableHandler = new Soli\Events\EventsDatesTableHandler();
+  $eventsDatesTableHandler->createTable();
+  flush_rewrite_rules();
 }
 
 class SoliAdmin {
   function __construct() {
-
     $this->createPages();
   }
 
@@ -56,7 +55,7 @@ class SoliAdmin {
 
       $controller->addPage( new \Soli\VirtualPages\Page( "/admin/events" ) )
         ->setTitle( "Events" )
-        ->setTemplate( 'dashboard.php' );
+        ->setTemplate( 'events-overview.php' );
 
       $controller->addPage( new \Soli\VirtualPages\Page( "/admin/pages/overview" ) )
         ->setTitle( "Pages | Overview" )
@@ -134,3 +133,5 @@ function custom_link_injection_to_gutenberg_toolbar(){
   }
 }
 add_action( 'enqueue_block_editor_assets', 'custom_link_injection_to_gutenberg_toolbar' );
+
+

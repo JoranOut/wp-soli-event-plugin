@@ -1,28 +1,28 @@
 import "./time-generator-modal-button.scss"
 import {SelectControl, Modal, Button} from "@wordpress/components"
-import {useState} from '@wordpress/element';
+import {useState, useEffect} from '@wordpress/element';
 import DatePickerButton from "../date-picker/date-picker-button";
 import {RepeatingOptions} from "./repeating-options";
 import {generateBiWeekly, generateMonths, generateWeeks} from "./time-generator-helpers";
 
-function RepeatEndDate(props) {
+function RepeatStartDate(props) {
     return (
         <div className="repeat-end-date">
-            <p>Herhalen tot: </p>
+            <p>Herhalen vanaf: </p>
             <DatePickerButton
-                currentDate={props.currentDate}
-                minimalDate={props.minimalDate}
+                date={props.currentDate}
                 setDate={props.setDate}
             />
         </div>);
 }
 
-function RepeatStartDate(props) {
+function RepeatEndDate(props) {
     return (
         <div className="repeat-end-date">
-            <p>Herhalen tot: </p>
+            <p>Herhalen tot en met: </p>
             <DatePickerButton
                 currentDate={props.currentDate}
+                minimalDate={props.minimalDate}
                 setDate={props.setDate}
             />
         </div>);
@@ -37,6 +37,7 @@ function DateViewToggle(props) {
 
     return (
         <div>
+            <h3>Gegenereede Data:</h3>
             <div className={['example-data', isOpen ? 'full' : ''].join(' ')}>
                 {props.data.map(data => {
                     return (
@@ -60,21 +61,35 @@ function DateViewToggle(props) {
 }
 
 function TimeGeneratorModalButton(props) {
+    const [startDate, setStartDate] = useState(props.startDate ? props.startDate.date : new Date());
     const [method, setMethod] = useState(null);
-    const [startDate, setStartDate] = useState(props.startDate);
     const [endDate, setEndDate] = useState(null);
     const [generatedData, setGeneratedData] = useState([]);
+    const [error, setError] = useState(null);
 
     const [isOpen, setOpen] = useState(false);
-    const openModal = () => setOpen(true);
+    const openModal = () => {
+        setOpen(true);
+    }
     const closeModal = () => setOpen(false);
     const submit = () => {
         props.onSubmit(generatedData);
         setOpen(false);
     }
 
+    useEffect(() => {
+        setStartDate(props.startDate ? props.startDate.date : new Date())
+    }, [props]);
+
     const generateData = (startDate, method, endDate) => {
         if (!startDate || !method || !endDate) {
+            setError("Vul een methode en beide data in voor resultaat")
+            setGeneratedData([])
+            return;
+        }
+        if (startDate > endDate) {
+            setError("Einddatum moet na start datum vallen")
+            setGeneratedData([])
             return;
         }
 
@@ -92,7 +107,16 @@ function TimeGeneratorModalButton(props) {
             default:
                 break;
         }
+
+        if (dates.length === 0){
+            setError("Gebruik een grotere tijdspanne om datums te genereren. ")
+            setGeneratedData([])
+            return;
+        }
+
+        setError(null);
         setGeneratedData(dates);
+
     }
 
     return (
@@ -137,7 +161,7 @@ function TimeGeneratorModalButton(props) {
                         }]}
                     />
 
-                    {method && <RepeatEndDate
+                    {!!method && <RepeatEndDate
                         currentDate={endDate}
                         minimalDate={props.startDate}
                         setDate={(newDate) => {
@@ -145,6 +169,10 @@ function TimeGeneratorModalButton(props) {
                             generateData(startDate, method, newDate);
                         }}
                     />}
+
+                    {!!error && <p>
+                        {error}
+                    </p>}
 
                     {generatedData.length > 0 && <DateViewToggle
                         data={generatedData}/>}

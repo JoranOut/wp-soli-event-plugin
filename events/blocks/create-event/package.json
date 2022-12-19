@@ -13,5 +13,13 @@
   "license": "ISC",
   "devDependencies": {
     "@wordpress/scripts": "^24.2.0"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.10.15",
+    "@mui/x-date-pickers": "^5.0.9",
+    "dayjs": "^1.11.6",
+    "react-simple-timefield": "^3.2.5"
   }
 }

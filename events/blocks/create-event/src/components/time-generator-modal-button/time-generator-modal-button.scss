@@ -24,6 +24,10 @@
   }
 }
 
+.MuiPickersPopper-root {
+  z-index: 100000 !important;
+}
+
 .components-modal__frame {
   min-height: min(600px, 80%);
 }
