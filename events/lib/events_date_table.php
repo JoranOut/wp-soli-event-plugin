@@ -30,6 +30,32 @@ class EventsDatesTableHandler {
     ) $this->charset;");
   }
 
+  function getDatesForMonth($yearmonth){
+    if (empty($yearmonth)){
+      return null;
+    }
+
+    $year = $yearmonth->format( 'Y' );
+    $month = $yearmonth->format( 'm' );
+
+    return $this->loadMonthEventsFromDb($year, $month);
+  }
+
+  function loadMonthEventsFromDb($year, $month) {
+    $query = $this->wpdb->prepare("SELECT d.id, d.parent, d.date, d.start_time, d.end_time, 
+       p.start_time as parent_start_time, p.end_time as parent_end_time, 
+       w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type 
+        FROM $this->tablename d
+        LEFT JOIN $this->tablename p
+            ON d.parent = p.id 
+        LEFT JOIN wp_posts w 
+            ON d.post_id = w.id 
+        WHERE YEAR(d.date) = %d AND MONTH(d.date) = %d 
+              and w.post_status = %s;", $year, $month, 'publish');
+    return $this->wpdb->get_results($query, ARRAY_A);
+  }
+
+
   function getDatesFromEvent($event_id) {
     $dates = $this->loadEventDatesFromDb($event_id);
     if (empty($dates)){
@@ -54,11 +80,21 @@ class EventsDatesTableHandler {
                 FROM $this->tablename d
                 LEFT JOIN $this->tablename p
                 ON d.parent = p.id
-                WHERE post_id=$event_id");
+                WHERE d.post_id=$event_id");
     return $this->wpdb->get_results($query, ARRAY_A);
   }
 
+  function getEventsBetweenDates($from, $to){
+    if (empty($from) || empty($to)){
+      return null;
+    }
+
+    return $this->loadAllBetweenDatesEventDatesFromDb($from, $to);
+  }
+
   function loadAllBetweenDatesEventDatesFromDb($from, $to) {
+    $startDate = $from->format('Y-m-d');
+    $endDate = $to->format('Y-m-d');
     $query = $this->wpdb->prepare("SELECT d.id, d.parent, d.date, d.start_time, d.end_time, 
        p.start_time as parent_start_time, p.end_time as parent_end_time, 
        w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type 
@@ -67,8 +103,8 @@ class EventsDatesTableHandler {
             ON d.parent = p.id 
         LEFT JOIN wp_posts w 
             ON d.post_id = w.id 
-        WHERE d.date between $from and $to 
-              w.post_status = 'publish';");
+        WHERE d.date between %s and %s 
+              and w.post_status = %s;", $startDate, $endDate, 'publish');
     return $this->wpdb->get_results($query, ARRAY_A);
   }
 

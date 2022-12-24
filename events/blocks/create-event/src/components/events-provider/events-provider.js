@@ -10,7 +10,7 @@ export default function EventsProvider(props) {
     useEffect(() => {
         if (error === undefined && !isLoading && props.dates == null) {
             setLoading(true)
-            apiFetch({path: 'soli_event/event/' + props.post_id})
+            apiFetch({path: 'soli_event/events/' + props.post_id})
                 .then(
                     (event) => {
                         console.log(fromEventDto(event))
@@ -31,7 +31,7 @@ export default function EventsProvider(props) {
 
     const postAPI = () => {
         apiFetch({
-            path: 'soli_event/event/' + props.post_id,
+            path: 'soli_event/events/' + props.post_id,
             method: 'POST',
             data: toEventDto(props.dates)
         }).then(

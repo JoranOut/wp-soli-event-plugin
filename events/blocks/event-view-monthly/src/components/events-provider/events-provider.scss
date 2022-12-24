@@ -1,0 +1,26 @@
+.calendar-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 2px;
+  border: 1px solid #f1f1f1;
+  background-color: #d6d6d6;
+  gap: 1em;
+  transition: opacity .3s;
+
+  &.loading{
+    opacity: .5;
+  }
+
+}
+
+.loadingtext {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  color: rgba(255,0,0,1);
+  font-weight: 900;
+  text-align: center;
+  transform: translateY(-50%);
+}

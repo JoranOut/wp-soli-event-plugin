@@ -1,0 +1,20 @@
+{
+  "name": "event-view-monthly",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "build": "wp-scripts build src/index.js src/frontend.js",
+    "start": "wp-scripts start src/index.js src/frontend.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@wordpress/scripts": "^24.2.0"
+  },
+  "dependencies": {
+    "@toast-ui/react-calendar": "^2.1.3"
+  }
+}
