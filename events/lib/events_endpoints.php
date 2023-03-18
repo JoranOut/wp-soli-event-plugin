@@ -1,4 +1,6 @@
 <?php
+
+
 add_action('rest_api_init', 'soli_event_rest_api', 10, 1);
 function soli_event_rest_api() {
 
@@ -30,7 +32,7 @@ function soli_event_rest_api() {
   ));
 
   // get events of a month
-  register_rest_route('soli_event', '/events/(?P<yearmonth>\d{4}-\d{2})/', array(
+  register_rest_route('soli_event', '/events/(?P<yearmonth>\d{4}-\d{1,2})/', array(
     'methods' => 'GET',
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
@@ -91,7 +93,7 @@ function soli_event_rest_api() {
    *  endTime: time,
    * }
    */
-  register_rest_route('soli_event', '/events/(?P<id>\d+)', array(
+  register_rest_route('wp-json/soli_event', '/events/(?P<id>\d+)', array(
     'methods' => 'POST',
     'permission_callback' => function () {
       return current_user_can('edit_posts');
