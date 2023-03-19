@@ -26,7 +26,6 @@ export default function CalendarWrapper() {
             events={events}
             changeView={(month) => {
                 if(calendarRef.current){
-                    console.log(new Date(month+"-01"))
                     calendarRef.current.calendarInstance.setDate(new Date(month+"-01"));
                 }
             }}
@@ -47,6 +46,7 @@ export default function CalendarWrapper() {
                 useCreationPopup={false}
                 useDetailPopup={false}
                 onClickEvent={(e) => {
+                    console.log(e.event)
                     setSelectedEvent(e.event)
                     setSelectedEventBox(getEventBlock(e.nativeEvent.target).getBoundingClientRect())
                 }}

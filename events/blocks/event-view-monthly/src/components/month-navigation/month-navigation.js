@@ -55,9 +55,9 @@ export default function MonthNavigation(props) {
 
     return (
         <div className="month-navigation">
-            <Button variant="secondary" onClick={navigateToPreviousMonth}>Volgende</Button>
+            <Button variant="secondary" onClick={navigateToPreviousMonth}>Vorige</Button>
             <Button variant="primary" onClick={navigateToToday}>Vandaag</Button>
-            <Button variant="secondary" onClick={navigateToNextMonth}>Vorige</Button>
+            <Button variant="secondary" onClick={navigateToNextMonth}>Volgende</Button>
         </div>
     );
 }

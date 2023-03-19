@@ -18,6 +18,7 @@ function fromDateDto(dateDto) {
             postAuthor: dateDto.post_author,
             postExcerpt: dateDto.post_excerpt,
             postStatus: dateDto.post_status,
+            featuredImage: dateDto.featured_image,
             guid: dateDto.guid,
         }
     }

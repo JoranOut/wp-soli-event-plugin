@@ -8,7 +8,7 @@ import MonthDisplay from "../month-display/month-display";
 export default function EventsProvider(props) {
     const [error, setError] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
-    const [yearmonth, setYearMonth] = useState(new Date().getFullYear()+"-"+(new Date().getMonth()-1));
+    const [yearmonth, setYearMonth] = useState(new Date().getFullYear()+"-"+(new Date().getMonth()+1));
     const [loadingBox, setLoadingBox] = useState();
     const wrapperRef = useRef();
 
@@ -72,7 +72,7 @@ export default function EventsProvider(props) {
                         yearmonth={yearmonth}
                         setYearmonth={updateYearmonth}/>
                 </div>
-                {isLoading && <p className="loadingtext" style={{...loadingBox}}>Loading...</p>}
+                {isLoading && <p className="loadingtext" style={{...loadingBox}}>Loading {yearmonth}...</p>}
             </>
         );
     }

@@ -57,6 +57,7 @@ export default function EventDetailPopUp(props) {
         <>
             {props.event &&
                 <div ref={ref} className={side === "left" ? "event-detail-popup left" : "event-detail-popup"} style={box}>
+                    <img src={props.event.raw.featuredImage}/>
                     <h2>{props.event.title}</h2>
                     <p>{parseDate(props.event.start, props.event.end)}</p>
                     <a href={props.event.raw.guid}>visit</a>

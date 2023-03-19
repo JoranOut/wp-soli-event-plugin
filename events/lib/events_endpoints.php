@@ -37,7 +37,7 @@ function soli_event_rest_api() {
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
       try {
-        $month = validateMonth($request['yearmonth']);
+        $ym = validateMonth($request['yearmonth']);
       } catch (Exception $e) {
         return new WP_REST_Response(array(
           'code' => WP_REST_Server::INVALID_ARGUMENT,
@@ -46,8 +46,15 @@ function soli_event_rest_api() {
       }
 
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
-      $dates = $eventHandler->getDatesForMonth($month);
-
+      $dates = $eventHandler->getDatesForMonth($ym);
+      foreach ($dates as &$date) {
+        if (isset($date['featured_image_id'])) {
+          $img = wp_get_attachment_image_src($date['featured_image_id'], 'thumbnail');
+          if(isset($img)){
+            $date['featured_image'] = $img[0];
+          }
+        }
+      }
       $response = new WP_REST_Response($dates);
       if (!$dates) {
         $response->set_status(204);
@@ -75,6 +82,7 @@ function soli_event_rest_api() {
     },
   ));
 
+
   /**
    * param: {
    *    id: int
@@ -93,7 +101,7 @@ function soli_event_rest_api() {
    *  endTime: time,
    * }
    */
-  register_rest_route('wp-json/soli_event', '/events/(?P<id>\d+)', array(
+  register_rest_route('soli_event', '/events/(?P<id>\d+)', array(
     'methods' => 'POST',
     'permission_callback' => function () {
       return current_user_can('edit_posts');
