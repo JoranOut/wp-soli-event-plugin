@@ -48,6 +48,12 @@ function soli_event_rest_api() {
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
       $dates = $eventHandler->getDatesForMonth($ym);
       foreach ($dates as &$date) {
+        if (isset($date['ID'])) {
+          $guid = get_post_permalink($date['ID']);
+          if(isset($guid)){
+            $date['guid'] = $guid . "?event=" . $date['id'];
+          }
+        }
         if (isset($date['featured_image_id'])) {
           $img = wp_get_attachment_image_src($date['featured_image_id'], 'thumbnail');
           if(isset($img)){

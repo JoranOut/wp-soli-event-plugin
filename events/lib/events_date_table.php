@@ -48,7 +48,7 @@ class EventsDatesTableHandler {
   function loadMonthEventsFromDb($year, $month) {
     $query = $this->wpdb->prepare("SELECT d.id, d.parent, d.date, d.start_time, d.end_time, 
        p.start_time as parent_start_time, p.end_time as parent_end_time, m.meta_value as featured_image_id,
-       w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type 
+       w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.post_type 
         FROM $this->tablename d
         LEFT JOIN $this->tablename p
             ON d.parent = p.id 

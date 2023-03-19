@@ -8,14 +8,16 @@ import MonthDisplay from "../month-display/month-display";
 export default function EventsProvider(props) {
     const [error, setError] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
-    const [yearmonth, setYearMonth] = useState(new Date().getFullYear()+"-"+(new Date().getMonth()+1));
+    const [yearmonth, setYearMonth] = useState(new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
     const [loadingBox, setLoadingBox] = useState();
     const wrapperRef = useRef();
 
     const updateYearmonth = (newYearMonth) => {
-        props.setEvents(null);
-        props.changeView(newYearMonth)
-        setYearMonth(newYearMonth);
+        if (!isLoading) {
+            props.setEvents(null);
+            props.changeView(newYearMonth)
+            setYearMonth(newYearMonth);
+        }
     }
 
     useEffect(() => {
@@ -33,6 +35,7 @@ export default function EventsProvider(props) {
                     (event) => {
                         setLoading(false)
                         setError(undefined)
+                        console.log(event)
                         props.setEvents(fromEventDto(event))
                         props.changeView(yearmonth)
                     },

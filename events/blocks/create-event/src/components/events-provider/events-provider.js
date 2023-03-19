@@ -13,7 +13,6 @@ export default function EventsProvider(props) {
             apiFetch({path: 'soli_event/events/' + props.post_id})
                 .then(
                     (event) => {
-                        console.log(fromEventDto(event))
                         props.setDates(fromEventDto(event))
                         setLoading(false)
                         setError(null)
@@ -64,7 +63,7 @@ export default function EventsProvider(props) {
         return (
             <>
                 {props.children}
-                {props.enablePost &&
+                {props.enableSaveButton &&
                     <Button onClick={() => postAPI()}>Save</Button>
                 }
             </>

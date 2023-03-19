@@ -46,7 +46,6 @@ export default function CalendarWrapper() {
                 useCreationPopup={false}
                 useDetailPopup={false}
                 onClickEvent={(e) => {
-                    console.log(e.event)
                     setSelectedEvent(e.event)
                     setSelectedEventBox(getEventBlock(e.nativeEvent.target).getBoundingClientRect())
                 }}
