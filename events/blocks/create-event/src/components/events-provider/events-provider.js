@@ -64,7 +64,9 @@ export default function EventsProvider(props) {
         return (
             <>
                 {props.children}
-                <Button onClick={() => postAPI()}>Save</Button>
+                {props.enablePost &&
+                    <Button onClick={() => postAPI()}>Save</Button>
+                }
             </>
         );
     }

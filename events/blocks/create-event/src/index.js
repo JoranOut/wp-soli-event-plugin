@@ -1,5 +1,5 @@
 import "./index.scss"
-import {useState, useEffect} from '@wordpress/element';
+import {useState} from '@wordpress/element';
 import RepeatingDate from "./components/repeating-date/repeating-date";
 import EventsProvider from "./components/events-provider/events-provider";
 import DateTimePicker from "./components/datetime-picker/datetime-picker";
@@ -34,6 +34,7 @@ function EditComponent(props) {
             setDates={(newDates) => {
                 setDates(newDates);
             }}
+            enableSaveButton={true}
         >
             {
                 <>

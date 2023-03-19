@@ -19,11 +19,15 @@ class SoliBlockCreateEvent {
     ));
   }
 
-  function theHTML($attributes) {
-    ob_start(); ?>
-    <h3>Today the sky is <?php echo esc_html($attributes['skyColor']) ?> and the grass is <?php echo esc_html($attributes['grassColor']) ?>!</h3>
+  function theHTML($attributes){
+    wp_enqueue_script('block-event-view-frontend',  plugin_dir_url(__FILE__) . 'build/frontend.js', array('wp-components', 'wp-element', 'wp-api-fetch'), '1.0', true);
+    wp_enqueue_style('block-event-view-frontend-styles',  plugin_dir_url(__FILE__) . 'build/frontend.css');
+
+    ob_start();?>
+      <div class="block-event-view" data-id="<?php echo get_the_ID() ?>"></div>
     <?php return ob_get_clean();
   }
+
 }
 
 $areYouPayingAttention = new SoliBlockCreateEvent();
