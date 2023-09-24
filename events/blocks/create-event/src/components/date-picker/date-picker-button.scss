@@ -23,8 +23,6 @@
   }
 
   .img-button {
-    border: 1px solid #999;
-    border-radius: 0 5px 5px 0;
     border-left-color: transparent;
     height: 48px;
     width: 48px;
@@ -32,8 +30,6 @@
     justify-content: center;
 
     &:hover {
-      border-color: #007cba #007cba #007cba transparent;
-
       img {
         filter: brightness(0) saturate(100%) invert(33%) sepia(53%) saturate(2030%) hue-rotate(174deg) brightness(93%) contrast(102%);
       }

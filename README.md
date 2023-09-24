@@ -1,0 +1,69 @@
+!\[npm\](https://img.shields.io/badge/npm-v9.5.0-f39f37)
+!\[node\](https://img.shields.io/badge/node-v16.13.0-f39f37)
+!\[wp_env\](https://img.shields.io/badge/wp_env-v5.12.0-f39f37)
+!\[wordpress\](https://img.shields.io/badge/wordpress-v6.3.1-f39f37)
+
+# WP Soli event plugin
+Plugin for wordpress dedicated to displaying events on [soli.nl](https://www.soli.nl)
+
+Contains:
+- Custom event post-type
+- Default template for event post
+- Gutenberg Block for registering event
+- Gutenberg Block for displaying events in calendar-view
+- Gutenberg Block for displaying events in list view
+
+# Development
+
+## WP-ENV
+### Install
+```cmd
+ npm -g install @wordpress/env 
+```
+
+### Start
+```cmd
+ wp-env start [--debug] 
+``` 
+
+### Stop
+```cmd 
+wp-env stop 
+```
+
+## Mysql container
+### Login 
+```cmd 
+mariadb -U -ppassword wordpress 
+```
+
+## Localhost
+### Front-end
+[front-end]( http://localhost:8888/)
+### Back-end
+[back-end]( http://localhost:8888/wp-admin/) \
+username: admin \
+password: password
+
+## Configuration
+```json
+ {
+    "env": {
+        "site": {
+            "plugins": [
+                "./wp-soli-admin-plugin",
+                "./wp-soli-menu-plugin"
+            ]
+        },
+        "winkel": {
+            "plugins": [
+                "./event-tickets",
+                "./woocommerce",
+                "./wp-soli-wc-events",
+                "./wp-soli-wc-kindermuziekweek",
+                "./mollie-payments-for-woocommerce"
+            ]
+        }
+    }
+}
+```

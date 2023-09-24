@@ -21,7 +21,7 @@ export default function CalendarWrapper() {
         }
     }
 
-    return (<div className="soli-block-create-event">
+    return (<div className="soli-block-view-monthly">
         <EventsProvider
             events={events}
             changeView={(month) => {

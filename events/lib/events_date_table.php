@@ -34,13 +34,13 @@ class EventsDatesTableHandler {
     ) $this->charset;");
   }
 
-  function getDatesForMonth($yearmonth){
-    if (empty($yearmonth)){
+  function getDatesForMonth($yearmonth) {
+    if (empty($yearmonth)) {
       return null;
     }
 
-    $year = $yearmonth->format( 'Y' );
-    $month = $yearmonth->format( 'm' );
+    $year = $yearmonth->format('Y');
+    $month = $yearmonth->format('m');
 
     return $this->loadMonthEventsFromDb($year, $month);
   }
@@ -64,20 +64,28 @@ class EventsDatesTableHandler {
 
   function getDatesFromEvent($event_id) {
     $dates = $this->loadEventDatesFromDb($event_id);
-    if (empty($dates)){
+    if (empty($dates)) {
       return null;
     }
-    foreach($dates as $date){
-       if ($date["parent"] == 0){
-         $main = $date;
-       } else {
-         $repeated[] = $date;
-       }
+    foreach ($dates as $date) {
+      if ($date["parent"] == 0) {
+        $main = $date;
+      } else {
+        $repeated[] = $date;
+      }
     }
     return (object)[
       "main" => $main,
       "repeated" => $repeated
     ];
+  }
+
+  function getDatesPerPageFromEvent($page, $itemsPerPage) {
+    $dates = $this->loadEventDatesPerPageFromDb($page, $itemsPerPage);
+    if (empty($dates)) {
+      return null;
+    }
+    return $dates;
   }
 
   function loadEventDatesFromDb($event_id) {
@@ -90,8 +98,27 @@ class EventsDatesTableHandler {
     return $this->wpdb->get_results($query, ARRAY_A);
   }
 
-  function getEventsBetweenDates($from, $to){
-    if (empty($from) || empty($to)){
+  function loadEventDatesPerPageFromDb($page, $itemsPerPage) {
+    $offset = ($page - 1) * $itemsPerPage;
+    $limit = $itemsPerPage;
+    $query = $this->wpdb->prepare("
+        SELECT d.id, d.parent, d.date, d.start_time, d.end_time, 
+           p.start_time as parent_start_time, p.end_time as parent_end_time, m.meta_value as featured_image_id,
+           w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.post_type 
+        FROM $this->tablename d
+        LEFT JOIN $this->tablename p
+            ON d.parent = p.id 
+        LEFT JOIN wp_posts w 
+            ON d.post_id = w.id 
+        LEFT JOIN $this->meta_table m 
+            ON d.post_id = w.id and m.meta_key = '_thumbnail_id'
+        WHERE w.post_status = %s
+        ORDER BY d.date desc LIMIT %d OFFSET %d ", 'publish', $limit, $offset);
+    return $this->wpdb->get_results($query, ARRAY_A);
+  }
+
+  function getEventsBetweenDates($from, $to) {
+    if (empty($from) || empty($to)) {
       return null;
     }
 
@@ -129,15 +156,15 @@ class EventsDatesTableHandler {
     return $this->getDatesFromEvent($event_id);
   }
 
-  function removeRedundantDates($event_id, $dates){
+  function removeRedundantDates($event_id, $dates) {
     $nonRedundant = array();
     if ($dates->repeated) {
       $nonRedundant = array_merge($nonRedundant, array_column($dates->repeated, 'id'));
     }
-    if (isset($dates->main->id)){
+    if (isset($dates->main->id)) {
       $nonRedundant[] = $dates->main->id;
     }
-    if(empty($nonRedundant)){
+    if (empty($nonRedundant)) {
       $query = $this->wpdb->prepare("
                           DELETE FROM $this->tablename
                               WHERE post_id = %d",
@@ -147,7 +174,7 @@ class EventsDatesTableHandler {
       $query = $this->wpdb->prepare("
                           DELETE FROM $this->tablename
                               WHERE post_id = %d 
-                              AND id NOT IN (".implode(',',$nonRedundant).");",
+                              AND id NOT IN (" . implode(',', $nonRedundant) . ");",
         $event_id
       );
     }
@@ -206,8 +233,8 @@ class EventsDatesTableHandler {
       && is_string($date->date);
   }
 
-  function replaceNullWithNull($query){
-    return str_replace("'NULL'","NULL", $query);
+  function replaceNullWithNull($query) {
+    return str_replace("'NULL'", "NULL", $query);
   }
 }
 

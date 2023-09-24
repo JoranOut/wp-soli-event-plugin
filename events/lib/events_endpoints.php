@@ -47,20 +47,27 @@ function soli_event_rest_api() {
 
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
       $dates = $eventHandler->getDatesForMonth($ym);
-      foreach ($dates as &$date) {
-        if (isset($date['ID'])) {
-          $guid = get_post_permalink($date['ID']);
-          if(isset($guid)){
-            $date['guid'] = $guid . "?event=" . $date['id'];
-          }
-        }
-        if (isset($date['featured_image_id'])) {
-          $img = wp_get_attachment_image_src($date['featured_image_id'], 'thumbnail');
-          if(isset($img)){
-            $date['featured_image'] = $img[0];
-          }
-        }
+      insertGUID($dates);
+      insertFeaturedImage($dates);
+
+      $response = new WP_REST_Response($dates);
+      if (!$dates) {
+        $response->set_status(204);
+      } else {
+        $response->set_status(200);
       }
+      return $response;
+    },
+  ));
+
+
+  // get event by ID
+  register_rest_route('soli_event', '/events/(?P<id>\d+)', array(
+    'methods' => 'GET',
+    'permission_callback' => '__return_true', // *always set a permission callback
+    'callback' => function ($request) {
+      $eventHandler = new \Soli\Events\EventsDatesTableHandler();
+      $dates = $eventHandler->getDatesFromEvent($request['id']);
       $response = new WP_REST_Response($dates);
       if (!$dates) {
         $response->set_status(204);
@@ -72,12 +79,16 @@ function soli_event_rest_api() {
   ));
 
   // get event by ID
-  register_rest_route('soli_event', '/events/(?P<id>\d+)', array(
+  register_rest_route('soli_event', '/events/all/(?P<page>\d+)/(?P<itemsPerPage>\d+)', array(
     'methods' => 'GET',
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
-      $dates = $eventHandler->getDatesFromEvent($request['id']);
+      $dates = $eventHandler->getDatesPerPageFromEvent($request['page'], $request['itemsPerPage']);
+
+      insertGUID($dates);
+      insertFeaturedImage($dates);
+
       $response = new WP_REST_Response($dates);
       if (!$dates) {
         $response->set_status(204);
@@ -163,5 +174,33 @@ function validateMonth($date) {
   } else {
     // The date string is invalid.
     throw new Exception();
+  }
+}
+
+function insertGUID($dates){
+  if (!isset($dates)){
+    return;
+  }
+  foreach ($dates as &$date) {
+    if (isset($date['ID'])) {
+      $guid = get_post_permalink($date['ID']);
+      if(isset($guid)){
+        $date['guid'] = $guid . "?event=" . $date['id'];
+      }
+    }
+  }
+}
+
+function insertFeaturedImage($dates){
+  if (!isset($dates)){
+    return;
+  }
+  foreach ($dates as &$date) {
+    if (isset($date['featured_image_id'])) {
+      $img = wp_get_attachment_image_src($date['featured_image_id'], 'thumbnail');
+      if(isset($img)){
+        $date['featured_image'] = $img[0];
+      }
+    }
   }
 }

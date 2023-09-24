@@ -15,7 +15,7 @@ export default function DateList(props) {
 
     return (
         <div className="date-list">
-            <h3>Datums</h3>
+            <h3>Andere datums</h3>
             {dates && dates.map((date, i) => {
                 return (
                     <DateListItem
