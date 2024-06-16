@@ -1,0 +1,17 @@
+.MuiPickersPopper-root {
+  z-index: 100000 !important;
+}
+
+.components-modal__content > div:last-of-type {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.location-creator {
+  display: block;
+  position: absolute;
+  right: 70px;
+  top: 27px;
+  z-index: 11;
+}

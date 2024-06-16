@@ -10,7 +10,7 @@ export default function EventsProvider(props) {
     useEffect(() => {
         if (error === undefined && !isLoading && props.dates == null) {
             setLoading(true)
-            apiFetch({path: 'soli_event/events/' + props.post_id})
+            apiFetch({path: 'soli_event/v1/events/' + props.post_id})
                 .then(
                     (event) => {
                         props.setDates(fromEventDto(event))
@@ -30,18 +30,18 @@ export default function EventsProvider(props) {
 
     const postAPI = () => {
         apiFetch({
-            path: 'soli_event/events/' + props.post_id,
+            path: 'soli_event/v1/events/' + props.post_id,
             method: 'POST',
             data: toEventDto(props.dates)
         }).then(
             (event) => {
                 props.setDates(fromEventDto(event))
-                console.log(fromEventDto(event))
                 setLoading(false)
             },
             // Note: It's important to handle errors here instead of a catch() block
             // so that we don't swallow exceptions from actual bugs in components.
             (error) => {
+                console.log(error)
                 setLoading(false)
                 setError(error)
             }

@@ -1,20 +1,23 @@
 function fromEventDto(eventDto) {
+    console.log(eventDto)
     return eventDto ? eventDto.map(fromDateDto) : [];
 }
 
 function fromDateDto(dateDto) {
-    const startTime = parseTime(dateDto.date, dateDto.start_time ? dateDto.start_time : dateDto.parent_start_time,)
-    const endTime = parseTime(dateDto.date, dateDto.end_time ? dateDto.end_time : dateDto.parent_end_time,)
+    console.log(dateDto)
+
+    const startDate = parseTime(dateDto.start_date)
+    const endDate = parseTime(dateDto.end_date)
 
     return {
         id: dateDto.id,
         calendarId: 'cal1',
         title: dateDto.post_title,
         category: 'time',
-        start: startTime,
-        end: endTime,
+        start: startDate,
+        end: endDate,
         raw: {
-            post_id: dateDto.ID,
+            post_id: dateDto.post_id,
             postAuthor: dateDto.post_author,
             postExcerpt: dateDto.post_excerpt,
             postStatus: dateDto.post_status,
@@ -24,18 +27,17 @@ function fromDateDto(dateDto) {
     }
 }
 
-function parseTime(date, time){
-    return date.substring(0, 10) + "T" + time;
+function parseTime(date){
+    return new Date(date).toISOString();
 }
 
 function fullDateDto(dateDto) {
     return {
         id: dateDto.id,
         parent: dateDto.parent,
-        date: dateDto.date,
-        starTime: dateDto.start_time ? dateDto.start_time : dateDto.parent_start_time,
-        endTime: dateDto.end_time ? dateDto.end_time : dateDto.parent_end_time,
-        ID: dateDto.ID,
+        startDate: dateDto.start_date,
+        endDate: dateDto.end_date,
+        ID: dateDto.post_id,
         postAuthor: dateDto.post_author,
         postTitle: dateDto.post_title,
         postExcerpt: dateDto.post_excerpt,

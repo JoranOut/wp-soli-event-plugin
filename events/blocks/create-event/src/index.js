@@ -2,7 +2,8 @@ import "./index.scss"
 import {useState} from '@wordpress/element';
 import RepeatingDate from "./components/repeating-date/repeating-date";
 import EventsProvider from "./components/events-provider/events-provider";
-import DateTimePicker from "./components/datetime-picker/datetime-picker";
+import DateRangePicker from "./components/daterange-picker/daterange-picker";
+import LocationPicker from "./components/location-picker/location-picker";
 
 wp.blocks.registerBlockType("soli/create-event", {
     title: "Create Event",
@@ -27,6 +28,12 @@ function EditComponent(props) {
         setDates({...dates, main: date});
     }
 
+    const updateLocation = (rooms, location) => {
+        dates.main.rooms = rooms;
+        dates.main.location = location;
+        setDates({...dates, main: dates.main})
+    }
+
     return (<div className="soli-block-create-event">
         <EventsProvider
             post_id={postId}
@@ -36,20 +43,21 @@ function EditComponent(props) {
             }}
             enableSaveButton={true}
         >
-            {
-                <>
-                    <DateTimePicker
-                        date={dates ? dates.main : null}
-                        minimalDate={new Date()}
-                        updateDate={updateMainDate}
-                    />
-                    <RepeatingDate
-                        dates={dates}
-                        setRepeatedDates={rdates => setDates({...dates, repeated: rdates})}
-                        setIsRepeatedDate={isrDates => setDates({...dates, isRepeatedDate: isrDates})}
-                    />
-                </>
-            }
+            <DateRangePicker
+                date={dates ? dates.main : null}
+                minimalDate={new Date()}
+                updateDate={updateMainDate}
+            />
+            <LocationPicker
+                location={dates && dates.main ? dates.main.location : null}
+                rooms={dates && dates.main ? dates.main.rooms : null}
+                onChange={updateLocation}
+            />
+            <RepeatingDate
+                dates={dates}
+                setRepeatedDates={rdates => setDates({...dates, repeated: rdates})}
+                setIsRepeatedDate={isrDates => setDates({...dates, isRepeatedDate: isrDates})}
+            />
         </EventsProvider>
     </div>)
 }

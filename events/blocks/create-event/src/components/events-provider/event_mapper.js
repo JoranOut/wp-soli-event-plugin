@@ -1,3 +1,4 @@
+
 function fromEventDto(eventDto) {
     return {
         main: eventDto ? fromDateDto(eventDto.main) : defaultDate(),
@@ -9,15 +10,27 @@ function fromEventDto(eventDto) {
 function fromDateDto(dateDto) {
     return {
         id: dateDto.id,
-        date: dateDto.date,
-        startTime: dateDto.start_time ? dateDto.start_time.slice(0, -3) : null,
-        endTime: dateDto.end_time ? dateDto.end_time.slice(0, -3) : null
+        startDate: dateDto.start_date + " UTC",
+        endDate: dateDto.end_date + " UTC",
+        location: fromLocationDto(dateDto),
+        rooms: JSON.parse(dateDto.rooms),
+    }
+}
+
+function fromLocationDto(dateDto) {
+    if (!dateDto.location_id){
+        return null;
+    }
+    return {
+        id: dateDto.location_id,
+        name: dateDto.location_name,
+        address: dateDto.location_address,
     }
 }
 
 function toEventDto(event) {
     return {
-        main: toDateDto(event.main ?? new Date()),
+        main: toDateDto(event.main),
         repeated: event.repeated && event.isRepeatedDate ? event.repeated.map((e) => toDateDto(e, event.main)) : null
     }
 }
@@ -25,18 +38,30 @@ function toEventDto(event) {
 function toDateDto(date, main) {
     return {
         id: date.id,
-        date: date.date,
-        start_time: !date.startTime || (main && date.startTime === main.startTime) ? null : date.startTime + ":00",
-        end_time: !date.endTime || (main && date.endTime === main.endTime) ? null : date.endTime + ":00"
+        start_date: date.startDate,
+        end_date: date.endDate,
+        location: ! date.location || (main && main.location && date.location.id === main.location.id) ? null : date.location.id,
+        rooms: !date.rooms || (main && equalArrays(date.rooms, main.rooms)) ? null : JSON.stringify(date.rooms),
     }
+}
+
+function equalArrays(a1, a2) {
+    if (!a1 || !a2) {
+        return null;
+    }
+    return a1.every((v, i) => v === a2[i]);
 }
 
 function defaultDate() {
     return {
-        date: new Date(),
-        startTime: new Date().getHours() + ":" + new Date().getMinutes(),
-        endTime: new Date().getHours() + 1 + ":" + new Date().getMinutes()
+        startDate: new Date(),
+        endDate: new Date().addHours(1)
     }
+}
+
+Date.prototype.addHours = function(h) {
+    this.setTime(this.getTime() + (h*60*60*1000));
+    return this;
 }
 
 module.exports = {

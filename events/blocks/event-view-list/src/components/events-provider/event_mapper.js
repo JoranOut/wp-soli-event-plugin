@@ -3,15 +3,14 @@ function fromEventDto(eventDto) {
 }
 
 function fromDateDto(dateDto) {
-    const startTime = parseTime(dateDto.date, dateDto.start_time ? dateDto.start_time : dateDto.parent_start_time,)
-    const endTime = parseTime(dateDto.date, dateDto.end_time ? dateDto.end_time : dateDto.parent_end_time,)
+    const startDate = parseTime(dateDto.startDate)
+    const endDate = parseTime(dateDto.endDate)
 
     return {
         id: dateDto.id,
         parent: dateDto.parent,
-        date: dateDto.date,
-        startTime: startTime,
-        endTime: endTime,
+        startDate: startDate,
+        endDate: endDate,
         featuredImageId: dateDto.featured_image_id,
         postId: dateDto.ID,
         postTitle: dateDto.post_title,
@@ -21,7 +20,7 @@ function fromDateDto(dateDto) {
 }
 
 function parseTime(date, time) {
-    return date.substring(0, 10) + "T" + time;
+    return date.toISOString();
 }
 
 module.exports = {

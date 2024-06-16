@@ -1,0 +1,13 @@
+.components-modal__frame {
+  min-height: min(600px, 80%);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.error {
+  color: red;
+  margin-bottom: 10px;
+}

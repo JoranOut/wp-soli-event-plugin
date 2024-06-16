@@ -13,12 +13,11 @@ export default function EventsProvider(props) {
     useEffect(() => {
         if (error === undefined && !isLoading && props.events == null) {
             setLoading(true)
-            apiFetch({path: `soli_event/events/all/${page}/${itemsPerPage}/`})
+            apiFetch({path: `soli_event/v1/events/all/${page}/${itemsPerPage}/`})
                 .then(
                     (event) => {
                         setLoading(false)
                         setError(undefined)
-                        console.log(event)
                         props.setEvents(fromEventDto(event))
                     },
                     // Note: It's important to handle errors here instead of a catch() block

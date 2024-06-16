@@ -4,14 +4,18 @@ import {useState, useEffect} from '@wordpress/element';
 
 export default function DateList(props) {
     const [dates, setDates] = useState(props.dates);
+
     const updateDate = (date, index) => {
-        dates[index] = date;
-        setDates(dates);
+        const newDates = dates ? [...dates] : [];
+        newDates[index] = date;
+        setDates(newDates);
+        props.onChange(newDates);
     }
 
     useEffect(() => {
+        console.log(props.dates)
         setDates(props.dates)
-    }, [props])
+    }, [props.dates])
 
     return (
         <div className="date-list">

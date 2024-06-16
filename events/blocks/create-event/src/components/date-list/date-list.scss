@@ -1,4 +1,7 @@
 .date-list{
+  display: grid;
+  grid-template-columns: repeat(9, auto);
+  grid-template-rows: 1fr;
   background: white;
   padding: 30px 0 40px;
   position: relative;
@@ -7,6 +10,7 @@
     color: #007cba;
     padding: 10px 16px;
     margin: 0;
+    grid-column: 1/ span 3;
   }
 
   .undo-button, .reset-button {

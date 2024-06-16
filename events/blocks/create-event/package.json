@@ -6,6 +6,7 @@
   "scripts": {
     "build": "wp-scripts build src/index.js src/frontend.js",
     "start": "wp-scripts start src/index.js src/frontend.js",
+    "start-create-event": "npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,8 +18,8 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@mui/material": "^5.10.15",
-    "@mui/x-date-pickers": "^5.0.9",
+    "@mui/material": "^5.15.17",
+    "@mui/x-date-pickers": "^7.4.0",
     "dayjs": "^1.11.6",
     "react-simple-timefield": "^3.2.5"
   }

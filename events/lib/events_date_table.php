@@ -5,10 +5,9 @@ namespace Soli\Events;
 class EventsDatesTableHandler {
   private $charset;
   private $wpdb;
-  /**
-   * @var string
-   */
-  private $tablename;
+
+  private $event_dates_table;
+  private $event_location_table;
   private $meta_table;
   private $post_table;
 
@@ -16,22 +15,30 @@ class EventsDatesTableHandler {
     global $wpdb;
     $this->wpdb = $wpdb;
     $this->charset = $wpdb->get_charset_collate();
-    $this->tablename = $wpdb->prefix . "event_dates";
+    $this->event_dates_table = $wpdb->prefix . "event_dates";
+    $this->event_location_table = $wpdb->prefix . "event_location";
     $this->meta_table = $wpdb->prefix . "postmeta";
     $this->post_table = $wpdb->prefix . "posts";
   }
 
-  function createTable() {
+  function createEventTable() {
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta("CREATE TABLE $this->tablename (
+    dbDelta("CREATE TABLE $this->event_dates_table (
         id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
         parent bigint(20) unsigned,
         post_id bigint(20) unsigned NOT NULL,
-        date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        start_time TIME,
-        end_time TIME,
+        start_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        end_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        location bigint(20) unsigned,
+        rooms TINYTEXT,
         PRIMARY KEY  (id)
     ) $this->charset;");
+  }
+
+  function dropEventTable() {
+    global $wpdb;
+    $sql = "DROP TABLE IF EXISTS $this->event_dates_table";
+    $wpdb->query($sql);
   }
 
   function getDatesForMonth($yearmonth) {
@@ -46,18 +53,19 @@ class EventsDatesTableHandler {
   }
 
   function loadMonthEventsFromDb($year, $month) {
-    $query = $this->wpdb->prepare("SELECT d.id, d.parent, d.date, d.start_time, d.end_time, 
-       p.start_time as parent_start_time, p.end_time as parent_end_time, m.meta_value as featured_image_id,
-       w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.post_type 
-        FROM $this->tablename d
-        LEFT JOIN $this->tablename p
+    $query = $this->wpdb->prepare("SELECT d.id, d.parent, d.start_date, d.end_date, m.meta_value as featured_image_id,
+       d.post_id, w.post_author, w.post_title, w.post_excerpt, w.post_status, w.post_name, w.post_modified, 
+       w.post_parent, w.post_type, w.guid
+        FROM $this->event_dates_table d
+        LEFT JOIN $this->event_dates_table p
             ON d.parent = p.id 
         LEFT JOIN wp_posts w 
             ON d.post_id = w.id 
         LEFT JOIN $this->meta_table m 
             ON d.post_id = w.id and m.meta_key = '_thumbnail_id'
-        WHERE YEAR(d.date) = %d AND MONTH(d.date) = %d 
-              and w.post_status = %s;", $year, $month, 'publish');
+        WHERE ((YEAR(d.start_date) = %d AND MONTH(d.start_date) = %d)
+              or (YEAR(d.end_date) = %d AND MONTH(d.end_date) = %d))
+              and w.post_status = %s;", $year, $month, $year, $month, 'publish');
     return $this->wpdb->get_results($query, ARRAY_A);
   }
 
@@ -90,10 +98,13 @@ class EventsDatesTableHandler {
 
   function loadEventDatesFromDb($event_id) {
     $query = $this->wpdb->prepare("
-                SELECT d.id, d.parent, d.date, d.start_time, d.end_time, p.start_time as parent_start_time, p.end_time as parent_end_time 
-                FROM $this->tablename d
-                LEFT JOIN $this->tablename p
-                ON d.parent = p.id
+                SELECT d.id, d.parent, d.start_date, d.end_date, d.rooms, p.rooms as parent_rooms,
+                       l.id as location_id, l.name as location_name, l.address as location_address
+                FROM $this->event_dates_table d
+                LEFT JOIN $this->event_dates_table p
+                    ON d.parent = p.id
+                LEFT JOIN $this->event_location_table l
+                    on d.location = l.id
                 WHERE d.post_id=$event_id");
     return $this->wpdb->get_results($query, ARRAY_A);
   }
@@ -102,18 +113,20 @@ class EventsDatesTableHandler {
     $offset = ($page - 1) * $itemsPerPage;
     $limit = $itemsPerPage;
     $query = $this->wpdb->prepare("
-        SELECT d.id, d.parent, d.date, d.start_time, d.end_time, 
-           p.start_time as parent_start_time, p.end_time as parent_end_time, m.meta_value as featured_image_id,
-           w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.post_type 
-        FROM $this->tablename d
-        LEFT JOIN $this->tablename p
+        SELECT d.id, d.parent, d.start_date, d.end_date, d.rooms, p.rooms as parent_rooms, m.meta_value as featured_image_id,
+           w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.post_type,
+           l.id as location_id, l.name as location_name, l.address as location_address
+        FROM $this->event_dates_table d
+        LEFT JOIN $this->event_dates_table p
             ON d.parent = p.id 
         LEFT JOIN wp_posts w 
             ON d.post_id = w.id 
         LEFT JOIN $this->meta_table m 
             ON d.post_id = w.id and m.meta_key = '_thumbnail_id'
+        LEFT JOIN $this->event_location_table l
+            on d.location = l.id
         WHERE w.post_status = %s
-        ORDER BY d.date desc LIMIT %d OFFSET %d ", 'publish', $limit, $offset);
+        ORDER BY d.start_date desc LIMIT %d OFFSET %d ", 'publish', $limit, $offset);
     return $this->wpdb->get_results($query, ARRAY_A);
   }
 
@@ -128,17 +141,18 @@ class EventsDatesTableHandler {
   function loadAllBetweenDatesEventDatesFromDb($from, $to) {
     $startDate = $from->format('Y-m-d');
     $endDate = $to->format('Y-m-d');
-    $query = $this->wpdb->prepare("SELECT d.id, d.parent, d.date, d.start_time, d.end_time, 
-       p.start_time as parent_start_time, p.end_time as parent_end_time,
-       w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type 
-        FROM $this->tablename d
-        LEFT JOIN $this->tablename p
+    $query = $this->wpdb->prepare("SELECT d.id, d.parent, d.start_date, d.end_date, p.rooms as parent_rooms,
+       w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type,
+       l.id as location_id, l.name as location_name, l.address as location_address
+        FROM $this->event_dates_table d
+        LEFT JOIN $this->event_dates_table p
             ON d.parent = p.id 
         LEFT JOIN $this->post_table w 
             ON d.post_id = w.id 
-        WHERE d.date between %s and %s
+        LEFT JOIN $this->event_location_table l
+            on d.location = l.id
+        WHERE ((d.start_date between %s and %s) or (d.end_date between %s and %s))
               and w.post_status = %s;", $startDate, $endDate, 'publish');
-    var_dump($query);
     return $this->wpdb->get_results($query, ARRAY_A);
   }
 
@@ -166,13 +180,13 @@ class EventsDatesTableHandler {
     }
     if (empty($nonRedundant)) {
       $query = $this->wpdb->prepare("
-                          DELETE FROM $this->tablename
+                          DELETE FROM $this->event_dates_table
                               WHERE post_id = %d",
         $event_id
       );
     } else {
       $query = $this->wpdb->prepare("
-                          DELETE FROM $this->tablename
+                          DELETE FROM $this->event_dates_table
                               WHERE post_id = %d 
                               AND id NOT IN (" . implode(',', $nonRedundant) . ");",
         $event_id
@@ -184,28 +198,31 @@ class EventsDatesTableHandler {
   function saveDate($event_id, $date, $parent_id = null) {
     if (empty($date->id)) {
       $query = $this->wpdb->prepare("
-                        INSERT INTO $this->tablename 
-                            (parent, post_id, date, start_time, end_time) VALUES 
-                            (%d, %d, %s, %s, %s)",
+                        INSERT INTO $this->event_dates_table 
+                            (parent, post_id, start_date, end_date, location, rooms) VALUES 
+                            (%d, %d, %s, %s, %s, %s)",
         $parent_id,
         $event_id,
-        $date->date,
-        $date->start_time ?: 'NULL',
-        $date->end_time ?: 'NULL'
+        $date->start_date,
+        $date->end_date,
+        $date->location ?: 'NULL',
+        $date->rooms ?: 'NULL',
       );
 
       $this->wpdb->get_results($this->replaceNullWithNull($query), ARRAY_A);
       return $this->wpdb->insert_id;
     } else {
       $query = $this->wpdb->prepare("
-                        UPDATE $this->tablename 
-                        SET date = %s,
-                            start_time = %s,
-                            end_time = %s
+                        UPDATE $this->event_dates_table 
+                        SET start_date = %s,
+                            end_date = %s,
+                            location = %s,
+                            rooms = %s
                         WHERE id=%d;",
-        $date->date,
-        $date->start_time ?: 'NULL',
-        $date->end_time ?: 'NULL',
+        $date->start_date,
+        $date->end_date,
+        $date->location ?: 'NULL',
+        $date->rooms ?: 'NULL',
         $date->id
       );
 
@@ -230,7 +247,8 @@ class EventsDatesTableHandler {
 
   function validateDate($date) {
     return isset($date)
-      && is_string($date->date);
+      && is_string($date->start_date)
+      && is_string($date->end_date);
   }
 
   function replaceNullWithNull($query) {

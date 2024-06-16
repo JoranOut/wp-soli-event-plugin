@@ -1,11 +1,16 @@
 <?php
 
-
 add_action('rest_api_init', 'soli_event_rest_api', 10, 1);
 function soli_event_rest_api() {
+  buildGETEventsBetweenDates();
+  buildGETEventsByMonth();
+  buildGETEventDatesFromEvent();
+  buildGETEventsByPageAndItemsPerPage();
+  buildPOSTEventDates();
+}
 
-  // get events between to dates
-  register_rest_route('soli_event', '/events', array(
+function buildGETEventsBetweenDates() {
+  register_rest_route('soli_event/v1', '/events', array(
     'methods' => 'GET',
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
@@ -30,9 +35,10 @@ function soli_event_rest_api() {
       return $response;
     },
   ));
+}
 
-  // get events of a month
-  register_rest_route('soli_event', '/events/(?P<yearmonth>\d{4}-\d{1,2})/', array(
+function buildGETEventsByMonth() {
+  register_rest_route('soli_event/v1', '/events/(?P<yearmonth>\d{4}-\d{1,2})/', array(
     'methods' => 'GET',
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
@@ -59,10 +65,10 @@ function soli_event_rest_api() {
       return $response;
     },
   ));
+}
 
-
-  // get event by ID
-  register_rest_route('soli_event', '/events/(?P<id>\d+)', array(
+function buildGETEventDatesFromEvent() {
+  register_rest_route('soli_event/v1', '/events/(?P<id>\d+)', array(
     'methods' => 'GET',
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
@@ -77,9 +83,10 @@ function soli_event_rest_api() {
       return $response;
     },
   ));
+}
 
-  // get event by ID
-  register_rest_route('soli_event', '/events/all/(?P<page>\d+)/(?P<itemsPerPage>\d+)', array(
+function buildGETEventsByPageAndItemsPerPage() {
+  register_rest_route('soli_event/v1', '/events/all/(?P<page>\d+)/(?P<itemsPerPage>\d+)', array(
     'methods' => 'GET',
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
@@ -98,33 +105,72 @@ function soli_event_rest_api() {
       return $response;
     },
   ));
+}
 
 
-  /**
-   * param: {
-   *    id: int
-   * }
-   * body:
-   *  {
-   *    dates: {
-   *      main: #date,
-   *      repeated: [#data]
-   *    }
-   *  }
-   * #date: {
-   *  id ?: int,
-   *  date: date,
-   *  startTime: time,
-   *  endTime: time,
-   * }
-   */
-  register_rest_route('soli_event', '/events/(?P<id>\d+)', array(
+/**
+ * param: {
+ *    id: int
+ * }
+ * body:
+ *  {
+ *    dates: {
+ *      main: #date,
+ *      repeated: [#data]
+ *    }
+ *  }
+ * #date: {
+ *  id ?: int,
+ *  start_date: date,
+ *  end_date: date,
+ * }
+ */
+function buildPOSTEventDates() {
+  register_rest_route('soli_event/v1', '/events/(?P<id>\d+)', array(
     'methods' => 'POST',
     'permission_callback' => function () {
       return current_user_can('edit_posts');
     }, // *always set a permission callback
     'callback' => function ($request) {
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
+      $body = json_decode($request->get_body());
+      $dates = $eventHandler->setDatesAtEvent($request['id'], $body);
+      $response = new WP_REST_Response($dates);
+      if (!$dates) {
+        $response->set_status(204);
+      } else {
+        $response->set_status(200);
+      }
+      return $response;
+    },
+  ));
+}
+
+/**
+ * param: {
+ *    id: int
+ * }
+ * body:
+ *  {
+ *    dates: {
+ *      main: #date,
+ *      repeated: [#data]
+ *    }
+ *  }
+ * #date: {
+ *  id ?: int,
+ *  start_date: date,
+ *  end_date: date,
+ * }
+ */
+function buildPOSTEventLocation() {
+  register_rest_route('soli_event/v1', '/location/(?P<id>\d+)', array(
+    'methods' => 'POST',
+    'permission_callback' => function () {
+      return current_user_can('edit_posts');
+    }, // *always set a permission callback
+    'callback' => function ($request) {
+      $eventHandler = new \Soli\Events\EventsLocation();
       $body = json_decode($request->get_body());
       $dates = $eventHandler->setDatesAtEvent($request['id'], $body);
       $response = new WP_REST_Response($dates);
@@ -177,28 +223,28 @@ function validateMonth($date) {
   }
 }
 
-function insertGUID($dates){
-  if (!isset($dates)){
+function insertGUID($dates) {
+  if (!isset($dates)) {
     return;
   }
   foreach ($dates as &$date) {
     if (isset($date['ID'])) {
       $guid = get_post_permalink($date['ID']);
-      if(isset($guid)){
+      if (isset($guid)) {
         $date['guid'] = $guid . "?event=" . $date['id'];
       }
     }
   }
 }
 
-function insertFeaturedImage($dates){
-  if (!isset($dates)){
+function insertFeaturedImage($dates) {
+  if (!isset($dates)) {
     return;
   }
   foreach ($dates as &$date) {
     if (isset($date['featured_image_id'])) {
       $img = wp_get_attachment_image_src($date['featured_image_id'], 'thumbnail');
-      if(isset($img)){
+      if (isset($img)) {
         $date['featured_image'] = $img[0];
       }
     }

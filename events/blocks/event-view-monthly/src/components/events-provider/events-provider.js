@@ -30,12 +30,11 @@ export default function EventsProvider(props) {
         }
         if (error === undefined && !isLoading && props.events == null) {
             setLoading(true)
-            apiFetch({path: `soli_event/events/${yearmonth}/`})
+            apiFetch({path: `soli_event/v1/events/${yearmonth}/`})
                 .then(
                     (event) => {
                         setLoading(false)
                         setError(undefined)
-                        console.log(event)
                         props.setEvents(fromEventDto(event))
                         props.changeView(yearmonth)
                     },

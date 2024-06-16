@@ -1,0 +1,62 @@
+.location-searcher {
+  display: flex;
+  flex-direction: column;
+}
+
+.location-search-result {
+  display: grid;
+  grid-template-columns: 1fr auto;
+
+  .components-search-control {
+    grid-column: 1 / span 3;
+    padding: 20px 0 0;
+  }
+
+  .location {
+    display: grid;
+    grid-column: 1 / span 2;
+    grid-template-columns: subgrid;
+    grid-template-areas:
+            "name submit"
+            "address submit";
+    border-bottom: 2px solid #deeff7;
+    align-items: center;
+    padding: 10px 0;
+
+    &.selected {
+      border: 2px dashed #ccc;
+      padding-left: 20px;
+    }
+
+    .name {
+      grid-area: name;
+      margin: 0;
+      font-weight: bold;
+
+      span {
+        font-weight: normal;
+        color: lightgray;
+      }
+    }
+
+    .address {
+      grid-area: address;
+      margin: 0;
+    }
+
+    button.submit-button,
+    button.delete-button {
+      display: flex;
+      justify-content: center;
+      grid-area: submit;
+
+      img {
+        height: 21px;
+      }
+
+      &:hover img {
+        filter: invert(13%) sepia(80%) saturate(7475%) hue-rotate(359deg) brightness(94%) contrast(81%);
+      }
+    }
+  }
+}

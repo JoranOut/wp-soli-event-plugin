@@ -1,0 +1,16 @@
+.components-modal__frame {
+  min-height: min(600px, 80%);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.room-checkbox.room-checkbox {
+  margin-left: 20px;
+
+  &:first-of-type {
+    margin-left: 0;
+  }
+}

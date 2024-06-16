@@ -1,12 +1,21 @@
 .date-list-item {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / span 9;
   border-bottom: 2px solid #deeff7;
   min-height: 40px;
   align-items: center;
   margin: 0 10px;
   padding: 2px 10px;
   justify-content: space-between;
+
+  &.past {
+    opacity: .5;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 
   &:last-child {
     border: none;

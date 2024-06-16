@@ -1,41 +1,73 @@
-export function generateWeeks(startDate, endDate){
-    const dates = []
-    for (let d = incrementByWeek(startDate); d < endDate; d = incrementByWeek(d)) {
-        dates.push(d);
+export function generateWeeksUntil(startDate, endDate, endRepeatDate) {
+    const dates = [{startDate: new Date(startDate), endDate: new Date(endDate)}]
+    for (let s = incrementByWeek(startDate), e = incrementByWeek(endDate); s < endRepeatDate; s = incrementByWeek(s), e = incrementByWeek(e)) {
+        dates.push({startDate: s, endDate: e});
     }
     return dates;
 }
 
-function incrementByWeek(date){
+export function generateWeeksTimes(startDate, endDate, endRepeatDate, times) {
+    let curr_date = {startDate: new Date(startDate), endDate: new Date(endDate)};
+    const dates = [curr_date]
+
+    for (let d = 0; d < times; d++) {
+        curr_date = {startDate: incrementByWeek(curr_date.startDate), endDate: incrementByWeek(curr_date.endDate)}
+        dates.push(curr_date);
+    }
+    return dates;
+}
+
+function incrementByWeek(date) {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + 7)
     return newDate;
 }
 
-export function generateBiWeekly(startDate, endDate){
-    const dates = []
-    for (let d = incrementBiWeekly(startDate); d < endDate; d = incrementBiWeekly(d)) {
-        dates.push(d);
+export function generateBiWeeklyUntil(startDate, endDate, endRepeatDate) {
+    const dates = [{startDate: new Date(startDate), endDate: new Date(endDate)}]
+    for (let s = incrementBiWeekly(startDate), e = incrementBiWeekly(endDate); s < endRepeatDate; s = incrementBiWeekly(s), e = incrementBiWeekly(e)) {
+        dates.push({startDate: s, endDate: e});
     }
     return dates;
 }
 
-function incrementBiWeekly(date){
+export function generateBiWeeklyTimes(startDate, endDate, endRepeatDate, times) {
+    let curr_date = {startDate: new Date(startDate), endDate: new Date(endDate)};
+    const dates = [curr_date]
+
+    for (let d = 0; d < times; d++) {
+        curr_date = {startDate: incrementBiWeekly(curr_date.startDate), endDate: incrementBiWeekly(curr_date.endDate)}
+        dates.push(curr_date);
+    }
+    return dates;
+}
+
+function incrementBiWeekly(date) {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + 14)
     return newDate;
 }
 
-
-export function generateMonths(startDate, endDate){
-    const dates = []
-    for (let d = incrementByMonth(startDate); d < endDate; d = incrementByMonth(d)) {
-        dates.push(d);
+export function generateMonthsUntil(startDate, endDate, endRepeatDate) {
+    const dates = [{startDate: new Date(startDate), endDate: new Date(endDate)}]
+    for (let s = incrementByMonth(startDate), e = incrementByMonth(endDate); s < endRepeatDate; s = incrementByMonth(s), e = incrementByMonth(e)) {
+        dates.push({startDate: s, endDate: e});
     }
     return dates;
 }
 
-function incrementByMonth(date){
+export function generateMonthsTimes(startDate, endDate, endRepeatDate, times) {
+    let curr_date = {startDate: new Date(startDate), endDate: new Date(endDate)};
+    const dates = [curr_date]
+
+    for (let d = 0; d < times; d++) {
+        curr_date = {startDate: incrementByMonth(curr_date.startDate), endDate: incrementByMonth(curr_date.endDate)}
+        dates.push(curr_date);
+    }
+    return dates;
+}
+
+function incrementByMonth(date) {
     const newDate = new Date(date);
     newDate.setMonth(newDate.getMonth() + 1)
     return newDate;

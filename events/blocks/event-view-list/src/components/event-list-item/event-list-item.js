@@ -1,19 +1,17 @@
 import "./event-list-item.scss";
 
 export default function EventListItem(props) {
-    const parseDate = (start, end) => {
-        const startDate = start.getFullYear() + "." + ensureTwoDigits(start.getMonth()) + "." + ensureTwoDigits(start.getDate());
-        const startTime = ensureTwoDigits(start.getHours()) + ":" + ensureTwoDigits(start.getMinutes());
-        const endDate = end.getFullYear() + "." + ensureTwoDigits(end.getMonth()) + "." + ensureTwoDigits(end.getDate());
-        const endTime = ensureTwoDigits(end.getHours()) + ":" + ensureTwoDigits(end.getMinutes());
-        if (startDate === endDate) {
-            return startDate + " " + startTime + " - " + endTime;
-        }
-        return startDate + " " + startTime + " - " + endDate + " " + endTime;
+    const isSameDay = (d1, d2) => {
+        return d1.getDate() === d2.getDate() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getFullYear() === d2.getFullYear();
     }
 
-    const ensureTwoDigits = (digits) => {
-        return ("00" + digits).slice(-2);
+    const parseDate = (start, end) => {
+        if (isSameDay(start, end)){
+            return start.format("dddd D MMMM, YYYY HH:mm") + " - " + end.format("HH:mm")
+        }
+        return start.format("dddd D MMMM, YYYY HH:mm") + " + " + end.format("dddd D MMMM, YYYY HH:mm");
     }
 
     return (
@@ -22,7 +20,7 @@ export default function EventListItem(props) {
                 <div>
                     <img src={props.event.featuredImage}/>
                     <h2>{props.event.title}</h2>
-                    <p>{parseDate(props.event.start, props.event.end)}</p>
+                    <p>{parseDate(props.event.startDate, props.event.endDate)}</p>
                     <a href={props.event.guid}>visit</a>
                 </div>
             }

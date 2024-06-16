@@ -1,9 +1,8 @@
 .generate-dates {
-  .data-view-toggle {
-    color: grey;
+  .expand-button {
+    color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
     border: 2px solid grey;
     border-radius: 2px;
-
 
     &.active {
       border-color: dodgerblue;
@@ -12,41 +11,109 @@
   }
 }
 
-.repeat-end-date {
-  display: flex;
-  flex-direction: column;
-  place-items: flex-start;
-  gap: 0;
-  margin-bottom: 1em;
+.generate-grid {
+  display: grid;
+  grid-template:
+      "grid-top-left grid-top-right" auto
+      "data-view data-view" auto
+      "submit-button submit-button" auto/ 1fr 1fr;
+  gap: 10px 40px;
 
-  p {
-    margin: 0;
+
+  .grid-top-left {
+    grid-area: grid-top-left;
+  }
+
+  .grid-top-right {
+    grid-area: grid-top-right;
+  }
+
+  .generated-data {
+    grid-area: data-view;
+  }
+
+  .submit-button {
+    grid-area: submit-button;
+  }
+
+  .MuiPickersPopper-root {
+    z-index: 100000 !important;
+  }
+
+  .components-modal__frame {
+    min-height: min(400px, 80%);
+  }
+
+  .generated-data {
+    background: antiquewhite;
+    margin: 0 -30px;
+    padding: 10px 40px 30px;
+  }
+
+  .example-data {
+    overflow-y: hidden;
+    max-height: 110px;
+    transition: max-height .5s ease-out;
+
+    &.full {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  }
+
+  .expand-button {
+    padding: 0;
+    height: 18px;
+  }
+
+  .submit-button {
+    display: block;
   }
 }
 
-.MuiPickersPopper-root {
-  z-index: 100000 !important;
-}
 
-.components-modal__frame {
-  min-height: min(600px, 80%);
-}
+:root {
+  .generate-dates {
+    .MuiOutlinedInput-notchedOutline {
+      border: none;
+    }
 
-.example-data {
-  overflow-y: hidden;
-  max-height: 200px;
-  transition: max-height .5s ease-out;
+    .MuiInputBase-root {
+      align-self: center;
+      width: fit-content;
+    }
 
-  &.full {
-    max-height: 2000px;
+    .MuiInputBase-input {
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    :not(.time) > div > .MuiInputBase-input {
+      text-transform: capitalize;
+      font-weight: bolder;
+      font-size: 26px;
+      padding: 0;
+    }
+
+    .end-date:not(.time) > div > .MuiInputBase-input {
+      font-size: 18px !important;
+    }
+
+    .time > div > .MuiInputBase-input {
+      width: 40px;
+    }
+
+    .MuiInputAdornment-root.MuiInputAdornment-positionEnd {
+      margin: 0 0 0 5px;
+    }
+
+    .MuiButtonBase-root.MuiIconButton-root.MuiIconButton-edgeEnd {
+      padding: 0;
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      outline: none;
+    }
   }
-}
-
-.expand-button {
-  padding: 0;
-  height: 18px;
-}
-
-.submit-button {
-  margin-top: 1em;
 }
