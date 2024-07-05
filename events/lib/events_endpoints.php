@@ -187,7 +187,7 @@ function buildPOSTEventLocation() {
 /**
  * @throws Exception
  */
-function validateDate($date) {
+function validateDate($date): ?DateTime {
   if (empty($date)) {
     return null;
   }
@@ -207,7 +207,7 @@ function validateDate($date) {
 /**
  * @throws Exception
  */
-function validateMonth($date) {
+function validateMonth($date): DateTime {
   if (empty($date)) {
     throw new Exception();
   }

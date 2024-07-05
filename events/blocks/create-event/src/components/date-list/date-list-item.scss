@@ -1,7 +1,7 @@
 .date-list-item {
   display: grid;
   grid-template-columns: subgrid;
-  grid-column: 1 / span 9;
+  grid-column: 1 / span 11;
   border-bottom: 2px solid #deeff7;
   min-height: 40px;
   align-items: center;
@@ -24,13 +24,5 @@
   p {
     flex: 1;
     text-align: right;
-  }
-
-  button img {
-    height: 21px;
-
-    &:hover {
-      filter: invert(13%) sepia(80%) saturate(7475%) hue-rotate(359deg) brightness(94%) contrast(81%);
-    }
   }
 }

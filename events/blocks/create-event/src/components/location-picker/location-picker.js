@@ -22,30 +22,26 @@ function LocationPicker({location, rooms, onChange}) {
         setLocation(location);
         setRooms(rooms);
         onChange(rooms, location);
-        if (rooms || location){
+        if (rooms || location) {
             closeModal();
         }
     }
 
     const displayRooms = () => {
-        if(_rooms?.length === ROOM_NAMES.length){
+        if (_rooms?.length === ROOM_NAMES.length) {
             return "Hele gebouw";
         }
-        if (_rooms?.length > 0){
-          return _rooms.map(i => ROOM_NAMES[i]).join(' + ');
+        if (_rooms?.length > 0) {
+            return _rooms.map(i => ROOM_NAMES[i]).join(' + ');
         }
         return null;
     }
 
     const displayLocation = () => {
-        if (_location){
-          return _location.name;
-        }
-        return null;
+        return _location?.name;
     }
 
     useEffect(() => {
-        console.log('Location or rooms props changed:', location, rooms); // Debugging line
         setLocation(location);
         setRooms(rooms);
     }, [location, rooms]);

@@ -1,18 +1,19 @@
 import './date-list-item.scss';
-import trashcan from '../../../../../../inc/assets/img/icons/delete.svg';
-import {Button} from "@wordpress/components";
 import DateRangePicker from "../daterange-picker/daterange-picker";
 import {useState, useEffect} from '@wordpress/element';
 import LocationPicker from "../location-picker/location-picker";
 import dayjs from "dayjs";
+import TimeGeneratorModalButton from "../time-generator-modal-button/time-generator-modal-button";
+import CopyButton from "../copy-button/copy-button";
+import DeleteButton from "../delete-button/delete-button";
 
 function DateListItem(props) {
     const [date, setDate] = useState(props.date)
 
     const updateLocation = (rooms, location) => {
-        const updatedDate = { ...date, location: {...location}, rooms: {...rooms} }; // Create a new copy of the date with updated location and rooms
+        const updatedDate = {...date, location: {...location}, rooms: rooms ? [...rooms] : null}; // Create a new copy of the date with updated location and rooms
         setDate(updatedDate);
-        props.updateDate(date);
+        props.updateDate(updatedDate);
     }
 
     const updateDate = (newDate) => {
@@ -20,8 +21,16 @@ function DateListItem(props) {
         props.updateDate(newDate);
     }
 
+    const addGeneratedDates = (dates) => {
+        props.addGeneratedDates(dates);
+    }
+
+    const copyDate = () => {
+        const {id: _, ...cleanCopy} = date
+        props.addDateCopy(cleanCopy);
+    }
+
     useEffect(() => {
-        console.log('Location or rooms props changed:', props.date); // Debugging line
         setDate(props.date); // Update the date state when props.date changes
     }, [props.date]);
 
@@ -30,7 +39,6 @@ function DateListItem(props) {
     return (
         <div className={['date-list-item', dayjs(date.endDate).isAfter(today) ? "future" : "past"].join(' ')}>
             <DateRangePicker
-                minimalDate={props.minimalDate}
                 date={date}
                 updateDate={(date) => updateDate(date)}
                 style="line"
@@ -41,7 +49,14 @@ function DateListItem(props) {
                 onChange={(rooms, location) => updateLocation(rooms, location)}
             />
 
-            <Button title='delete' onClick={props.onDelete}><img src={trashcan}/></Button>
+            <CopyButton onClick={() => copyDate()}/>
+
+            <TimeGeneratorModalButton
+                date={date}
+                onSubmit={(dates) => addGeneratedDates(dates)}/>
+
+            <DeleteButton
+                onClick={() => props.onDelete()}/>
         </div>
     );
 }

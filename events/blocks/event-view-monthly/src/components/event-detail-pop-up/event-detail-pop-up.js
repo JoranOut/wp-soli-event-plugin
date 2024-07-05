@@ -1,6 +1,7 @@
 import "./event-detail-pop-up.scss";
 import '@toast-ui/calendar/dist/toastui-calendar.min.css';
 import {useState, useEffect, useRef} from '@wordpress/element';
+import dayjs from "dayjs";
 
 export default function EventDetailPopUp(props) {
     const [box, setBox] = useState({});
@@ -9,9 +10,9 @@ export default function EventDetailPopUp(props) {
     const ref = useRef();
 
     const isSingleDay = (d1, d2) => {
-        return d1.getDate() === d2.getDate() &&
-            d1.getMonth() === d2.getMonth() &&
-            d1.getFullYear() === d2.getFullYear();
+        return d1.date() === d2.date() &&
+            d1.month() === d2.month() &&
+            d1.year() === d2.year();
     }
 
     const parseDate = (start, end) => {
@@ -57,7 +58,7 @@ export default function EventDetailPopUp(props) {
                 <div ref={ref} className={side === "left" ? "event-detail-popup left" : "event-detail-popup"} style={box}>
                     <img src={props.event.raw.featuredImage}/>
                     <h2>{props.event.title}</h2>
-                    <p>{parseDate(props.event.start, props.event.end)}</p>
+                    <p>{parseDate(dayjs(props.event.start.d), dayjs(props.event.end.d))}</p>
                     <a href={props.event.raw.guid}>visit</a>
                 </div>
             }

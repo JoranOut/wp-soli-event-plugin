@@ -25,7 +25,6 @@ class EventsDatesTableHandler {
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta("CREATE TABLE $this->event_dates_table (
         id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-        parent bigint(20) unsigned,
         post_id bigint(20) unsigned NOT NULL,
         start_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
         end_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -53,12 +52,10 @@ class EventsDatesTableHandler {
   }
 
   function loadMonthEventsFromDb($year, $month) {
-    $query = $this->wpdb->prepare("SELECT d.id, d.parent, d.start_date, d.end_date, m.meta_value as featured_image_id,
+    $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date, m.meta_value as featured_image_id,
        d.post_id, w.post_author, w.post_title, w.post_excerpt, w.post_status, w.post_name, w.post_modified, 
        w.post_parent, w.post_type, w.guid
         FROM $this->event_dates_table d
-        LEFT JOIN $this->event_dates_table p
-            ON d.parent = p.id 
         LEFT JOIN wp_posts w 
             ON d.post_id = w.id 
         LEFT JOIN $this->meta_table m 
@@ -75,17 +72,7 @@ class EventsDatesTableHandler {
     if (empty($dates)) {
       return null;
     }
-    foreach ($dates as $date) {
-      if ($date["parent"] == 0) {
-        $main = $date;
-      } else {
-        $repeated[] = $date;
-      }
-    }
-    return (object)[
-      "main" => $main,
-      "repeated" => $repeated
-    ];
+    return $dates;
   }
 
   function getDatesPerPageFromEvent($page, $itemsPerPage) {
@@ -98,11 +85,9 @@ class EventsDatesTableHandler {
 
   function loadEventDatesFromDb($event_id) {
     $query = $this->wpdb->prepare("
-                SELECT d.id, d.parent, d.start_date, d.end_date, d.rooms, p.rooms as parent_rooms,
+                SELECT d.id, d.start_date, d.end_date, d.rooms,
                        l.id as location_id, l.name as location_name, l.address as location_address
                 FROM $this->event_dates_table d
-                LEFT JOIN $this->event_dates_table p
-                    ON d.parent = p.id
                 LEFT JOIN $this->event_location_table l
                     on d.location = l.id
                 WHERE d.post_id=$event_id");
@@ -113,12 +98,10 @@ class EventsDatesTableHandler {
     $offset = ($page - 1) * $itemsPerPage;
     $limit = $itemsPerPage;
     $query = $this->wpdb->prepare("
-        SELECT d.id, d.parent, d.start_date, d.end_date, d.rooms, p.rooms as parent_rooms, m.meta_value as featured_image_id,
+        SELECT d.id, d.start_date, d.end_date, d.rooms, m.meta_value as featured_image_id,
            w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.post_type,
            l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
-        LEFT JOIN $this->event_dates_table p
-            ON d.parent = p.id 
         LEFT JOIN wp_posts w 
             ON d.post_id = w.id 
         LEFT JOIN $this->meta_table m 
@@ -141,12 +124,10 @@ class EventsDatesTableHandler {
   function loadAllBetweenDatesEventDatesFromDb($from, $to) {
     $startDate = $from->format('Y-m-d');
     $endDate = $to->format('Y-m-d');
-    $query = $this->wpdb->prepare("SELECT d.id, d.parent, d.start_date, d.end_date, p.rooms as parent_rooms,
+    $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date,
        w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type,
        l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
-        LEFT JOIN $this->event_dates_table p
-            ON d.parent = p.id 
         LEFT JOIN $this->post_table w 
             ON d.post_id = w.id 
         LEFT JOIN $this->event_location_table l
@@ -158,13 +139,13 @@ class EventsDatesTableHandler {
 
   function setDatesAtEvent($event_id, $dates) {
     if (!$this->validateDates($dates)) {
+      var_dump("validateDates");
       return false;
     }
     $this->removeRedundantDates($event_id, $dates);
-    $main_id = $this->saveDate($event_id, $dates->main);
-    if ($dates->repeated) {
-      foreach ($dates->repeated as $date) {
-        $this->saveDate($event_id, $date, $main_id);
+    if ($dates) {
+      foreach ($dates as $date) {
+        $this->saveDate($event_id, $date);
       }
     }
     return $this->getDatesFromEvent($event_id);
@@ -172,11 +153,8 @@ class EventsDatesTableHandler {
 
   function removeRedundantDates($event_id, $dates) {
     $nonRedundant = array();
-    if ($dates->repeated) {
-      $nonRedundant = array_merge($nonRedundant, array_column($dates->repeated, 'id'));
-    }
-    if (isset($dates->main->id)) {
-      $nonRedundant[] = $dates->main->id;
+    if ($dates) {
+      $nonRedundant = array_merge($nonRedundant, array_column($dates, 'id'));
     }
     if (empty($nonRedundant)) {
       $query = $this->wpdb->prepare("
@@ -195,13 +173,12 @@ class EventsDatesTableHandler {
     $this->wpdb->get_results($query, ARRAY_A);
   }
 
-  function saveDate($event_id, $date, $parent_id = null) {
+  function saveDate($event_id, $date) {
     if (empty($date->id)) {
       $query = $this->wpdb->prepare("
                         INSERT INTO $this->event_dates_table 
-                            (parent, post_id, start_date, end_date, location, rooms) VALUES 
-                            (%d, %d, %s, %s, %s, %s)",
-        $parent_id,
+                            (post_id, start_date, end_date, location, rooms) VALUES 
+                            (%d, %s, %s, %s, %s)",
         $event_id,
         $date->start_date,
         $date->end_date,
@@ -231,21 +208,16 @@ class EventsDatesTableHandler {
     }
   }
 
-  function validateDates($dates) {
-    if (!$this->validateDate($dates->main)) {
-      return false;
-    }
-    if ($dates->repeated) {
-      foreach ($dates->repeated as $date) {
-        if (!$this->validateDate($date)) {
-          return false;
-        }
+  function validateDates($dates): bool {
+    foreach ($dates as $date) {
+      if (!$this->validateDate($date)) {
+        return false;
       }
     }
     return true;
   }
 
-  function validateDate($date) {
+  function validateDate($date): bool {
     return isset($date)
       && is_string($date->start_date)
       && is_string($date->end_date);

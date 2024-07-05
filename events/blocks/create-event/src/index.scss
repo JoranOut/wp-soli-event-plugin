@@ -8,6 +8,16 @@
   gap: 1em;
 }
 
+.single-event {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 10px;
+
+  > .date-range-picker {
+    width: 100%;
+  }
+}
+
 .repeat-options {
   display: flex;
   flex-direction: row;

@@ -1,0 +1,10 @@
+.state-buttons {
+  position: absolute;
+  top: 26px;
+  right: 65px;
+  z-index: 11;
+}
+
+.undo-button, .reset-button, .redo-button {
+  width: 44px;
+}

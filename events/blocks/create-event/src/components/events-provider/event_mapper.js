@@ -1,10 +1,5 @@
-
 function fromEventDto(eventDto) {
-    return {
-        main: eventDto ? fromDateDto(eventDto.main) : defaultDate(),
-        repeated: eventDto && eventDto.repeated ? eventDto.repeated.map(fromDateDto) : null,
-        isRepeatedDate: !!(eventDto && eventDto.repeated)
-    }
+    return eventDto ? eventDto.map(fromDateDto) : null
 }
 
 function fromDateDto(dateDto) {
@@ -18,7 +13,7 @@ function fromDateDto(dateDto) {
 }
 
 function fromLocationDto(dateDto) {
-    if (!dateDto.location_id){
+    if (!dateDto.location_id) {
         return null;
     }
     return {
@@ -29,27 +24,17 @@ function fromLocationDto(dateDto) {
 }
 
 function toEventDto(event) {
-    return {
-        main: toDateDto(event.main),
-        repeated: event.repeated && event.isRepeatedDate ? event.repeated.map((e) => toDateDto(e, event.main)) : null
-    }
+    return event ? event.map((e) => toDateDto(e)) : [];
 }
 
-function toDateDto(date, main) {
+function toDateDto(date) {
     return {
         id: date.id,
         start_date: date.startDate,
         end_date: date.endDate,
-        location: ! date.location || (main && main.location && date.location.id === main.location.id) ? null : date.location.id,
-        rooms: !date.rooms || (main && equalArrays(date.rooms, main.rooms)) ? null : JSON.stringify(date.rooms),
+        location: !date.location ? null : date.location.id,
+        rooms: !date.rooms ? null : JSON.stringify(date.rooms),
     }
-}
-
-function equalArrays(a1, a2) {
-    if (!a1 || !a2) {
-        return null;
-    }
-    return a1.every((v, i) => v === a2[i]);
 }
 
 function defaultDate() {
@@ -59,8 +44,8 @@ function defaultDate() {
     }
 }
 
-Date.prototype.addHours = function(h) {
-    this.setTime(this.getTime() + (h*60*60*1000));
+Date.prototype.addHours = function (h) {
+    this.setTime(this.getTime() + (h * 60 * 60 * 1000));
     return this;
 }
 

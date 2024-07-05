@@ -1,10 +1,11 @@
-.date-list{
+.date-list {
   display: grid;
-  grid-template-columns: repeat(9, auto);
+  grid-template-columns: repeat(7, auto) repeat(4, min-content);
   grid-template-rows: 1fr;
   background: white;
   padding: 30px 0 40px;
   position: relative;
+  column-gap: 10px;
 
   h3 {
     color: #007cba;

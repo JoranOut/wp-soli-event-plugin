@@ -28,20 +28,19 @@ function FrontEndComponent(props) {
             post_id={postId}
             dates={dates}
             setDates={(newDates) => {
-                if (newDates.isRepeatedDate) {
-                    newDates.repeated.push(newDates.main);
-                    newDates.repeated.sort((a,b) => a.start_date.localeCompare(b.start_date))
+                if (newDates?.length > 1) {
+                    newDates.push(newDates);
+                    newDates.sort((a,b) => a.start_date.localeCompare(b.start_date))
                 }
                 setDates(newDates);
             }}
             enableSaveButton={false}
         >
             <SelectedDate
-                event_id={event_id}
-                main_date={dates.main}/>
+                event_id={event_id}/>
 
-            {dates && dates.isRepeatedDate &&
-                dates.repeated.map((date, i) => {
+            {dates &&
+                dates.map((date, i) => {
                 const selectedClass = date.id === event_id ? 'selected' : '';
                 return (
                     <div key={i} className={selectedClass}>

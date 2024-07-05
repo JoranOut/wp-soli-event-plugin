@@ -6,7 +6,8 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import 'dayjs/locale/nl';
 
-import infoSVG from "../../../../../../inc/assets/img/icons/info.svg";
+import {ROOM_NAMES} from "../../../../../inc/values";
+
 
 function LocationWarning(props) {
     const [location, setLocation] = useState(props.location);
@@ -18,17 +19,15 @@ function LocationWarning(props) {
     }
 
     return (
-        <div className={"location-warning"}>
-            <img src={infoSVG}/>
-            <p>andere locatie: {location}</p>
-        </div>
+        <p className="location">{location}</p>
     );
 }
 
 export const DateListViewItem = forwardRef(function DateListViewItem(props, ref) {
     const [startDate, setStartDate] = useState(dayjs(props.date.startDate));
     const [endDate, setEndDate] = useState(dayjs(props.date.endDate));
-    const [location, setLocation] = useState(props.location);
+    const [location, setLocation] = useState(props.date.location);
+    const [rooms, setRooms] = useState(props.date.rooms);
 
     dayjs.locale("nl");
 
@@ -38,12 +37,35 @@ export const DateListViewItem = forwardRef(function DateListViewItem(props, ref)
             d1.year() === d2.year();
     }
 
+
+    const displayRooms = (rooms) => {
+        if (rooms && rooms.length > 0) {
+            return rooms.map(i => ROOM_NAMES[i]).join(' + ');
+        }
+        return null;
+    }
+
+    const returnSpecialLocation = (itemLocation, itemRooms) => {
+        console.log(itemLocation)
+        console.log(itemRooms)
+        if (itemLocation) {
+            return itemLocation?.name;
+        }
+
+        if (itemRooms){
+            return displayRooms(itemRooms);
+        }
+
+        return "geen locatie";
+    }
+
     let today = dayjs();
 
     useEffect(() => {
         setStartDate(dayjs(props.date.startDate));
         setEndDate(dayjs(props.date.endDate));
-        setLocation(props.location);
+        setLocation(props.date.location);
+        setRooms(props.date.rooms);
         today = dayjs();
     }, [props]);
 
@@ -58,8 +80,8 @@ export const DateListViewItem = forwardRef(function DateListViewItem(props, ref)
                 <span>{startDate.format("HH:mm")}</span>
                 <span> - </span>
                 <span>{endDate.format("HH:mm")}</span>
-                {!isSameDay(startDate, endDate) && <span>{endDate.format("DD MMMM YYYY (dddd)")}</span>}
-                <LocationWarning location={location}/>
+                <span>{!isSameDay(startDate, endDate) ? endDate.format("DD MMMM YYYY (dddd)") : ""}</span>
+                <LocationWarning location={() => returnSpecialLocation(location, rooms)}/>
             </LocalizationProvider>
         </div>);
 });

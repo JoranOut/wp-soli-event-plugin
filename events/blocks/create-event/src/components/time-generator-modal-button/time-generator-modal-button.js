@@ -1,6 +1,7 @@
 import "./time-generator-modal-button.scss"
 import {SelectControl, Modal, Button} from "@wordpress/components"
 import {useState, useEffect} from '@wordpress/element';
+import repeatSVG from "../../../../../../inc/assets/img/icons/repeat.svg";
 
 import {RepeatingOptions} from "./repeating-options";
 
@@ -25,6 +26,7 @@ import FormControl from '@mui/material/FormControl';
 import {RepeatingMethod} from "./repeating-method";
 import NumberedInput from "./numbered-input";
 import DateRangePicker from "../daterange-picker/daterange-picker";
+import LocationPicker from "../location-picker/location-picker";
 
 function DateViewToggle(props) {
     const [isOpen, setOpen] = useState(false);
@@ -95,10 +97,11 @@ function RadioRepeatingMethod(props) {
     </FormControl>);
 }
 
-
 function TimeGeneratorModalButton(props) {
     const [startDate, setStartDate] = useState(props.date ? dayjs(props.date.startDate) : dayjs());
     const [endDate, setEndDate] = useState(props.date ? dayjs(props.date.endDate) : dayjs());
+    const [location, setLocation] = useState(props.date ? props.date.location : null);
+    const [rooms, setRooms] = useState(props.date ? props.date.rooms : []);
     const [frequency, setFrequency] = useState(null);
     const [repeatAmount, setRepeatAmount] = useState(0);
     const [endRepeatDate, setEndRepeatDate] = useState(null);
@@ -116,9 +119,16 @@ function TimeGeneratorModalButton(props) {
         setOpen(false);
     }
 
+    const updateLocation = (rooms, location) => {
+        setLocation(location);
+        setRooms(rooms);
+    }
+
     useEffect(() => {
         setStartDate(props.date ? dayjs(props.date.startDate) : dayjs())
         setEndDate(props.date ? dayjs(props.date.endDate) : dayjs())
+        setLocation(props.date ? props.date.location : null);
+        setRooms(props.date ? props.date.rooms : []);
     }, [props]);
 
     const generateData = (startDate, endDate, frequency, method, endRepeatDate, amount) => {
@@ -165,21 +175,24 @@ function TimeGeneratorModalButton(props) {
             }
         }
 
-
         if (dates.length === 0) {
             setError("Gebruik een grotere tijdspanne om datums te genereren. ")
             setGeneratedData([])
             return;
         }
 
+        dates.map(date => {
+            date.rooms = rooms;
+            date.location = location;
+        })
         setError(null);
         setGeneratedData(dates);
 
     }
 
     return (<div>
-        <Button variant="secondary" onClick={openModal}>
-            Genereer datums
+        <Button className="repeat-button" variant="secondary" onClick={openModal}>
+            <img src={repeatSVG}/>
         </Button>
         {isOpen && (<Modal
             className="generate-dates"
@@ -198,7 +211,6 @@ function TimeGeneratorModalButton(props) {
             >
                 <div className={"generate-grid"}>
                     <div className={"grid-top-left"}>
-
                         <DateRangePicker
                             className={"dateformat"}
                             minimalDate={props.minimalDate}
@@ -209,6 +221,11 @@ function TimeGeneratorModalButton(props) {
                                 generateData(startDate, endDate, frequency, method, endRepeatDate, repeatAmount);
                             }}
                             edit={true}
+                        />
+                        <LocationPicker
+                            location={location}
+                            rooms={rooms}
+                            onChange={(rooms, location) => updateLocation(rooms, location)}
                         />
                     </div>
                     <div className={"grid-top-right"}>

@@ -28,7 +28,16 @@ export default function EventsProvider(props) {
         }
     })
 
+    const hasInvalidForms = () => {
+        return document.querySelector(`.soli-block-create-event:has(.invalid)`);
+    }
+
     const postAPI = () => {
+        if (hasInvalidForms()){
+            console.log("the form has invalid inputs")
+            return;
+        }
+
         apiFetch({
             path: 'soli_event/v1/events/' + props.post_id,
             method: 'POST',

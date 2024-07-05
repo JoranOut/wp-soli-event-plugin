@@ -42,6 +42,7 @@
 
   .start-date {
     grid-area: start-date;
+
   }
 
   .start-time {
@@ -50,6 +51,26 @@
 
   .end-date {
     grid-area: end-date;
+  }
+
+  .start-date,
+  .end-date {
+    display: flex;
+    flex-direction: row;
+
+    &.invalid {
+      color: red;
+    }
+
+    .weekday {
+      text-transform: capitalize;
+      font-weight: bolder;
+      font-size: 18px;
+
+      display: table-cell;
+      place-self: center;
+      padding: 0 0 4px;
+    }
   }
 
   .end-time {
@@ -74,10 +95,14 @@
       padding: 0;
     }
 
+    .invalid .MuiInputBase-input {
+      color: red;
+    }
+
     :not(.time) > div > .MuiInputBase-input {
       text-transform: capitalize;
       font-weight: bolder;
-      font-size: 26px;
+      font-size: 18px;
       padding: 0;
     }
 

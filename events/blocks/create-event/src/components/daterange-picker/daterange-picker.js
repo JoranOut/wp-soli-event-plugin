@@ -6,6 +6,7 @@ import {TimePicker} from '@mui/x-date-pickers/TimePicker';
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import {renderTimeViewClock} from '@mui/x-date-pickers/timeViewRenderers';
 
 function DateRangePicker(props) {
@@ -13,6 +14,12 @@ function DateRangePicker(props) {
     const [startDate, setStartDate] = useState(dayjs(props.date ? props.date.startDate : getDefaultDate()))
     const [endDate, setEndDate] = useState(dayjs(props.date ? props.date.endDate : getDefaultDate(1)))
     const [style, setStyle] = useState(props.style ? props.style : "grid")
+
+    const [validStartDate, setValidStartDate] = useState(true);
+    const [validEndDate, setValidEndDate] = useState(true);
+
+
+    dayjs.extend(customParseFormat);
 
     const dateInput1 = useRef();
     const dateInput2 = useRef();
@@ -34,6 +41,10 @@ function DateRangePicker(props) {
         }
     }
 
+    const isDateInValid = (date) => {
+        return isNaN(date.year());
+    }
+
     useEffect(() => {
         setId(props.date ? props.date.id : null)
         setStartDate(dayjs(props.date ? props.date.startDate : getDefaultDate()))
@@ -42,11 +53,11 @@ function DateRangePicker(props) {
 
     useEffect(() => {
         resizeInput(dateInput1);
-    }, [startDate])
+    }, [startDate, props.date])
 
     useEffect(() => {
         resizeInput(dateInput2);
-    }, [endDate])
+    }, [endDate, props.date])
 
     return (
         <>
@@ -55,24 +66,36 @@ function DateRangePicker(props) {
                     dateAdapter={AdapterDayjs}
                     adapterLocale={'nl'}
                 >
-                    <DatePicker
-                        className="start-date"
-                        ref={dateInput1}
-                        value={startDate}
-                        onChange={(newStartDate) => {
-                            let newEndDate = endDate;
-                            if (isSingleDay()) {
-                                newEndDate = newEndDate
-                                    .year(newStartDate.year())
-                                    .month(newStartDate.month())
-                                    .date(newStartDate.date());
-                            }
-                            setStartDate(newStartDate);
-                            setEndDate(newEndDate);
-                            updateDate(newStartDate, newEndDate);
-                        }}
-                        format="dddd D MMMM, YYYY"
-                    />
+                    <div className={["start-date", validStartDate ? "" : "invalid"].join(" ")}>
+                        <span className="weekday"
+                              onClick={() => {
+                                  dateInput1.current.querySelector('input').focus()
+                              }}
+                        >{startDate.locale("nl").format("dddd")}</span>
+                        <DatePicker
+                            ref={dateInput1}
+                            value={startDate}
+                            onChange={(newStartDate) => {
+                                if (isDateInValid(newStartDate)) {
+                                    setValidStartDate(false);
+                                    return;
+                                }
+
+                                let newEndDate = endDate;
+                                if (isSingleDay()) {
+                                    newEndDate = newEndDate
+                                        .year(newStartDate.year())
+                                        .month(newStartDate.month())
+                                        .date(newStartDate.date());
+                                }
+                                setValidStartDate(true);
+                                setStartDate(newStartDate);
+                                setEndDate(newEndDate);
+                                updateDate(newStartDate, newEndDate);
+                            }}
+                            format=" D MMMM, YYYY"
+                        />
+                    </div>
                     <TimePicker
                         className="start-time time"
                         value={startDate}
@@ -106,27 +129,39 @@ function DateRangePicker(props) {
                     />}
                     {!isSingleDay() &&
                         <>
-                            <DateTimePicker
-                                className="end-date"
-                                value={endDate}
-                                ref={dateInput2}
-                                onChange={(newEndDate) => {
-                                    newEndDate = newEndDate
-                                        .hour(endDate.hour())
-                                        .minute(endDate.minute());
+                            <div className={["end-date", validEndDate ? "" : "invalid"].join(" ")}>
+                                <span className="weekday"
+                                      onClick={() => {
+                                          dateInput2.current.querySelector('input').focus()
+                                      }}
+                                >{endDate.locale("nl").format("dddd")}</span>
+                                <DateTimePicker
+                                    value={endDate}
+                                    ref={dateInput2}
+                                    onChange={(newEndDate) => {
+                                        if (isDateInValid(newEndDate)) {
+                                            setValidEndDate(false);
+                                            return;
+                                        }
 
-                                    setEndDate(newEndDate);
-                                    updateDate(startDate, newEndDate);
-                                }}
-                                minDateTime={startDate}
+                                        newEndDate = newEndDate
+                                            .hour(endDate.hour())
+                                            .minute(endDate.minute());
 
-                                format="dddd D MMMM, YYYY"
-                                ampm={false}
-                                viewRenderers={{
-                                    hours: renderTimeViewClock,
-                                    minutes: renderTimeViewClock
-                                }}
-                            />
+                                        setValidEndDate(true);
+                                        setEndDate(newEndDate);
+                                        updateDate(startDate, newEndDate);
+                                    }}
+                                    minDateTime={startDate}
+
+                                    format=" D MMMM, YYYY"
+                                    ampm={false}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock
+                                    }}
+                                />
+                            </div>
                             <TimePicker
                                 className="end-time time"
                                 value={endDate}

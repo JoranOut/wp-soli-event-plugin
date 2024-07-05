@@ -10,9 +10,11 @@
 }
 
 .date-list-view {
-  background: #ffffff;
-  padding: 10px 10px 30px;
   position: relative;
+
+  h3 {
+    margin: 0.5em 0;
+  }
 
   .scroll-indicator {
     position: relative;
@@ -33,10 +35,13 @@
     max-height: 200px;
     transition: max-height .5s ease-out;
     display: grid;
-    grid-template-columns: auto auto auto auto auto min-content;
+    grid-template-columns: auto auto auto auto auto auto;
     row-gap: 11px;
+    column-gap: 5px;
     overflow-y: auto;
     scroll-behavior: smooth;
     padding-bottom: 1em;
+    padding-right: 1em;
+    margin-right: -1em;
   }
 }

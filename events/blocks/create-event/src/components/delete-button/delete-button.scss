@@ -1,0 +1,12 @@
+.delete-button {
+  width: 44px;
+
+  img {
+    height: 21px;
+    filter: invert(42%) sepia(94%) saturate(4637%) hue-rotate(179deg) brightness(89%) contrast(105%);
+
+    &:hover {
+      filter: invert(13%) sepia(80%) saturate(7475%) hue-rotate(359deg) brightness(94%) contrast(81%);
+    }
+  }
+}
