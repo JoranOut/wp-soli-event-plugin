@@ -6,6 +6,8 @@
 # WP Soli event plugin
 Plugin for wordpress dedicated to displaying events on [soli.nl](https://www.soli.nl)
 
+~Current Version:1.0~
+
 Contains:
 - Custom event post-type
 - Default template for event post

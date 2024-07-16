@@ -41,7 +41,7 @@ function soli_events_register_post_type() {
       [
         'core/group', [],
         [
-          ['core/post-featured-image', [],],
+          ['soli/featured-image', [],],
           ['soli/create-event', [],],
         ],
       ],
