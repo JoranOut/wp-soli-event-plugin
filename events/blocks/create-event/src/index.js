@@ -11,9 +11,6 @@ wp.blocks.registerBlockType("soli/create-event", {
     title: "Create Event",
     icon: "smiley",
     category: "soli",
-    attributes: {
-        skyColor: {type: "string"}, grassColor: {type: "string"}
-    },
     edit: EditComponent,
     save: function (props) {
         return null

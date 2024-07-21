@@ -3,7 +3,7 @@
 namespace Soli\Events;
 /*
   Plugin Name: Soli Event Plugin
-  Version: 1.0.1
+  Version: 1.0.2
   Author: Joran Out
 */
 

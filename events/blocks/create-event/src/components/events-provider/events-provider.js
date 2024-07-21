@@ -1,11 +1,17 @@
 import apiFetch from '@wordpress/api-fetch';
+import { useSelect, useDispatch } from '@wordpress/data';
 import {useState, useEffect} from '@wordpress/element';
-import {Button} from "@wordpress/components"
 import {fromEventDto, toEventDto} from "./event_mapper";
 
 export default function EventsProvider(props) {
     const [error, setError] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
+    const [initialData, setInitialData] = useState(null);
+    const { isSavingPost, isNewPost } = useSelect((select) => ({
+        isSavingPost: select('core/editor').isSavingPost(),
+        isNewPost: !select('core/editor').getCurrentPostId(),
+    }));
+    const { editPost } = useDispatch('core/editor');
 
     useEffect(() => {
         if (error === undefined && !isLoading && props.dates == null) {
@@ -13,7 +19,9 @@ export default function EventsProvider(props) {
             apiFetch({path: 'soli_event/v1/events/' + props.post_id})
                 .then(
                     (event) => {
-                        props.setDates(fromEventDto(event))
+                        const eventData = fromEventDto(event);
+                        props.setDates(eventData);
+                        setInitialData(eventData);
                         setLoading(false)
                         setError(null)
                     },
@@ -26,7 +34,17 @@ export default function EventsProvider(props) {
                     }
                 );
         }
-    })
+    });
+
+    useEffect(() => {
+        if (initialData && props.dates && JSON.stringify(initialData) !== JSON.stringify(props.dates)) {
+            console.log("hasNewEventData")
+            editPost({ meta: { hasNewEventData: true } });
+            if (isNewPost) {
+                editPost({ status: 'draft' });
+            }
+        }
+    }, [props.dates]);
 
     const hasInvalidForms = () => {
         return document.querySelector(`.soli-block-create-event:has(.invalid)`);
@@ -46,6 +64,7 @@ export default function EventsProvider(props) {
             (event) => {
                 props.setDates(fromEventDto(event))
                 setLoading(false)
+                editPost({ meta: { hasNewEventData: false } });
             },
             // Note: It's important to handle errors here instead of a catch() block
             // so that we don't swallow exceptions from actual bugs in components.
@@ -55,6 +74,12 @@ export default function EventsProvider(props) {
             }
         );
     }
+
+    useEffect(() => {
+        if (isSavingPost) {
+            postAPI();
+        }
+    }, [isSavingPost]);
 
     // If there's an error in fetching the remote data, display the error.
     if (error) {
@@ -71,11 +96,7 @@ export default function EventsProvider(props) {
         return (
             <>
                 {props.children}
-                {props.enableSaveButton &&
-                    <Button onClick={() => postAPI()}>Save</Button>
-                }
             </>
         );
     }
-
 }
