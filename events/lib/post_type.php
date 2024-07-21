@@ -2,7 +2,12 @@
 function soli_events_register_post_type() {
   $labels = array(
     'name' => 'Events', // Plural name
-    'singular_name' => 'Event'   // Singular name
+    'singular_name' => 'Event',   // Singular name
+    'add_new' => 'New Event',
+    'view_item' => 'View Event',
+    'edit_item' => 'Edit Event',
+    'insert_into_item' => 'Insert into Event',
+    'search_items' => 'Search Events'
   );
 
   $supports = array(

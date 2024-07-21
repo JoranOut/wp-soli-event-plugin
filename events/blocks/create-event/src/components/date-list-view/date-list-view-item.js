@@ -46,8 +46,6 @@ export const DateListViewItem = forwardRef(function DateListViewItem(props, ref)
     }
 
     const returnSpecialLocation = (itemLocation, itemRooms) => {
-        console.log(itemLocation)
-        console.log(itemRooms)
         if (itemLocation) {
             return itemLocation?.name;
         }

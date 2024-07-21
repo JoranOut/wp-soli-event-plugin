@@ -11,7 +11,7 @@ function DateListItem(props) {
     const [date, setDate] = useState(props.date)
 
     const updateLocation = (rooms, location) => {
-        const updatedDate = {...date, location: {...location}, rooms: rooms ? [...rooms] : null}; // Create a new copy of the date with updated location and rooms
+        const updatedDate = {...date, location: location ? {...location} : null, rooms: rooms ? [...rooms] : null}; // Create a new copy of the date with updated location and rooms
         setDate(updatedDate);
         props.updateDate(updatedDate);
     }

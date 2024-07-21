@@ -131,7 +131,7 @@ function TimeGeneratorModalButton(props) {
         setRooms(props.date ? props.date.rooms : []);
     }, [props]);
 
-    const generateData = (startDate, endDate, frequency, method, endRepeatDate, amount) => {
+    const generateData = (startDate, endDate, frequency, method, endRepeatDate, amount, rooms, location) => {
         setGeneratedData([])
         if (!startDate || !frequency || !method || (!endRepeatDate && !amount)) {
             setError("Vul een frequency, methode en data in voor resultaat")
@@ -144,17 +144,19 @@ function TimeGeneratorModalButton(props) {
 
         setError(null);
 
+        const endRepeatDateNextDay = endRepeatDate?.add(1, 'day');
+
         const dates = [];
         if (method === RepeatingMethod.UNTIL_DATE) {
             switch (frequency) {
                 case RepeatingOptions.WEEKLY:
-                    dates.push(...generateWeeksUntil(startDate, endDate, endRepeatDate));
+                    dates.push(...generateWeeksUntil(startDate, endDate, endRepeatDateNextDay));
                     break;
                 case RepeatingOptions.BIWEEKLY:
-                    dates.push(...generateBiWeeklyUntil(startDate, endDate, endRepeatDate));
+                    dates.push(...generateBiWeeklyUntil(startDate, endDate, endRepeatDateNextDay));
                     break;
                 case RepeatingOptions.MONTHLY:
-                    dates.push(...generateMonthsUntil(startDate, endDate, endRepeatDate));
+                    dates.push(...generateMonthsUntil(startDate, endDate, endRepeatDateNextDay));
                     break;
                 default:
                     break;
@@ -162,13 +164,13 @@ function TimeGeneratorModalButton(props) {
         } else {
             switch (frequency) {
                 case RepeatingOptions.WEEKLY:
-                    dates.push(...generateWeeksTimes(startDate, endDate, endRepeatDate, amount));
+                    dates.push(...generateWeeksTimes(startDate, endDate, endRepeatDateNextDay, amount));
                     break;
                 case RepeatingOptions.BIWEEKLY:
-                    dates.push(...generateBiWeeklyTimes(startDate, endDate, endRepeatDate, amount));
+                    dates.push(...generateBiWeeklyTimes(startDate, endDate, endRepeatDateNextDay, amount));
                     break;
                 case RepeatingOptions.MONTHLY:
-                    dates.push(...generateMonthsTimes(startDate, endDate, endRepeatDate, amount));
+                    dates.push(...generateMonthsTimes(startDate, endDate, endRepeatDateNextDay, amount));
                     break;
                 default:
                     break;
@@ -185,6 +187,7 @@ function TimeGeneratorModalButton(props) {
             date.rooms = rooms;
             date.location = location;
         })
+
         setError(null);
         setGeneratedData(dates);
 
@@ -218,14 +221,17 @@ function TimeGeneratorModalButton(props) {
                             updateDate={(date) => {
                                 setStartDate(dayjs(date.startDate));
                                 setEndDate(dayjs(date.endDate));
-                                generateData(startDate, endDate, frequency, method, endRepeatDate, repeatAmount);
+                                generateData(date.startDate, date.endDate, frequency, method, endRepeatDate, repeatAmount, rooms, location);
                             }}
                             edit={true}
                         />
                         <LocationPicker
                             location={location}
                             rooms={rooms}
-                            onChange={(rooms, location) => updateLocation(rooms, location)}
+                            onChange={(rooms, location) => {
+                                updateLocation(rooms, location);
+                                generateData(startDate, endDate, frequency, method, endRepeatDate, repeatAmount, rooms, location);
+                            }}
                         />
                     </div>
                     <div className={"grid-top-right"}>
@@ -237,7 +243,7 @@ function TimeGeneratorModalButton(props) {
                             value={frequency ?? ''}
                             onChange={(frequency) => {
                                 setFrequency(frequency);
-                                generateData(startDate, endDate, frequency, method, endRepeatDate, repeatAmount);
+                                generateData(startDate, endDate, frequency, method, endRepeatDate, repeatAmount, rooms, location);
                             }}
                             options={[{
                                 disabled: true, label: 'Selecteer een optie', value: ''
@@ -254,7 +260,7 @@ function TimeGeneratorModalButton(props) {
                             className={"method"}
                             onChange={(newMethod) => {
                                 setMethod(newMethod);
-                                generateData(startDate, endDate, frequency, newMethod, endRepeatDate, repeatAmount);
+                                generateData(startDate, endDate, frequency, newMethod, endRepeatDate, repeatAmount, rooms, location);
                             }}
                         />}
 
@@ -265,7 +271,7 @@ function TimeGeneratorModalButton(props) {
                                 min={0}
                                 onChange={(event, val) => {
                                     setRepeatAmount(val);
-                                    generateData(startDate, endDate, frequency, RepeatingMethod.TIMES, null, val);
+                                    generateData(startDate, endDate, frequency, RepeatingMethod.TIMES, null, val, rooms, location);
                                 }}
                                 endAdornment={{
                                     WEEKLY: 'weken', BIWEEKLY: 'keer om de week', MONTHLY: 'maanden'
@@ -281,7 +287,7 @@ function TimeGeneratorModalButton(props) {
                                 minDate={startDate}
                                 onChange={(newEndRepeatDate) => {
                                     setEndRepeatDate(dayjs(newEndRepeatDate));
-                                    generateData(startDate, endDate, frequency, method, newEndRepeatDate, null);
+                                    generateData(startDate, endDate, frequency, method, newEndRepeatDate, null, rooms, location);
                                 }}
                                 format="dddd D MMMM, YYYY"
                             />

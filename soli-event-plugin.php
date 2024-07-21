@@ -1,19 +1,20 @@
 <?php
 
+namespace Soli\Events;
 /*
   Plugin Name: Soli Event Plugin
-  Version: 1.0
+  Version: 1.0.1
   Author: Joran Out
 */
 
 require_once 'events/events.php';
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
-define( 'SOLI_EVENT__PLUGIN_DIR_PATH', plugin_dir_path( __FILE__ ) );
-define( 'SOLI_EVENT__PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) );
+define('SOLI_EVENT__PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
+define('SOLI_EVENT__PLUGIN_DIR_URL', plugin_dir_url(__FILE__));
 
-register_activation_hook( __FILE__, "onActivate" );
-function onActivate(){
+register_activation_hook(__FILE__, "onActivate");
+function onActivate() {
   $eventsDatesTableHandler = new Soli\Events\EventsDatesTableHandler();
   $eventsDatesTableHandler->createEventTable();
   $eventsLocationTableHandler = new Soli\Events\LocationTableHandler();
@@ -22,35 +23,31 @@ function onActivate(){
 }
 
 register_uninstall_hook(__FILE__, 'onUninstall');
-function onUninstall(){
+function onUninstall() {
   $eventsDatesTableHandler = new Soli\Events\EventsDatesTableHandler();
   $eventsDatesTableHandler->dropEventTable();
   $eventsLocationTableHandler = new Soli\Events\LocationTableHandler();
   $eventsLocationTableHandler->dropLocationTable();
 }
 
-register_deactivation_hook( __FILE__, 'onDeactivate' );
+register_deactivation_hook(__FILE__, 'onDeactivate');
 function onDeactivate() {
   // Unregister the post type, so the rules are no longer in memory.
-  unregister_post_type( 'soli_event' );
+  unregister_post_type('soli_event');
   // Clear the permalinks to remove our post type's rules from the database.
   flush_rewrite_rules();
 }
 
-
-
-add_action( 'init', 'github_plugin_updater_init' );
-function github_plugin_updater_init() {
-
+add_action('init', function () {
   include_once 'updater.php';
 
-  define( 'WP_GITHUB_FORCE_UPDATE', true );
+  define('WP_GITHUB_FORCE_UPDATE', true);
 
-  if ( is_admin() ) { // note the use of is_admin() to double check that this is happening in the admin
+  if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
 
     $config = array(
-      'slug' => plugin_basename( __FILE__ ), // this is the slug of your plugin
-      'proper_folder_name' => plugin_basename( __FILE__ ), // this is the name of the folder your plugin lives in
+      'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
+      'proper_folder_name' => plugin_basename(__FILE__), // this is the name of the folder your plugin lives in
       'api_url' => 'https://api.github.com/repos/JoranOut/wp-soli-event-plugin', // the GitHub API url of your GitHub repo
       'raw_url' => 'https://raw.github.com/JoranOut/wp-soli-event-plugin/master', // the GitHub raw url of your GitHub repo
       'github_url' => 'https://github.com/JoranOut/wp-soli-event-plugin', // the GitHub url of your GitHub repo
@@ -61,15 +58,6 @@ function github_plugin_updater_init() {
       'readme' => 'README.md', // which file to use as the readme for the version number
     );
 
-    new WP_GitHub_Updater( $config );
+    new WP_GitHub_Updater($config);
   }
-
-}
-
-class SoliAdmin {
-
-}
-
-$soliAdmin = new SoliAdmin();
-
-
+});

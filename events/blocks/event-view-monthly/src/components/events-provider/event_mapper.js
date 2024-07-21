@@ -1,11 +1,8 @@
 function fromEventDto(eventDto) {
-    console.log(eventDto)
     return eventDto ? eventDto.map(fromDateDto) : [];
 }
 
 function fromDateDto(dateDto) {
-    console.log(dateDto)
-
     const startDate = parseTime(dateDto.start_date)
     const endDate = parseTime(dateDto.end_date)
 

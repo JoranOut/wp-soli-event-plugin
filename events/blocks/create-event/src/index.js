@@ -27,8 +27,10 @@ function EditComponent(props) {
     const [dates, setDates] = useState();
 
     const updateSingleDate = (date) => {
-        const singleDate = dates[0];
-        setDates([{...singleDate, ...date}]);
+        if (dates?.length > 0){
+            const singleDate = dates[0];
+            setDates([{...singleDate, ...date}]);
+        }
     }
 
     const updateSingleLocation = (rooms, location) => {
@@ -58,7 +60,14 @@ function EditComponent(props) {
             post_id={postId}
             dates={dates}
             setDates={(newDates) => {
-                setDates(newDates);
+                if (newDates?.length > 0){
+                    setDates(newDates);
+                } else {
+                    setDates([{
+                        startDate: getDefaultDate(),
+                        endDate: getDefaultDate(1)
+                    }]);
+                }
             }}
             enableSaveButton={true}
         >
@@ -69,11 +78,12 @@ function EditComponent(props) {
                         date={dates?.length > 0 ? dates[0] : null}
                         minimalDate={new Date()}
                         updateDate={(date) => updateSingleDate(date)}
+                        defaultDate={true}
                     />
                     <LocationPicker
                         location={dates?.length > 0 ? dates[0].location : null}
                         rooms={dates?.length > 0 ? dates[0].rooms : null}
-                        onChange={(date) => updateSingleLocation(date)}
+                        onChange={(rooms, location) => updateSingleLocation(rooms, location)}
                     />
                     <TimeGeneratorModalButton
                         date={dates?.length > 0 ? dates[0] : null}
@@ -94,5 +104,16 @@ function EditComponent(props) {
             }
         </EventsProvider>
     </div>)
+}
+
+function addHours(date, hours) {
+    if (hours) {
+        date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
+    }
+    return date;
+}
+
+function getDefaultDate(h) {
+    return addHours(new Date(), h).toISOString();
 }
 

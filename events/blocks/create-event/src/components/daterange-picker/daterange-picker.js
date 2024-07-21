@@ -18,7 +18,6 @@ function DateRangePicker(props) {
     const [validStartDate, setValidStartDate] = useState(true);
     const [validEndDate, setValidEndDate] = useState(true);
 
-
     dayjs.extend(customParseFormat);
 
     const dateInput1 = useRef();
