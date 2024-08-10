@@ -6,7 +6,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import 'dayjs/locale/nl';
 
-import {ROOM_NAMES} from "../../../../../inc/values";
+import {displayRooms} from "../../../../../inc/values";
 
 
 function LocationWarning(props) {
@@ -35,14 +35,6 @@ export const DateListViewItem = forwardRef(function DateListViewItem(props, ref)
         return d1.date() === d2.date() &&
             d1.month() === d2.month() &&
             d1.year() === d2.year();
-    }
-
-
-    const displayRooms = (rooms) => {
-        if (rooms && rooms.length > 0) {
-            return rooms.map(i => ROOM_NAMES[i]).join(' + ');
-        }
-        return null;
     }
 
     const returnSpecialLocation = (itemLocation, itemRooms) => {

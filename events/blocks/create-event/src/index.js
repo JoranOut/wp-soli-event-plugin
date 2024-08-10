@@ -6,21 +6,26 @@ import DateRangePicker from "./components/daterange-picker/daterange-picker";
 import LocationPicker from "./components/location-picker/location-picker";
 import TimeGeneratorModalButton from "./components/time-generator-modal-button/time-generator-modal-button";
 import CopyButton from "./components/copy-button/copy-button";
+import EventStatusSelector from "./components/event-status-selector/event-status-selector";
+import NotesEditor from "./components/notes-editor/notes-editor";
 
 wp.blocks.registerBlockType("soli/create-event", {
     title: "Create Event",
     icon: "smiley",
     category: "soli",
+    supports: {
+        align: [ "wide" ],
+    },
     edit: EditComponent,
-    save: function (props) {
+    save: function () {
         return null
     },
     usesContext: ['postId']
 
 })
 
-function EditComponent(props) {
-    const {postId} = props.context;
+function EditComponent({context}) {
+    const {postId} = context;
     const [dates, setDates] = useState();
 
     const updateSingleDate = (date) => {
@@ -33,6 +38,16 @@ function EditComponent(props) {
     const updateSingleLocation = (rooms, location) => {
         const singleDate = dates[0];
         setDates([{...singleDate, rooms: rooms, location: location}])
+    }
+
+    const updateSingleStatus = (status) => {
+        const singleDate = dates[0];
+        setDates([{...singleDate, status: status}])
+    }
+
+    const updateSingleNotes = (notes) => {
+        const singleDate = dates[0];
+        setDates([{...singleDate, notes: notes}])
     }
 
     const addGeneratedDates = (genDates) => {
@@ -77,17 +92,29 @@ function EditComponent(props) {
                         updateDate={(date) => updateSingleDate(date)}
                         defaultDate={true}
                     />
+
                     <LocationPicker
                         location={dates?.length > 0 ? dates[0].location : null}
                         rooms={dates?.length > 0 ? dates[0].rooms : null}
                         onChange={(rooms, location) => updateSingleLocation(rooms, location)}
                     />
+
+                    <NotesEditor
+                        size={"full"}
+                        notes={dates?.length > 0 ? dates[0].notes : null}
+                        onChange={(notes) => updateSingleNotes(notes)}
+                    />
+
                     <TimeGeneratorModalButton
                         date={dates?.length > 0 ? dates[0] : null}
                         onSubmit={(genDates) => {
                             addGeneratedDates(genDates)
                         }}/>
                     <CopyButton onClick={() => copySingleDate()}/>
+                    <EventStatusSelector
+                        status={dates?.length > 0 ? dates[0].status : null}
+                        onChange={(status) => updateSingleStatus(status)}
+                    />
                 </div>
             }
             {

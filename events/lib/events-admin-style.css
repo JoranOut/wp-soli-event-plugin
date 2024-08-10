@@ -1,0 +1,19 @@
+.column-notes div {
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help;
+}
+
+.fixed .column-title,
+.fixed .column-author,
+.fixed .column-categories,
+.fixed .column-tags,
+.fixed .column-date,
+.fixed .column-start_date,
+.fixed .column-end_date,
+.fixed .column-location,
+.fixed .column-status,
+.fixed .column-notes {
+  width: initial;
+}

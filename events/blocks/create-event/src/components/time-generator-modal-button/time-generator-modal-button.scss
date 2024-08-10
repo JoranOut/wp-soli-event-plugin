@@ -22,71 +22,82 @@
       color: dodgerblue;
     }
   }
-}
 
-.generate-grid {
-  display: grid;
-  grid-template:
+  .location-picker button.is-secondary,
+  .event-status-selector {
+    background: #ffffff;
+  }
+
+  .generate-grid {
+    display: grid;
+    grid-template:
       "grid-top-left grid-top-right" auto
       "data-view data-view" auto
       "submit-button submit-button" auto/ 1fr 1fr;
-  gap: 10px 40px;
+    gap: 10px 40px;
 
-
-  .grid-top-left {
-    grid-area: grid-top-left;
-  }
-
-  .grid-top-right {
-    grid-area: grid-top-right;
-  }
-
-  .generated-data {
-    grid-area: data-view;
-  }
-
-  .submit-button {
-    grid-area: submit-button;
-  }
-
-  .MuiPickersPopper-root {
-    z-index: 100000 !important;
-  }
-
-  .components-modal__frame {
-    min-height: min(400px, 80%);
-  }
-
-  .generated-data {
-    background: antiquewhite;
-    margin: 0 -30px;
-    padding: 10px 40px 30px;
-  }
-
-  .example-data {
-    overflow-y: hidden;
-    max-height: 110px;
-    transition: max-height .5s ease-out;
-
-    &.full {
-      max-height: 200px;
-      overflow-y: auto;
+    .grid-top-left {
+      grid-area: grid-top-left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 3px solid #000;
+      border-style: dotted;
+      padding: 20px;
+      background: antiquewhite;
     }
-  }
 
-  .expand-button {
-    padding: 0;
-    height: 18px;
-  }
+    .grid-top-right {
+      grid-area: grid-top-right;
+    }
 
-  .submit-button {
-    display: block;
+    .generated-data {
+      grid-area: data-view;
+    }
+
+    .submit-button {
+      grid-area: submit-button;
+    }
+
+    .MuiPickersPopper-root {
+      z-index: 100000 !important;
+    }
+
+    .components-modal__frame {
+      min-height: min(400px, 80%);
+    }
+
+    .generated-data {
+      background: antiquewhite;
+      margin: 0 -30px;
+      padding: 10px 40px 30px;
+    }
+
+    .example-data {
+      overflow-y: hidden;
+      max-height: 110px;
+      transition: max-height .5s ease-out;
+
+      &.full {
+        max-height: 200px;
+        overflow-y: auto;
+      }
+    }
+
+    .expand-button {
+      padding: 0;
+      height: 18px;
+    }
+
+    .submit-button {
+      display: block;
+    }
   }
 }
 
 
 :root {
-  .generate-dates {
+  .generate-dates .grid-top-right {
     .MuiOutlinedInput-notchedOutline {
       border: none;
     }

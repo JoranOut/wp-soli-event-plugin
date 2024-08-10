@@ -23,10 +23,12 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
+import Switch from '@mui/material/Switch';
 import {RepeatingMethod} from "./repeating-method";
 import NumberedInput from "./numbered-input";
 import DateRangePicker from "../daterange-picker/daterange-picker";
 import LocationPicker from "../location-picker/location-picker";
+import EventStatusSelector from "../event-status-selector/event-status-selector";
 
 function DateViewToggle(props) {
     const [isOpen, setOpen] = useState(false);
@@ -59,7 +61,7 @@ function DateViewToggle(props) {
                 })}
             </div>
             {props.data.length > 6 && <Button className='expand-button'
-                                               onClick={() => toggleOpen()}>
+                                              onClick={() => toggleOpen()}>
                 {!isOpen ? 'Bekijk alle data' : 'Verberg'}
             </Button>}
         </div>)
@@ -102,6 +104,9 @@ function TimeGeneratorModalButton(props) {
     const [endDate, setEndDate] = useState(props.date ? dayjs(props.date.endDate) : dayjs());
     const [location, setLocation] = useState(props.date ? props.date.location : null);
     const [rooms, setRooms] = useState(props.date ? props.date.rooms : []);
+    const [status, setStatus] = useState(props.date ? props.date.status : []);
+    const [notes, setNotes] = useState(props.date ? props.date.notes : []);
+    const [useNotes, setUseNotes] = useState(false);
     const [frequency, setFrequency] = useState(null);
     const [repeatAmount, setRepeatAmount] = useState(0);
     const [endRepeatDate, setEndRepeatDate] = useState(null);
@@ -129,11 +134,36 @@ function TimeGeneratorModalButton(props) {
         setEndDate(props.date ? dayjs(props.date.endDate) : dayjs())
         setLocation(props.date ? props.date.location : null);
         setRooms(props.date ? props.date.rooms : []);
+        setStatus(props.date ? props.date.status : []);
+        setNotes(props.date ? props.date.notes : []);
     }, [props]);
 
-    const generateData = (startDate, endDate, frequency, method, endRepeatDate, amount, rooms, location) => {
+    const generateData = ({
+                              startDate,
+                              endDate,
+                              frequency,
+                              method,
+                              endRepeatDate,
+                              repeatAmount,
+                              rooms,
+                              location,
+                              status,
+                              useNotes
+                          }) => {
         setGeneratedData([])
-        if (!startDate || !frequency || !method || (!endRepeatDate && !amount)) {
+
+        console.log({startDate});
+        console.log({endDate});
+        console.log({frequency});
+        console.log({method});
+        console.log({endRepeatDate});
+        console.log({repeatAmount});
+        console.log({rooms});
+        console.log({location});
+        console.log({status});
+        console.log({useNotes});
+
+        if (!startDate || !frequency || !method || (!endRepeatDate && !repeatAmount)) {
             setError("Vul een frequency, methode en data in voor resultaat")
             return;
         }
@@ -164,13 +194,13 @@ function TimeGeneratorModalButton(props) {
         } else {
             switch (frequency) {
                 case RepeatingOptions.WEEKLY:
-                    dates.push(...generateWeeksTimes(startDate, endDate, endRepeatDateNextDay, amount));
+                    dates.push(...generateWeeksTimes(startDate, endDate, endRepeatDateNextDay, repeatAmount));
                     break;
                 case RepeatingOptions.BIWEEKLY:
-                    dates.push(...generateBiWeeklyTimes(startDate, endDate, endRepeatDateNextDay, amount));
+                    dates.push(...generateBiWeeklyTimes(startDate, endDate, endRepeatDateNextDay, repeatAmount));
                     break;
                 case RepeatingOptions.MONTHLY:
-                    dates.push(...generateMonthsTimes(startDate, endDate, endRepeatDateNextDay, amount));
+                    dates.push(...generateMonthsTimes(startDate, endDate, endRepeatDateNextDay, repeatAmount));
                     break;
                 default:
                     break;
@@ -186,7 +216,14 @@ function TimeGeneratorModalButton(props) {
         dates.map(date => {
             date.rooms = rooms;
             date.location = location;
+            date.status = status;
         })
+
+        if (useNotes) {
+            dates.map(date => {
+                date.notes = notes;
+            })
+        }
 
         setError(null);
         setGeneratedData(dates);
@@ -221,7 +258,18 @@ function TimeGeneratorModalButton(props) {
                             updateDate={(date) => {
                                 setStartDate(dayjs(date.startDate));
                                 setEndDate(dayjs(date.endDate));
-                                generateData(date.startDate, date.endDate, frequency, method, endRepeatDate, repeatAmount, rooms, location);
+                                generateData({
+                                    startDate: date.startDate,
+                                    endDate: date.endDate,
+                                    frequency: frequency,
+                                    method: method,
+                                    endRepeatDate: endRepeatDate,
+                                    repeatAmount: repeatAmount,
+                                    rooms: rooms,
+                                    location: location,
+                                    status: status,
+                                    useNotes: useNotes,
+                                });
                             }}
                             edit={true}
                         />
@@ -230,9 +278,59 @@ function TimeGeneratorModalButton(props) {
                             rooms={rooms}
                             onChange={(rooms, location) => {
                                 updateLocation(rooms, location);
-                                generateData(startDate, endDate, frequency, method, endRepeatDate, repeatAmount, rooms, location);
+                                generateData({
+                                    startDate: startDate,
+                                    endDate: endDate,
+                                    frequency: frequency,
+                                    method: method,
+                                    endRepeatDate: endRepeatDate,
+                                    repeatAmount: repeatAmount,
+                                    rooms: rooms,
+                                    location: location,
+                                    status: status,
+                                    useNotes: useNotes,
+                                });
                             }}
                         />
+                        <EventStatusSelector
+                            status={status}
+                            onChange={(status) => {
+                                setStatus(status);
+                                generateData({
+                                    startDate: startDate,
+                                    endDate: endDate,
+                                    frequency: frequency,
+                                    method: method,
+                                    endRepeatDate: endRepeatDate,
+                                    repeatAmount: repeatAmount,
+                                    rooms: rooms,
+                                    location: location,
+                                    status: status,
+                                    useNotes: useNotes,
+                                });
+                            }}
+                        />
+                        <FormControlLabel control={
+                            <Switch
+                                value={useNotes}
+                                onChange={(useNotes) => {
+                                    setNotes(useNotes);
+                                    generateData({
+                                        startDate: startDate,
+                                        endDate: endDate,
+                                        frequency: frequency,
+                                        method: method,
+                                        endRepeatDate: endRepeatDate,
+                                        repeatAmount: repeatAmount,
+                                        rooms: rooms,
+                                        location: location,
+                                        status: status,
+                                        useNotes: useNotes,
+                                    });
+                                }}
+                            />
+                        } label="copy notes"/>
+
                     </div>
                     <div className={"grid-top-right"}>
 
@@ -243,7 +341,18 @@ function TimeGeneratorModalButton(props) {
                             value={frequency ?? ''}
                             onChange={(frequency) => {
                                 setFrequency(frequency);
-                                generateData(startDate, endDate, frequency, method, endRepeatDate, repeatAmount, rooms, location);
+                                generateData({
+                                    startDate: startDate,
+                                    endDate: endDate,
+                                    frequency: frequency,
+                                    method: method,
+                                    endRepeatDate: endRepeatDate,
+                                    repeatAmount: repeatAmount,
+                                    rooms: rooms,
+                                    location: location,
+                                    status: status,
+                                    useNotes: useNotes,
+                                });
                             }}
                             options={[{
                                 disabled: true, label: 'Selecteer een optie', value: ''
@@ -260,7 +369,18 @@ function TimeGeneratorModalButton(props) {
                             className={"method"}
                             onChange={(newMethod) => {
                                 setMethod(newMethod);
-                                generateData(startDate, endDate, frequency, newMethod, endRepeatDate, repeatAmount, rooms, location);
+                                generateData({
+                                    startDate: startDate,
+                                    endDate: endDate,
+                                    frequency: frequency,
+                                    method: newMethod,
+                                    endRepeatDate: endRepeatDate,
+                                    repeatAmount: repeatAmount,
+                                    rooms: rooms,
+                                    location: location,
+                                    status: status,
+                                    useNotes: useNotes,
+                                });
                             }}
                         />}
 
@@ -270,8 +390,21 @@ function TimeGeneratorModalButton(props) {
                                 value={repeatAmount}
                                 min={0}
                                 onChange={(event, val) => {
+                                    console.log(event)
+                                    console.log(val)
                                     setRepeatAmount(val);
-                                    generateData(startDate, endDate, frequency, RepeatingMethod.TIMES, null, val, rooms, location);
+                                    generateData({
+                                        startDate: startDate,
+                                        endDate: endDate,
+                                        frequency: frequency,
+                                        method: RepeatingMethod.TIMES,
+                                        endRepeatDate: null,
+                                        amount: val,
+                                        rooms: rooms,
+                                        location: location,
+                                        status: status,
+                                        useNotes: useNotes,
+                                    });
                                 }}
                                 endAdornment={{
                                     WEEKLY: 'weken', BIWEEKLY: 'keer om de week', MONTHLY: 'maanden'
@@ -287,7 +420,18 @@ function TimeGeneratorModalButton(props) {
                                 minDate={startDate}
                                 onChange={(newEndRepeatDate) => {
                                     setEndRepeatDate(dayjs(newEndRepeatDate));
-                                    generateData(startDate, endDate, frequency, method, newEndRepeatDate, null, rooms, location);
+                                    generateData({
+                                        startDate: startDate,
+                                        endDate: endDate,
+                                        frequency: frequency,
+                                        method: method,
+                                        endRepeatDate: newEndRepeatDate,
+                                        repeatAmount: null,
+                                        rooms: rooms,
+                                        location: location,
+                                        status: status,
+                                        useNotes: useNotes,
+                                    });
                                 }}
                                 format="dddd D MMMM, YYYY"
                             />

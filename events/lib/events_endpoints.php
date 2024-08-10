@@ -250,3 +250,21 @@ function insertFeaturedImage($dates) {
     }
   }
 }
+
+
+function validateStatii($dates): bool {
+  if (!isset($dates)) {
+    return true;
+  }
+  foreach ($dates as &$date) {
+    if (!validateStatii($date["status"])){
+      return false;
+    }
+  }
+  return true;
+}
+
+function validateStatus($status): bool {
+  $statii = array("PLANNED", "PENDING_APPROVAL", "PUBLIC", "PRIVATE");
+  return in_array($status, $statii);
+}

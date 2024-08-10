@@ -4,6 +4,5 @@ import CalendarWrapper from "./components/calendar-wrapper/calendar-wrapper";
 const divsToUpdate = document.querySelectorAll(".block-event-view-monthly")
 
 divsToUpdate.forEach(function(div) {
-    render(<CalendarWrapper />, div)
-    div.classList.remove("block-event-view-monthly")
+    render(<CalendarWrapper className="alignwide" />, div)
 })

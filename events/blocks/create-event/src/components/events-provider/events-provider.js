@@ -12,6 +12,7 @@ export default function EventsProvider(props) {
         isNewPost: !select('core/editor').getCurrentPostId(),
     }));
     const { editPost } = useDispatch('core/editor');
+    const { notices } = useDispatch('core/notices');
 
     useEffect(() => {
         if (error === undefined && !isLoading && props.dates == null) {
@@ -38,7 +39,6 @@ export default function EventsProvider(props) {
 
     useEffect(() => {
         if (initialData && props.dates && JSON.stringify(initialData) !== JSON.stringify(props.dates)) {
-            console.log("hasNewEventData")
             editPost({ meta: { hasNewEventData: true } });
             if (isNewPost) {
                 editPost({ status: 'draft' });

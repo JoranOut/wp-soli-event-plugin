@@ -4,7 +4,7 @@ import {useState, useEffect} from '@wordpress/element';
 import LocationSearcher from "../location-searcher/location-searcher";
 import LocationCreator from "../location-creator/location-creator";
 import RoomsPicker from "../rooms-picker/rooms-picker";
-import {ROOM_NAMES} from "../../../../../inc/values";
+import {displayRooms} from "../../../../../inc/values";
 
 function LocationPicker({location, rooms, onChange}) {
     const [_location, setLocation] = useState(location);
@@ -25,16 +25,6 @@ function LocationPicker({location, rooms, onChange}) {
         if (rooms || location) {
             closeModal();
         }
-    }
-
-    const displayRooms = () => {
-        if (_rooms?.length === ROOM_NAMES.length) {
-            return "Hele gebouw";
-        }
-        if (_rooms?.length > 0) {
-            return _rooms.map(i => ROOM_NAMES[i]).join(' + ');
-        }
-        return null;
     }
 
     const displayLocation = () => {

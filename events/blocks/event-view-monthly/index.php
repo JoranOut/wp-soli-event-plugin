@@ -25,7 +25,7 @@ class SoliBlockEventViewMonthly {
     wp_enqueue_style('block-event-view-monthly-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css');
 
     ob_start();?>
-    <div class="block-event-view-monthly"></div>
+    <div class="block-event-view-monthly alignwide"></div>
     <?php return ob_get_clean();
   }
 

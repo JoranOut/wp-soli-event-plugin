@@ -12,11 +12,15 @@ const useHistory = (initialState, onChange) => {
     const [latestIndex, setLatestIndex] = useState();
 
     const setNewState = (index, newState) => {
+        console.log("StateStore SetNewState")
+        console.log(index)
+        console.log(latestIndex)
+        console.log(newState)
         if (newState === undefined) {
             return;
         }
 
-        if (latestIndex === index) {
+        if (index != null && latestIndex === index) {
             overrideLatestState(newState);
         } else {
             addNewState(newState);
@@ -32,10 +36,10 @@ const useHistory = (initialState, onChange) => {
     };
 
     const overrideLatestState = (newState) => {
-        const updatedHistory = history.slice(0, currentStep + 1);
-
-        setHistory([...updatedHistory, newState]);
-        setCurrentStep(updatedHistory.length);
+        if (currentStep > 0){
+            history[currentStep] = newState;
+            setHistory([...history]);
+        }
     };
 
     const undo = () => {
@@ -71,10 +75,10 @@ const useHistory = (initialState, onChange) => {
 };
 
 export default function StateStore(props) {
-    const {state, setNewState, undo, redo, reset, canUndo, canRedo, canReset} = useHistory(undefined, props.onChange);
+    const {setNewState, undo, redo, reset, canUndo, canRedo, canReset} = useHistory(undefined, props.onChange);
 
     useEffect(() => {
-        setNewState(props.state)
+        setNewState(props.index, props.state)
     }, [props.state]);
 
     return <div>

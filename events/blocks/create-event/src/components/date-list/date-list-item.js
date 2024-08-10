@@ -6,6 +6,8 @@ import dayjs from "dayjs";
 import TimeGeneratorModalButton from "../time-generator-modal-button/time-generator-modal-button";
 import CopyButton from "../copy-button/copy-button";
 import DeleteButton from "../delete-button/delete-button";
+import EventStatusSelector from "../event-status-selector/event-status-selector";
+import NotesEditor from "../notes-editor/notes-editor";
 
 function DateListItem(props) {
     const [date, setDate] = useState(props.date)
@@ -16,9 +18,22 @@ function DateListItem(props) {
         props.updateDate(updatedDate);
     }
 
+    const updateStatus = (status) => {
+        const updatedDate = {...date, status}; // Create a new copy of the date with updated location and rooms
+        setDate(updatedDate);
+        props.updateDate(updatedDate);
+    }
+
+    const updateNotes = (notes) => {
+        const updatedDate = {...date, notes}; // Create a new copy of the date with updated location and rooms
+        setDate(updatedDate);
+        props.updateDate(updatedDate);
+    }
+
     const updateDate = (newDate) => {
-        setDate(newDate);
-        props.updateDate(newDate);
+        const updatedDate = {...date, ...newDate};
+        setDate(updatedDate);
+        props.updateDate(updatedDate);
     }
 
     const addGeneratedDates = (dates) => {
@@ -26,7 +41,7 @@ function DateListItem(props) {
     }
 
     const copyDate = () => {
-        const {id: _, ...cleanCopy} = date
+        const {id: _, ...cleanCopy} = date;
         props.addDateCopy(cleanCopy);
     }
 
@@ -47,6 +62,17 @@ function DateListItem(props) {
                 location={date.location}
                 rooms={date.rooms}
                 onChange={(rooms, location) => updateLocation(rooms, location)}
+            />
+
+            <NotesEditor
+                size={"small"}
+                notes={date.notes}
+                onChange={(notes) => updateNotes(notes)}
+            />
+
+            <EventStatusSelector
+                status={date.status}
+                onChange={(status) => updateStatus(status)}
             />
 
             <CopyButton onClick={() => copyDate()}/>

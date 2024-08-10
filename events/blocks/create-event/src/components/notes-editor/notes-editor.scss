@@ -1,0 +1,79 @@
+.components-modal__frame {
+  min-height: min(800px, 80%);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.notes-hint {
+  color: #555555;
+}
+
+.notes-textfield textarea:focus {
+  box-shadow: none;
+}
+
+.notes-editor {
+  display: block;
+  color: #666666;
+
+  .notes-preview {
+    display: none;
+  }
+}
+
+.notes-editor.full {
+  display: flex;
+  flex-direction: column;
+  background: rgb(255 255 255 / 31%);
+  border-radius: 5px;
+  padding: 10px 20px 20px;
+  gap: 10px;
+  margin-top: 10px;
+
+  .notes-preview {
+    display: block;
+  }
+}
+
+.notes-editor.small {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+
+  .notes-preview {
+    display: block;
+    text-wrap: nowrap;
+    max-width: 25ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px 10px;
+    border-radius: 5px 0 0 5px;
+    border: 1px solid var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+    border-right: none;
+  }
+}
+
+.notes-button {
+  width: 44px;
+
+  img {
+    height: 21px;
+    filter: invert(42%) sepia(94%) saturate(4637%) hue-rotate(179deg) brightness(89%) contrast(105%);
+
+    &:hover {
+      filter: brightness(0) saturate(100%) invert(23%) sepia(28%) saturate(4059%) hue-rotate(175deg) brightness(98%) contrast(100%);
+    }
+  }
+
+  &.empty img {
+    height: 21px;
+    filter: invert(63%) sepia(6%) saturate(13%) hue-rotate(336deg) brightness(84%) contrast(82%);
+
+    &:hover {
+      filter: invert(25%) sepia(0%) saturate(1566%) hue-rotate(164deg) brightness(84%) contrast(80%);
+    }
+  }
+}

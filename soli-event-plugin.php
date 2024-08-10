@@ -13,24 +13,24 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
 define('SOLI_EVENT__PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
 define('SOLI_EVENT__PLUGIN_DIR_URL', plugin_dir_url(__FILE__));
 
-register_activation_hook(__FILE__, "onActivate");
+register_activation_hook(__FILE__, "Soli\Events\onActivate");
 function onActivate() {
-  $eventsDatesTableHandler = new Soli\Events\EventsDatesTableHandler();
+  $eventsDatesTableHandler = new EventsDatesTableHandler();
   $eventsDatesTableHandler->createEventTable();
-  $eventsLocationTableHandler = new Soli\Events\LocationTableHandler();
+  $eventsLocationTableHandler = new LocationTableHandler();
   $eventsLocationTableHandler->createLocationTable();
   flush_rewrite_rules();
 }
 
-register_uninstall_hook(__FILE__, 'onUninstall');
+register_uninstall_hook(__FILE__, 'Soli\Events\onUninstall');
 function onUninstall() {
-  $eventsDatesTableHandler = new Soli\Events\EventsDatesTableHandler();
+  $eventsDatesTableHandler = new EventsDatesTableHandler();
   $eventsDatesTableHandler->dropEventTable();
-  $eventsLocationTableHandler = new Soli\Events\LocationTableHandler();
+  $eventsLocationTableHandler = new LocationTableHandler();
   $eventsLocationTableHandler->dropLocationTable();
 }
 
-register_deactivation_hook(__FILE__, 'onDeactivate');
+register_deactivation_hook(__FILE__, 'Soli\Events\onDeactivate');
 function onDeactivate() {
   // Unregister the post type, so the rules are no longer in memory.
   unregister_post_type('soli_event');

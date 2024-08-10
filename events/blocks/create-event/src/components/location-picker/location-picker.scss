@@ -8,10 +8,14 @@
   gap: 10px;
 }
 
-.location-creator {
-  display: block;
-  position: absolute;
-  right: 70px;
-  top: 27px;
-  z-index: 11;
+.location-picker {
+  width: 100%;
+
+  .location-creator {
+    display: block;
+    position: absolute;
+    right: 70px;
+    top: 27px;
+    z-index: 11;
+  }
 }

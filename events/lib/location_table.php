@@ -50,7 +50,7 @@ class LocationTableHandler {
                 FROM $this->event_location_table l
                 LEFT JOIN $this->event_dates_table d
                 ON l.id = d.location
-                WHERE d.id=$event_id");
+                WHERE d.id=%d", $event_id);
     return $this->wpdb->get_results($query, ARRAY_A);
   }
 

@@ -5,11 +5,12 @@ import copySVG from "../../../../../../inc/assets/img/icons/copy.svg";
 
 export default function CopyButton(props) {
     return (
-        <Button
-            className="copy-button"
-            variant="secondary"
-            onClick={() => props.onClick()}>
-            <img src={copySVG}/>
-        </Button>
+        <div className="copy-button">
+            <Button
+                variant="secondary"
+                onClick={() => props.onClick()}>
+                <img src={copySVG}/>
+            </Button>
+        </div>
     )
 }

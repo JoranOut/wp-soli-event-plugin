@@ -7,16 +7,19 @@ import StateStore from "../state-store/state-store";
 export default function DateList(props) {
     const [dates, setDates] = useState(props.dates);
     const [state, setState] = useState();
+    const [latestIndex, setLatestIndex] = useState();
 
     const updateDate = (date, index) => {
         const newDates = dates ? [...dates] : [];
         newDates[index] = date;
         setState(newDates);
+        setLatestIndex(index);
         setDates(newDates);
         props.onChange(newDates);
     }
 
     const sortByStartDate = (a, b) => {
+        setLatestIndex(null)
         return dayjs(a.startDate) < dayjs(b.startDate) ? -1 : 1;
     }
 
@@ -44,6 +47,7 @@ export default function DateList(props) {
 
     return (
         <StateStore
+            index={latestIndex}
             state={state}
             onChange={newDates => setDates(newDates)}
         >

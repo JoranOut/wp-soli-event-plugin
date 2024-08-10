@@ -9,6 +9,8 @@ function fromDateDto(dateDto) {
         endDate: dateDto.end_date + " UTC",
         location: fromLocationDto(dateDto),
         rooms: JSON.parse(dateDto.rooms),
+        status: dateDto.status,
+        notes: dateDto.notes,
     }
 }
 
@@ -34,13 +36,8 @@ function toDateDto(date) {
         end_date: date.endDate,
         location: !date.location ? null : date.location.id,
         rooms: !date.rooms ? null : JSON.stringify(date.rooms),
-    }
-}
-
-function defaultDate() {
-    return {
-        startDate: new Date(),
-        endDate: new Date().addHours(1)
+        status: date.status,
+        notes: date.notes,
     }
 }
 

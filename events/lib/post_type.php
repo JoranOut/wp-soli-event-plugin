@@ -44,11 +44,8 @@ function soli_events_register_post_type() {
     'show_in_rest' => true,
     'template' => [
       [
-        'core/group', [],
-        [
-          ['soli/featured-image', [],],
-          ['soli/create-event', [],],
-        ],
+        ['soli/featured-image', [],],
+        ['soli/create-event', ['align' => 'wide'],],
       ],
     ]
   );
