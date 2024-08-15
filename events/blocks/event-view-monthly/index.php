@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Description: Block which contains the monthly view of eventsevent
+  Description: Block which contains the monthly view of events
 */
 if( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
@@ -11,8 +11,8 @@ class SoliBlockEventViewMonthly {
   }
 
   function adminAssets() {
-    wp_register_style('block-event-view-monthly-css', plugin_dir_url(__FILE__) . 'build/index.css');
     wp_register_script('block-event-view-monthly-js', plugin_dir_url(__FILE__) . 'build/index.js', array('wp-blocks', 'wp-element', 'wp-editor'));
+    wp_register_style('block-event-view-monthly-css', plugin_dir_url(__FILE__) . 'build/index.css');
     register_block_type('soli/event-view-monthly', array(
       'editor_script' => 'block-event-view-monthly-js',
       'editor_style' => 'block-event-view-monthly-css',

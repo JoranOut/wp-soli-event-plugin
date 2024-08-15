@@ -1,3 +1,4 @@
+import './index.scss'
 import { render } from '@wordpress/element';
 import CalendarWrapper from "./components/calendar-wrapper/calendar-wrapper";
 

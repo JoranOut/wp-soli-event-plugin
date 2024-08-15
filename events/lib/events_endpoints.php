@@ -223,21 +223,19 @@ function validateMonth($date): DateTime {
   }
 }
 
-function insertGUID($dates) {
-  if (!isset($dates)) {
+function insertGUID(&$dates) {
+  if (empty($dates)) {
     return;
   }
   foreach ($dates as &$date) {
-    if (isset($date['ID'])) {
-      $guid = get_post_permalink($date['ID']);
-      if (isset($guid)) {
-        $date['guid'] = $guid . "?event=" . $date['id'];
-      }
+    if (isset($date['post_id'])) {
+      $guid = esc_url(get_post_permalink($date['post_id']));
+      $date['guid'] = $guid . "?event=" . $date['id'];
     }
   }
 }
 
-function insertFeaturedImage($dates) {
+function insertFeaturedImage(&$dates) {
   if (!isset($dates)) {
     return;
   }
@@ -257,7 +255,7 @@ function validateStatii($dates): bool {
     return true;
   }
   foreach ($dates as &$date) {
-    if (!validateStatii($date["status"])){
+    if (!validateStatii($date["status"])) {
       return false;
     }
   }
