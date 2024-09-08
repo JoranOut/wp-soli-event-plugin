@@ -1,6 +1,23 @@
 {
-  "dependencies": {
-    "@wordpress/env": "^10.4.0",
-    "npm": "^10.8.2"
+  "name": "featured-image",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "build": "npm run build --workspace=events/blocks",
+    "publish": "node ./publish.js"
+  },
+  "workspaces": [
+    "events/blocks/create-event",
+    "events/blocks/event-view-list",
+    "events/blocks/event-view-monthly"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@wordpress/scripts": "^24.2.0",
+    "archiver": "^7.0.1",
+    "express": "^4.19.2"
   }
 }

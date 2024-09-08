@@ -1,4 +1,6 @@
 <?php
+namespace Soli\Events;
+
 function soli_events_register_post_type() {
   $labels = array(
     'name' => 'Events', // Plural name
@@ -41,17 +43,35 @@ function soli_events_register_post_type() {
     'publicly_queryable' => true,  // Allows queries to be performed on the front-end part if set to true
     'capability_type' => 'post', // Allows read, edit, delete like “Post”
     'rewrite' => array('slug' => 'evenement'),
-    'show_in_rest' => true,
-    'template' => [
-      [
-        ['soli/featured-image', [],],
-        ['soli/create-event', ['align' => 'wide'],],
-      ],
-    ]
+    'show_in_rest' => true
   );
 
   register_post_type('soli_event', $args); //Create a post type with the slug is ‘product’ and arguments in $args.
 }
 
-add_action('init', 'soli_events_register_post_type', 0);
+add_action('init', 'Soli\Events\soli_events_register_post_type', 0);
+
+function modify_post_type_args( $args, $post_type ) {
+  if ( 'soli_event' === $post_type) {
+    $args['template'] = array(
+      array( 'soli/featured-image', array(
+        'lock' => array(
+          'move' => true,
+          'remove' => true
+        )
+      ) ),
+      array( 'soli/create-event', array(
+        'align' => array('wide'),
+        'lock' => array(
+          'move' => true,
+          'remove' => true
+        )
+      ) ),
+      // You can add more blocks to the template here if needed
+    );
+//    $args['template_lock'] = 'all'; // Optional: Lock the template to prevent users from removing default blocks
+  }
+  return $args;
+}
+add_filter( 'register_post_type_args', 'Soli\Events\modify_post_type_args', 10, 2 );
 

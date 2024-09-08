@@ -1,6 +1,5 @@
 {
   "plugins": [
-    "../../wp-soli-featured-image-plugin",
     "."
   ],
   "config": {

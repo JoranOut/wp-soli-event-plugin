@@ -11,8 +11,8 @@ class SoliBlockEventViewList {
   }
 
   function adminAssets() {
-    wp_register_style('block-event-view-list-css', plugin_dir_url(__FILE__) . 'build/index.css');
-    wp_register_script('block-event-view-list-js', plugin_dir_url(__FILE__) . 'build/index.js', array('wp-blocks', 'wp-element', 'wp-editor'));
+    wp_register_style('block-event-view-list-css', plugin_dir_url(__FILE__) . 'build/index.css', array(), SOLI_EVENT__PLUGIN_VERSION);
+    wp_register_script('block-event-view-list-js', plugin_dir_url(__FILE__) . 'build/index.js', array('wp-blocks', 'wp-element', 'wp-editor'), SOLI_EVENT__PLUGIN_VERSION, true);
     register_block_type('soli/event-view-list', array(
       'editor_script' => 'block-event-view-list-js',
       'editor_style' => 'block-event-view-list-css',
@@ -21,8 +21,8 @@ class SoliBlockEventViewList {
   }
 
   function theHTML($attributes){
-    wp_enqueue_script('block-event-view-list-frontend',  plugin_dir_url(__FILE__) . 'build/frontend.js', array('wp-components', 'wp-element', 'wp-api-fetch'), '1.0', true);
-    wp_enqueue_style('block-event-view-list-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css');
+    wp_enqueue_script('block-event-view-list-frontend',  plugin_dir_url(__FILE__) . 'build/frontend.js', array('wp-components', 'wp-element', 'wp-api-fetch'), SOLI_EVENT__PLUGIN_VERSION, true);
+    wp_enqueue_style('block-event-view-list-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css', array(), SOLI_EVENT__PLUGIN_VERSION);
 
     ob_start();?>
     <div class="block-event-view-monthly"></div>
