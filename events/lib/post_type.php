@@ -5,11 +5,13 @@ function soli_events_register_post_type() {
   $labels = array(
     'name' => 'Events', // Plural name
     'singular_name' => 'Event',   // Singular name
-    'add_new' => 'New Event',
+    'add_new' => 'Add Event',
+    'add_new_item' => 'Add New Event',
     'view_item' => 'View Event',
     'edit_item' => 'Edit Event',
     'insert_into_item' => 'Insert into Event',
-    'search_items' => 'Search Events'
+    'search_items' => 'Search Events',
+    'not_found' =>  'No Events Found',
   );
 
   $supports = array(

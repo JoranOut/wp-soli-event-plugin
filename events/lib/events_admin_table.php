@@ -32,7 +32,7 @@ function set_default_sort_order($query) {
   }
 }
 
-
+/*
 add_filter('posts_clauses', 'modify_posts_clauses', 10, 2);
 function modify_posts_clauses($clauses, $query) {
   global $wpdb, $pagenow, $post_type;
@@ -52,8 +52,8 @@ function modify_posts_clauses($clauses, $query) {
   }
 
   return $clauses;
-}
-
+}*/
+/*
 add_filter('posts_search', 'custom_event_dates_search', 10, 2);
 function custom_event_dates_search($search, $query) {
   global $wpdb, $pagenow, $post_type;
@@ -81,7 +81,7 @@ function custom_event_dates_search($search, $query) {
   }
 
   return $search;
-}
+}*/
 
 add_action('manage_soli_event_posts_custom_column', 'custom_soli_event_column', 10, 2);
 function custom_soli_event_column($column, $post_id) {
@@ -141,3 +141,4 @@ function load_events_admin_style($hook) {
 }
 
 add_action('admin_enqueue_scripts', 'load_events_admin_style');
+

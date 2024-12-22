@@ -1,15 +1,58 @@
 import './selected-date.scss';
+import calendarIcon from "../../../../../../inc/assets/img/icons/calendar.svg";
+import locationIcon from "../../../../../../inc/assets/img/icons/pin-1.svg";
+import dayjs from "dayjs";
+import {useState, useEffect} from '@wordpress/element';
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {showVenue} from "../../../../../inc/values";
+
 
 function SelectedDate(props) {
-    const date = props.date;
+    dayjs.locale("nl");
+    const [startDate, setStartDate] = useState(dayjs(props.date?.startDate));
+    const [endDate, setEndDate] = useState(dayjs(props.date?.endDate));
+    const [location, setLocation] = useState(props.date?.location);
+    const [rooms, setRooms] = useState(props.date?.rooms);
+
+
+    const isSameDay = (d1, d2) => {
+        return d1.date() === d2.date() &&
+            d1.month() === d2.month() &&
+            d1.year() === d2.year();
+    }
+
+    let today = dayjs();
+
+    useEffect(() => {
+        setStartDate(dayjs(props.date.startDate));
+        setEndDate(dayjs(props.date.endDate));
+        setLocation(props.date.location);
+        setRooms(props.date.rooms);
+        today = dayjs();
+    }, [props]);
 
     return (
-        <div className='selected-date'>
-            <h4>Informatie:</h4>
-            <p>{date.startDate.split(' ')[0]}</p>
-            <p>{date.startDate} {date.endDate}</p>
-        </div>
-    );
+        <div className="selected-date">
+            <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale={'nl'}
+            >
+                {endDate.isBefore(today) && <p className="warning">( ! ) Dit evenement heeft al plaatsgevonden</p>}
+                <div className="date">
+                    <img src={calendarIcon}/>
+                    <span>{startDate.format("DD MMMM YYYY (dddd)")}</span>
+                    <span>{startDate.format("HH:mm")}</span>
+                    <span> - </span>
+                    <span>{endDate.format("HH:mm")}</span>
+                    <span>{!isSameDay(startDate, endDate) ? endDate.format("DD MMMM YYYY (dddd)") : ""}</span>
+                </div>
+            </LocalizationProvider>
+            <div className="location">
+                <img src={locationIcon}/>
+                {showVenue(location, rooms, true)}
+            </div>
+        </div>);
 }
 
 export default SelectedDate;

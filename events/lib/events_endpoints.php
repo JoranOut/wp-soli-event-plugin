@@ -230,7 +230,7 @@ function insertGUID(&$dates) {
   foreach ($dates as &$date) {
     if (isset($date['post_id'])) {
       $guid = esc_url(get_post_permalink($date['post_id']));
-      $date['guid'] = $guid . "?event=" . $date['id'];
+      $date['guid'] = $guid . "&event=" . $date['id'];
     }
   }
 }

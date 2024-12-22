@@ -6,8 +6,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import 'dayjs/locale/nl';
 
-import {displayRooms} from "../../../../../inc/values";
-
+import {showVenue} from "../../../../../inc/values";
 
 function LocationWarning(props) {
     const [location, setLocation] = useState(props.location);
@@ -37,17 +36,6 @@ export const DateListViewItem = forwardRef(function DateListViewItem(props, ref)
             d1.year() === d2.year();
     }
 
-    const returnSpecialLocation = (itemLocation, itemRooms) => {
-        if (itemLocation) {
-            return itemLocation?.name;
-        }
-
-        if (itemRooms){
-            return displayRooms(itemRooms);
-        }
-
-        return "geen locatie";
-    }
 
     let today = dayjs();
 
@@ -71,7 +59,7 @@ export const DateListViewItem = forwardRef(function DateListViewItem(props, ref)
                 <span> - </span>
                 <span>{endDate.format("HH:mm")}</span>
                 <span>{!isSameDay(startDate, endDate) ? endDate.format("DD MMMM YYYY (dddd)") : ""}</span>
-                <LocationWarning location={() => returnSpecialLocation(location, rooms)}/>
+                <LocationWarning location={() => showVenue(location, rooms)}/>
             </LocalizationProvider>
         </div>);
 });

@@ -21,6 +21,7 @@ require_once 'lib/events_date_table.php';
 require_once 'lib/events_endpoints.php';
 require_once 'lib/events_admin_table.php';
 require_once 'lib/post_type.php';
+require_once 'lib/post_type_query.php';
 require_once 'inc/values.php';
 require_once 'blocks/create-event/index.php';
 require_once 'blocks/event-view-monthly/index.php';

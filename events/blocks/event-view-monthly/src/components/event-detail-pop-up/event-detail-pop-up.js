@@ -35,13 +35,13 @@ export default function EventDetailPopUp(props) {
                 setSide("left")
                 setBox({
                     top: window.scrollY + eventBox.top + eventBox.height / 2 + 'px',
-                    left: eventBox.left + 'px',
+                    left: eventBox.left - 5 + 'px',
                 });
             } else {
                 setSide("right")
                 setBox({
                     top: window.scrollY + eventBox.top + eventBox.height / 2 + 'px',
-                    left: eventBox.left + eventBox.width + 'px',
+                    left: eventBox.left + eventBox.width + 5 + 'px',
                 });
             }
 
@@ -59,7 +59,7 @@ export default function EventDetailPopUp(props) {
                     <img src={props.event.raw.featuredImage}/>
                     <h2>{props.event.title}</h2>
                     <p>{parseDate(dayjs(props.event.start.d), dayjs(props.event.end.d))}</p>
-                    <a href={props.event.raw.guid}>visit</a>
+                    <a className="components-button is-primary" href={props.event.raw.guid}>visit</a>
                 </div>
             }
         </>

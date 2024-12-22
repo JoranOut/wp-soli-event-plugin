@@ -1,7 +1,7 @@
 import "./index.scss"
 import {useState} from '@wordpress/element';
 import EditableDateTable from "./components/editable-date-table/editable-date-table";
-import EventsProvider from "./components/events-provider/events-provider";
+import AdminEventsProvider from "./components/events-provider/admin-events-provider";
 import DateRangePicker from "./components/daterange-picker/daterange-picker";
 import LocationPicker from "./components/location-picker/location-picker";
 import TimeGeneratorModalButton from "./components/time-generator-modal-button/time-generator-modal-button";
@@ -14,14 +14,13 @@ wp.blocks.registerBlockType("soli/create-event", {
     icon: "smiley",
     category: "soli",
     supports: {
-        align: [ "wide" ],
+        align: [ "wide" ]
     },
     edit: EditComponent,
     save: function () {
         return null
     },
     usesContext: ['postId']
-
 })
 
 function EditComponent({context}) {
@@ -68,7 +67,7 @@ function EditComponent({context}) {
     }
 
     return (<div className="soli-block-create-event">
-        <EventsProvider
+        <AdminEventsProvider
             post_id={postId}
             dates={dates}
             setDates={(newDates) => {
@@ -126,7 +125,7 @@ function EditComponent({context}) {
                     }}
                 />
             }
-        </EventsProvider>
+        </AdminEventsProvider>
     </div>)
 }
 

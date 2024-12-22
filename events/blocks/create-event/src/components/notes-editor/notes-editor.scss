@@ -27,11 +27,14 @@ form {
 .notes-editor.full {
   display: flex;
   flex-direction: column;
-  background: rgb(255 255 255 / 31%);
-  border-radius: 5px;
-  padding: 10px 20px 20px;
-  gap: 10px;
   margin-top: 10px;
+
+  &:not(:has(.empty)){
+    background: rgb(255 255 255 / 31%);
+    border-radius: 5px;
+    padding: 10px 20px 20px;
+    gap: 10px;
+  }
 
   .notes-preview {
     display: block;

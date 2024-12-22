@@ -10,6 +10,18 @@ export const displayRooms = (rooms) => {
     return null;
 }
 
+export const showVenue = (itemLocation, itemRooms, fullLocation) => {
+    if (itemLocation) {
+        return fullLocation ? [itemLocation.name,itemLocation.address].join(", ") : itemLocation?.name;
+    }
+
+    if (itemRooms){
+        return displayRooms(itemRooms);
+    }
+
+    return "geen locatie";
+}
+
 export const EVENT_STATUS = ["OPTION", "PENDING_APPROVAL", "PUBLIC", "PRIVATE"];
 
 export const EVENT_STATUS_COLOR = {
