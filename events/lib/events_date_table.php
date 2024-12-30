@@ -42,35 +42,6 @@ class EventsDatesTableHandler {
     $wpdb->query($sql);
   }
 
-  function getDatesForMonth($yearmonth) {
-    if (empty($yearmonth)) {
-      return null;
-    }
-
-    $year = $yearmonth->format('Y');
-    $month = $yearmonth->format('m');
-
-    return $this->loadMonthEventsFromDb($year, $month);
-  }
-
-  function loadMonthEventsFromDb($year, $month) {
-    $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, m.meta_value as featured_image_id,
-       l.id as location_id, l.name as location_name, l.address as location_address,
-       d.post_id, w.post_author, w.post_title, w.post_excerpt, w.post_status, w.post_name, w.post_modified, 
-       w.post_parent, w.post_type
-        FROM $this->event_dates_table d
-        LEFT JOIN $this->event_location_table l
-            on d.location = l.id
-        LEFT JOIN wp_posts w 
-            ON d.post_id = w.id 
-        LEFT JOIN $this->meta_table m 
-            ON d.post_id = w.id and m.meta_key = '_thumbnail_id'
-        WHERE ((YEAR(d.start_date) = %d AND MONTH(d.start_date) = %d)
-              or (YEAR(d.end_date) = %d AND MONTH(d.end_date) = %d))
-              and w.post_status = %s;", $year, $month, $year, $month, 'publish');
-    return $this->wpdb->get_results($query, ARRAY_A);
-  }
-
   function getDatesFromEvent($event_id) {
     $dates = $this->loadEventDatesFromDb($event_id);
     if (empty($dates)) {
@@ -128,8 +99,10 @@ class EventsDatesTableHandler {
   function loadAllBetweenDatesEventDatesFromDb($from, $to) {
     $startDate = $from->format('Y-m-d');
     $endDate = $to->format('Y-m-d');
-    $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes
-       w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type,
+    $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes,
+       w.ID , w.post_author , 
+       CASE d.status WHEN 'PRIVATE' THEN '🔒private' ELSE w.post_title END AS post_title, 
+       w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type,
        l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
         LEFT JOIN $this->post_table w 
@@ -137,13 +110,12 @@ class EventsDatesTableHandler {
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
         WHERE ((d.start_date between %s and %s) or (d.end_date between %s and %s))
-              and w.post_status = %s;", $startDate, $endDate, 'publish');
+              and w.post_status = %s;", $startDate, $endDate, $startDate, $endDate, 'publish');
     return $this->wpdb->get_results($query, ARRAY_A);
   }
 
   function setDatesAtEvent($event_id, $dates) {
     if (!$this->validateDates($dates)) {
-      var_dump("validateDates");
       return false;
     }
     $this->removeRedundantDates($event_id, $dates);

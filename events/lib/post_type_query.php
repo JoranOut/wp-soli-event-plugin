@@ -20,6 +20,14 @@ function soli_events_modify_query_clauses($clauses, $wp_query) {
                           ", $event_dates_table.notes, $event_dates_table.rooms ";
 
     $clauses['fields'] .= ", $event_location_table.name as location_name, $event_location_table.address as location_address ";
+
+    // Apply filter based on dropdown selection
+    if (!isset($_GET['event_filter']) || $_GET['event_filter'] === 'future') {
+      $current_day_start = current_time('Y-m-d') . ' 00:00:00';
+
+      // Add a condition to filter out past events
+      $clauses['where'] .= $wpdb->prepare(" AND $event_dates_table.end_date >= %s", $current_day_start);
+    }
   }
 
   return $clauses;
@@ -60,3 +68,19 @@ function custom_event_post_count($counts, $post_type, $perm) {
 
 // Hook into `wp_count_posts` to modify post counts
 add_filter('wp_count_posts', 'Soli\Events\custom_event_post_count', 999, 3);
+
+function soli_events_add_filter_dropdown() {
+  global $typenow;
+
+  // Ensure this filter is only added for the 'soli_event' post type
+  if ($typenow === 'soli_event') {
+    // Get the current filter value (default to 'future' if not set)
+    $selected = isset($_GET['event_filter']) ? $_GET['event_filter'] : 'future';
+
+    echo '<select name="event_filter" id="event_filter">';
+    echo '<option value="future"' . selected($selected, 'future', false) . '>Future Events</option>';
+    echo '<option value="all"' . selected($selected, 'all', false) . '>All Events</option>';
+    echo '</select>';
+  }
+}
+add_action('restrict_manage_posts', 'Soli\Events\soli_events_add_filter_dropdown');

@@ -3,7 +3,6 @@
 add_action('rest_api_init', 'soli_event_rest_api', 10, 1);
 function soli_event_rest_api() {
   buildGETEventsBetweenDates();
-  buildGETEventsByMonth();
   buildGETEventDatesFromEvent();
   buildGETEventsByPageAndItemsPerPage();
   buildPOSTEventDates();
@@ -26,36 +25,6 @@ function buildGETEventsBetweenDates() {
 
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
       $dates = $eventHandler->getEventsBetweenDates($startDate, $endDate);
-      $response = new WP_REST_Response($dates);
-      if (!$dates) {
-        $response->set_status(204);
-      } else {
-        $response->set_status(200);
-      }
-      return $response;
-    },
-  ));
-}
-
-function buildGETEventsByMonth() {
-  register_rest_route('soli_event/v1', '/events/(?P<yearmonth>\d{4}-\d{1,2})/', array(
-    'methods' => 'GET',
-    'permission_callback' => '__return_true', // *always set a permission callback
-    'callback' => function ($request) {
-      try {
-        $ym = validateMonth($request['yearmonth']);
-      } catch (Exception $e) {
-        return new WP_REST_Response(array(
-          'code' => WP_REST_Server::INVALID_ARGUMENT,
-          'message' => 'Invalid request arguments.',
-        ), 400);
-      }
-
-      $eventHandler = new \Soli\Events\EventsDatesTableHandler();
-      $dates = $eventHandler->getDatesForMonth($ym);
-      insertGUID($dates);
-      insertFeaturedImage($dates);
-
       $response = new WP_REST_Response($dates);
       if (!$dates) {
         $response->set_status(204);

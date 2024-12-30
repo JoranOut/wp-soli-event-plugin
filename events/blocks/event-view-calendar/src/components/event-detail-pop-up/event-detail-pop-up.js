@@ -1,5 +1,4 @@
 import "./event-detail-pop-up.scss";
-import '@toast-ui/calendar/dist/toastui-calendar.min.css';
 import {useState, useEffect, useRef} from '@wordpress/element';
 import dayjs from "dayjs";
 

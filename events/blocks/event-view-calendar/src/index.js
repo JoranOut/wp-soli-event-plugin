@@ -1,8 +1,8 @@
 import "./index.scss"
 import CalendarWrapper from "./components/calendar-wrapper/calendar-wrapper";
 
-wp.blocks.registerBlockType("soli/event-view-monthly", {
-    title: "Event View Monthly",
+wp.blocks.registerBlockType("soli/event-view-calendar", {
+    title: "Event View Calendar",
     icon: "calendar-alt",
     category: "soli",
     edit: EditComponent

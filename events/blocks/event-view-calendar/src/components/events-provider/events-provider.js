@@ -5,19 +5,16 @@ import {fromEventDto} from "./event_mapper";
 import MonthNavigation from "../month-navigation/month-navigation";
 import MonthDisplay from "../month-display/month-display";
 
-export default function EventsProvider(props) {
+export default function EventsProvider({setEvents, range, children}) {
     const [error, setError] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
-    const [yearmonth, setYearMonth] = useState(new Date().getFullYear() + "-" + (new Date().getMonth() + 1));
     const [loadingBox, setLoadingBox] = useState();
     const wrapperRef = useRef();
 
-    const updateYearmonth = (newYearMonth) => {
-        if (!isLoading) {
-            props.setEvents(null);
-            props.changeView(newYearMonth)
-            setYearMonth(newYearMonth);
-        }
+    const toDateString = (date)=>{
+        return new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
+            .toISOString()
+            .split("T")[0];
     }
 
     useEffect(() => {
@@ -28,15 +25,17 @@ export default function EventsProvider(props) {
                     wrapperRef.current.getBoundingClientRect().height / 2 + "px"
             });
         }
-        if (error === undefined && !isLoading && props.events == null) {
+        if (error === undefined && !isLoading && range) {
             setLoading(true)
-            apiFetch({path: `soli_event/v1/events/${yearmonth}/`})
+            const startDate = toDateString(range.start);
+            const endDate = toDateString(range.end);
+
+            apiFetch({path: `soli_event/v1/events/?start_date=${startDate}&end_date=${endDate}`})
                 .then(
                     (event) => {
                         setLoading(false)
                         setError(undefined)
-                        props.setEvents(fromEventDto(event))
-                        props.changeView(yearmonth)
+                        setEvents(fromEventDto(event))
                     },
                     // Note: It's important to handle errors here instead of a catch() block
                     // so that we don't swallow exceptions from actual bugs in components.
@@ -47,7 +46,7 @@ export default function EventsProvider(props) {
                     }
                 );
         }
-    }, [yearmonth])
+    }, [range])
 
     // If there's an error in fetching the remote data, display the error.
     if (error) {
@@ -60,21 +59,12 @@ export default function EventsProvider(props) {
     } else {
         return (
             <>
-                <MonthDisplay
-                    yearmonth={yearmonth}/>
-
                 <div className={isLoading ? "calendar-wrapper loading" : "calendar-wrapper"}
                      ref={wrapperRef}>
-                    <MonthNavigation
-                        yearmonth={yearmonth}
-                        setYearmonth={updateYearmonth}/>
 
-                    {props.children}
-                    <MonthNavigation
-                        yearmonth={yearmonth}
-                        setYearmonth={updateYearmonth}/>
+                    {children}
                 </div>
-                {isLoading && <p className="loadingtext" style={{...loadingBox}}>Loading {yearmonth}...</p>}
+                {isLoading && <p className="loadingtext" style={{...loadingBox}}>Loading events...</p>}
             </>
         );
     }
