@@ -152,17 +152,6 @@ function TimeGeneratorModalButton(props) {
                           }) => {
         setGeneratedData([])
 
-        console.log({startDate});
-        console.log({endDate});
-        console.log({frequency});
-        console.log({method});
-        console.log({endRepeatDate});
-        console.log({repeatAmount});
-        console.log({rooms});
-        console.log({location});
-        console.log({status});
-        console.log({useNotes});
-
         if (!startDate || !frequency || !method || (!endRepeatDate && !repeatAmount)) {
             setError("Vul een frequency, methode en data in voor resultaat")
             return;
@@ -390,8 +379,6 @@ function TimeGeneratorModalButton(props) {
                                 value={repeatAmount}
                                 min={0}
                                 onChange={(event, val) => {
-                                    console.log(event)
-                                    console.log(val)
                                     setRepeatAmount(val);
                                     generateData({
                                         startDate: startDate,

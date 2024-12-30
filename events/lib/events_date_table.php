@@ -32,6 +32,7 @@ class EventsDatesTableHandler {
         rooms TINYTEXT,
         status TINYTEXT NOT NULL DEFAULT 'PLANNED',
         notes TEXT,
+        is_concert BOOLEAN NOT NULL DEFAULT 0,
         PRIMARY KEY  (id)
     ) $this->charset;");
   }
@@ -60,32 +61,34 @@ class EventsDatesTableHandler {
 
   function loadEventDatesFromDb($event_id) {
     $query = $this->wpdb->prepare("
-                SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes,
+                SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
                        l.id as location_id, l.name as location_name, l.address as location_address
                 FROM $this->event_dates_table d
                 LEFT JOIN $this->event_location_table l
                     on d.location = l.id
                 WHERE d.post_id = %d", $event_id);
-    return $this->wpdb->get_results($query, ARRAY_A);
+    $results = $this->wpdb->get_results($query, ARRAY_A);
+    return $this->castIsConcertToBoolean($results);
   }
 
   function loadEventDatesPerPageFromDb($page, $itemsPerPage) {
     $offset = ($page - 1) * $itemsPerPage;
     $limit = $itemsPerPage;
     $query = $this->wpdb->prepare("
-        SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, m.meta_value as featured_image_id,
+        SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert, m.meta_value as featured_image_id,
            w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.post_type,
            l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
-        LEFT JOIN wp_posts w 
-            ON d.post_id = w.id 
-        LEFT JOIN $this->meta_table m 
+        LEFT JOIN wp_posts w
+            ON d.post_id = w.id
+        LEFT JOIN $this->meta_table m
             ON d.post_id = w.id and m.meta_key = '_thumbnail_id'
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
         WHERE w.post_status = %s
         ORDER BY d.start_date desc LIMIT %d OFFSET %d ", 'publish', $limit, $offset);
-    return $this->wpdb->get_results($query, ARRAY_A);
+    $results = $this->wpdb->get_results($query, ARRAY_A);
+    return $this->castIsConcertToBoolean($results);
   }
 
   function getEventsBetweenDates($from, $to) {
@@ -99,19 +102,20 @@ class EventsDatesTableHandler {
   function loadAllBetweenDatesEventDatesFromDb($from, $to) {
     $startDate = $from->format('Y-m-d');
     $endDate = $to->format('Y-m-d');
-    $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes,
-       w.ID , w.post_author , 
-       CASE d.status WHEN 'PRIVATE' THEN '🔒private' ELSE w.post_title END AS post_title, 
+    $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
+       w.ID , w.post_author ,
+       CASE d.status WHEN 'PRIVATE' THEN '🔒private' ELSE w.post_title END AS post_title,
        w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type,
        l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
-        LEFT JOIN $this->post_table w 
-            ON d.post_id = w.id 
+        LEFT JOIN $this->post_table w
+            ON d.post_id = w.id
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
         WHERE ((d.start_date between %s and %s) or (d.end_date between %s and %s))
               and w.post_status = %s;", $startDate, $endDate, $startDate, $endDate, 'publish');
-    return $this->wpdb->get_results($query, ARRAY_A);
+    $results = $this->wpdb->get_results($query, ARRAY_A);
+    return $this->castIsConcertToBoolean($results);
   }
 
   function setDatesAtEvent($event_id, $dates) {
@@ -141,7 +145,7 @@ class EventsDatesTableHandler {
     } else {
       $query = $this->wpdb->prepare("
                           DELETE FROM $this->event_dates_table
-                              WHERE post_id = %d 
+                              WHERE post_id = %d
                               AND id NOT IN (" . implode(',', $nonRedundant) . ");",
         $post_id
       );
@@ -152,9 +156,9 @@ class EventsDatesTableHandler {
   function saveDate($event_id, $date) {
     if (empty($date->id)) {
       $query = $this->wpdb->prepare("
-                        INSERT INTO $this->event_dates_table 
-                            (post_id, start_date, end_date, location, rooms, status, notes) VALUES 
-                            (%d, %s, %s, %s, %s, %s, %s)",
+                        INSERT INTO $this->event_dates_table
+                            (post_id, start_date, end_date, location, rooms, status, notes, is_concert) VALUES
+                            (%d, %s, %s, %s, %s, %s, %s, %d)",
         $event_id,
         $date->start_date,
         $date->end_date,
@@ -162,19 +166,21 @@ class EventsDatesTableHandler {
         $date->rooms ?: 'NULL',
         $date->status,
         $date->notes,
+        $date->is_concert ? 1 : 0
       );
 
       $this->wpdb->get_results($this->replaceNullWithNull($query), ARRAY_A);
       return $this->wpdb->insert_id;
     } else {
       $query = $this->wpdb->prepare("
-                        UPDATE $this->event_dates_table 
+                        UPDATE $this->event_dates_table
                         SET start_date = %s,
                             end_date = %s,
                             location = %s,
                             rooms = %s,
                             status = %s,
-                            notes = %s
+                            notes = %s,
+                            is_concert = %d
                         WHERE id=%d;",
         $date->start_date,
         $date->end_date,
@@ -182,6 +188,7 @@ class EventsDatesTableHandler {
         $date->rooms ?: 'NULL',
         $date->status,
         $date->notes,
+        $date->is_concert ? 1 : 0,
         $date->id
       );
 
@@ -208,5 +215,11 @@ class EventsDatesTableHandler {
   function replaceNullWithNull($query) {
     return str_replace("'NULL'", "NULL", $query);
   }
-}
 
+  private function castIsConcertToBoolean($results) {
+    return array_map(function($date) {
+      $date['is_concert'] = (bool) $date['is_concert'];
+      return $date;
+    }, $results);
+  }
+}

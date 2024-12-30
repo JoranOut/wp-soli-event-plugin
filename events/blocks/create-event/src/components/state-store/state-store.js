@@ -12,10 +12,6 @@ const useHistory = (initialState, onChange) => {
     const [latestIndex, setLatestIndex] = useState();
 
     const setNewState = (index, newState) => {
-        console.log("StateStore SetNewState")
-        console.log(index)
-        console.log(latestIndex)
-        console.log(newState)
         if (newState === undefined) {
             return;
         }

@@ -41,7 +41,7 @@ function LocationPicker({location, rooms, onChange}) {
             <Button variant="secondary" onClick={openModal}>
                 {
                     displayLocation() ??
-                    displayRooms() ??
+                    displayRooms(_rooms) ??
                     "Kies een locatie"
                 }
             </Button>

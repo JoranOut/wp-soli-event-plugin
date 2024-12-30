@@ -8,6 +8,7 @@ import TimeGeneratorModalButton from "./components/time-generator-modal-button/t
 import CopyButton from "./components/copy-button/copy-button";
 import EventStatusSelector from "./components/event-status-selector/event-status-selector";
 import NotesEditor from "./components/notes-editor/notes-editor";
+import ConcertStatusSwitch from "./components/concert-status-switch/concert-status-switch";
 
 wp.blocks.registerBlockType("soli/create-event", {
     title: "Create Event",
@@ -42,6 +43,11 @@ function EditComponent({context}) {
     const updateSingleStatus = (status) => {
         const singleDate = dates[0];
         setDates([{...singleDate, status: status}])
+    }
+
+    const updateSingleConcertStatus = (concertStatus) => {
+        const singleDate = dates[0];
+        setDates([{...singleDate, concertStatus: concertStatus}])
     }
 
     const updateSingleNotes = (notes) => {
@@ -98,6 +104,11 @@ function EditComponent({context}) {
                         onChange={(rooms, location) => updateSingleLocation(rooms, location)}
                     />
 
+                    <ConcertStatusSwitch
+                        concertStatus={dates?.length > 0 ? dates[0].concertStatus : null}
+                        onChange={(status) => updateSingleConcertStatus(status)}
+                    />
+
                     <NotesEditor
                         size={"full"}
                         notes={dates?.length > 0 ? dates[0].notes : null}
@@ -110,6 +121,7 @@ function EditComponent({context}) {
                             addGeneratedDates(genDates)
                         }}/>
                     <CopyButton onClick={() => copySingleDate()}/>
+
                     <EventStatusSelector
                         status={dates?.length > 0 ? dates[0].status : null}
                         onChange={(status) => updateSingleStatus(status)}

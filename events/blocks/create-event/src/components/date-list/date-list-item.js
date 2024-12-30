@@ -8,6 +8,7 @@ import CopyButton from "../copy-button/copy-button";
 import DeleteButton from "../delete-button/delete-button";
 import EventStatusSelector from "../event-status-selector/event-status-selector";
 import NotesEditor from "../notes-editor/notes-editor";
+import ConcertStatusSwitch from "../concert-status-switch/concert-status-switch";
 
 function DateListItem(props) {
     const [date, setDate] = useState(props.date)
@@ -20,6 +21,12 @@ function DateListItem(props) {
 
     const updateStatus = (status) => {
         const updatedDate = {...date, status}; // Create a new copy of the date with updated location and rooms
+        setDate(updatedDate);
+        props.updateDate(updatedDate);
+    }
+
+    const updateConcertStatus = (concertStatus) => {
+        const updatedDate = {...date, concertStatus}; // Create a new copy of the date with updated location and rooms
         setDate(updatedDate);
         props.updateDate(updatedDate);
     }
@@ -73,6 +80,11 @@ function DateListItem(props) {
             <EventStatusSelector
                 status={date.status}
                 onChange={(status) => updateStatus(status)}
+            />
+
+            <ConcertStatusSwitch
+                concertStatus={date.concertStatus}
+                onChange={(status) => updateConcertStatus(status)}
             />
 
             <CopyButton onClick={() => copyDate()}/>

@@ -10,6 +10,7 @@ function fromDateDto(dateDto) {
         location: fromLocationDto(dateDto),
         rooms: JSON.parse(dateDto.rooms),
         status: dateDto.status,
+        concertStatus: dateDto.is_concert,
         notes: dateDto.notes,
     }
 }
@@ -37,6 +38,7 @@ function toDateDto(date) {
         location: !date.location ? null : date.location.id,
         rooms: !date.rooms ? null : JSON.stringify(date.rooms),
         status: date.status,
+        is_concert: date.concertStatus,
         notes: date.notes,
     }
 }
