@@ -1,7 +1,7 @@
 import "./events-provider.scss";
 import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect} from '@wordpress/element';
-import {fromEventDto} from "./event_mapper";
+import {fromEventDto} from "./event-mapper";
 
 export default function EventsProvider(props) {
     const [error, setError] = useState(undefined);

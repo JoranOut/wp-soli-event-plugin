@@ -25,7 +25,7 @@ class SoliBlockEventViewCalendar {
     wp_enqueue_style('block-event-view-calendar-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css', array(), SOLI_EVENT__PLUGIN_VERSION);
 
     ob_start();?>
-    <div class="block-event-view-calendar type-month alignwide"></div>
+    <div class="block-event-view-calendar type-month only-concerts alignwide"></div>
     <?php return ob_get_clean();
   }
 

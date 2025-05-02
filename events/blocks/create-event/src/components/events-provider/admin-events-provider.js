@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { useSelect, useDispatch } from '@wordpress/data';
 import {useState, useEffect} from '@wordpress/element';
-import {fromEventDto, toEventDto} from "./event_mapper";
+import {fromEventDto, toEventDto} from "./event-mapper";
 
 export default function AdminEventsProvider(props) {
     const [error, setError] = useState(undefined);

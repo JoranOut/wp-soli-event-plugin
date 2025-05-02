@@ -1,21 +1,69 @@
 import "./events-provider.scss";
 import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect, useRef} from '@wordpress/element';
-import {fromEventDto} from "./event_mapper";
-import MonthNavigation from "../month-navigation/month-navigation";
-import MonthDisplay from "../month-display/month-display";
+import {fromEventDto} from "./event-mapper";
+import {ROOM_COLORS} from "../../../../../inc/values";
 
-export default function EventsProvider({setEvents, range, children}) {
+export default function EventsProvider({setEvents, range, filters, children}) {
     const [error, setError] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
     const [loadingBox, setLoadingBox] = useState();
     const wrapperRef = useRef();
 
-    const toDateString = (date)=>{
-        return new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
+    const [cache, setCache] = useState([]);
+    const splitEvents = (f) => f.includes("only-internal");
+
+    const toDateString = (date) => {
+        return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
             .toISOString()
             .split("T")[0];
     }
+
+    const splitEventsOnRooms = (events) => {
+        if (!events) {
+            return [];
+        }
+        return events.flatMap(event => {
+            if (!event.rooms) {
+                return event;
+            }
+            const rooms = JSON.parse(event.rooms);
+            if (!rooms || rooms.length === 0) {
+                return event;
+            }
+            return rooms.map((room, index) => {
+                return {
+                    ...event,
+                    id: `${event.id}.${index}`,
+                    post_title: `${event.post_title} - ${room}`,
+                    rooms: JSON.stringify([room]),
+                    color: ROOM_COLORS[room]
+                }
+            })
+        })
+    }
+
+    const filterEvent = (event, filters) => {
+        const concert = !filters.includes("only-concerts") || event.is_concert;
+
+        let room = true;
+        const rooms = JSON.parse(event.rooms);
+        const internal = !filters.includes("only-internal") || !!rooms;
+        const roomFilters = filters.filter(f => f !== "only-concerts" || f !== "only-internal");
+        if (filters.includes("only-internal") && roomFilters.length > 0) {
+            if (!rooms || !rooms.some(r => roomFilters.includes(r))) {
+                room = false;
+            }
+        }
+
+        return concert && internal && room;
+    }
+
+    useEffect(() => {
+        const events = splitEvents(filters) ? splitEventsOnRooms(cache) : cache;
+        const filteredEvents = events.filter(event => filterEvent(event, filters));
+        setEvents(fromEventDto(filteredEvents));
+    }, [filters]);
 
     useEffect(() => {
         if (wrapperRef && wrapperRef.current) {
@@ -32,10 +80,13 @@ export default function EventsProvider({setEvents, range, children}) {
 
             apiFetch({path: `soli_event/v1/events/?start_date=${startDate}&end_date=${endDate}`})
                 .then(
-                    (event) => {
+                    (response) => {
                         setLoading(false)
                         setError(undefined)
-                        setEvents(fromEventDto(event))
+                        setCache(response);
+                        const events = splitEvents(filters) ? splitEventsOnRooms(response) : response;
+                        const filteredEvents = events.filter(event => filterEvent(event, filters));
+                        setEvents(fromEventDto(filteredEvents));
                     },
                     // Note: It's important to handle errors here instead of a catch() block
                     // so that we don't swallow exceptions from actual bugs in components.

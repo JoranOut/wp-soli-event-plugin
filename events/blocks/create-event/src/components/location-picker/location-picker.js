@@ -56,31 +56,34 @@ function LocationPicker({location, rooms, onChange}) {
                     shouldCloseOnClickOutside={true}
                     __experimentalHideHeader={false}
                 >
-                    <ToggleControl
-                        label="Muziekcentrum"
-                        checked={isInternal}
-                        onChange={() => {
-                            setInternal(!isInternal);
-                        }}
-                    />
+                    <div className="location-picker-modal">
 
-                    {isInternal &&
-                        <RoomsPicker
-                            rooms={rooms}
-                            onSave={(rooms) => selectLocation(rooms, null)}
+                        <ToggleControl
+                            label="Muziekcentrum"
+                            checked={isInternal}
+                            onChange={() => {
+                                setInternal(!isInternal);
+                            }}
                         />
-                    }
-                    {!isInternal &&
-                        <>
-                            <LocationSearcher
-                                location={_location}
-                                onSelected={(loc) => selectLocation(null, loc)}
+
+                        {isInternal &&
+                            <RoomsPicker
+                                rooms={rooms}
+                                onSave={(rooms) => selectLocation(rooms, null)}
                             />
-                            <LocationCreator
-                                onCreated={(loc) => selectLocation(null, loc)}
-                            />
-                        </>
-                    }
+                        }
+                        {!isInternal &&
+                            <>
+                                <LocationSearcher
+                                    location={_location}
+                                    onSelected={(loc) => selectLocation(null, loc)}
+                                />
+                                <LocationCreator
+                                    onCreated={(loc) => selectLocation(null, loc)}
+                                />
+                            </>
+                        }
+                    </div>
                 </Modal>
             )}
         </div>);

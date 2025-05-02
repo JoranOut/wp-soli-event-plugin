@@ -104,7 +104,7 @@ class EventsDatesTableHandler {
     $endDate = $to->format('Y-m-d');
     $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
        w.ID , w.post_author ,
-       CASE d.status WHEN 'PRIVATE' THEN '🔒private' ELSE w.post_title END AS post_title,
+       CASE d.status WHEN 'PRIVATE' THEN 'private' ELSE w.post_title END AS post_title,
        w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type,
        l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
@@ -154,6 +154,8 @@ class EventsDatesTableHandler {
   }
 
   function saveDate($event_id, $date) {
+    $roomsJson = json_encode(Values\roomIndexesToSlugs($date->rooms));
+
     if (empty($date->id)) {
       $query = $this->wpdb->prepare("
                         INSERT INTO $this->event_dates_table
@@ -163,7 +165,7 @@ class EventsDatesTableHandler {
         $date->start_date,
         $date->end_date,
         $date->location ?: 'NULL',
-        $date->rooms ?: 'NULL',
+        $roomsJson ?: 'NULL',
         $date->status,
         $date->notes,
         $date->is_concert ? 1 : 0
@@ -185,7 +187,7 @@ class EventsDatesTableHandler {
         $date->start_date,
         $date->end_date,
         $date->location ?: 'NULL',
-        $date->rooms ?: 'NULL',
+        $roomsJson ?: 'NULL',
         $date->status,
         $date->notes,
         $date->is_concert ? 1 : 0,

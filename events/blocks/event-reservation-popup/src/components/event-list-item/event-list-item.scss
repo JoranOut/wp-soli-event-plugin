@@ -1,0 +1,33 @@
+.event-list-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+
+  &:nth-child(2n) {
+    background: #efefef;
+  }
+
+  .copy-button,
+  .focus-button,
+  .delete-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    padding: 5px;
+
+    &.delete-button:hover {
+      background: #ffd7d7;
+    }
+
+    img {
+      height: 21px;
+      filter: invert(42%) sepia(94%) saturate(4637%) hue-rotate(179deg) brightness(89%) contrast(105%);
+
+      &:hover {
+        filter: brightness(0) saturate(100%) invert(23%) sepia(28%) saturate(4059%) hue-rotate(175deg) brightness(98%) contrast(100%);
+      }
+    }
+  }
+
+}

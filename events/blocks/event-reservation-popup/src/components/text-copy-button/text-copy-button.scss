@@ -1,0 +1,15 @@
+.text-copy-button {
+  display: flex;
+  gap: 5px;
+
+  img {
+    height: 21px;
+    filter: brightness(0) saturate(100%) invert(23%) sepia(28%) saturate(4059%) hue-rotate(175deg) brightness(98%) contrast(100%);
+  }
+
+  &:hover img,
+  &:disabled img {
+    filter: invert(103%) brightness(89%) contrast(105%);
+  }
+}
+

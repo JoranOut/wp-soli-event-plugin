@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+        }
+        .svg-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            background: #f9f9f9;
+        }
+        .svg-container img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+        .svg-container span {
+            margin-top: 5px;
+            font-size: 14px;
+            text-align: center;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<div class="grid-container" id="svgGrid"></div>
+
+<script src="svg_list.js"></script>
+<script>
+    const grid = document.getElementById('svgGrid');
+
+    svgFiles.forEach(svg => {
+        const container = document.createElement('div');
+        container.className = 'svg-container';
+
+        const img = document.createElement('img');
+        img.src = svg;
+        img.alt = svg;
+
+        const label = document.createElement('span');
+        label.textContent = svg;
+
+        container.appendChild(img);
+        container.appendChild(label);
+        grid.appendChild(container);
+    });
+</script>
+</body>
+</html>

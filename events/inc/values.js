@@ -1,4 +1,10 @@
 export const ROOM_NAMES = ["Grote zaal", "Spiegelzaal", "Garderobe", "Studio 1", "Studio 2"];
+export const ROOM_SLUGS = ["grote-zaal", "spiegelzaal", "garderobe", "studio-1", "studio-2"];
+
+export const slugToRoomIndex = (slug) => {
+    const index = ROOM_SLUGS.indexOf(slug);
+    return index === -1 ? null : index;
+}
 
 export const displayRooms = (rooms) => {
     if (rooms?.length === ROOM_NAMES.length) {
@@ -29,4 +35,12 @@ export const EVENT_STATUS_COLOR = {
     "PENDING_APPROVAL": 'var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9))',
     "PUBLIC": 'green',
     "PRIVATE": 'purple',
+}
+
+export const ROOM_COLORS = {
+    "grote-zaal": "#2d7d8e",
+    "spiegelzaal": "#5a8e2b",
+    "garderobe": "#845d95",
+    "studio-1": "#936a50",
+    "studio-2": "#455787",
 }

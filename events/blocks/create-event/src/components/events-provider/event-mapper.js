@@ -1,3 +1,5 @@
+const {slugToRoomIndex} = require("../../../../../inc/values");
+
 function fromEventDto(eventDto) {
     return eventDto ? eventDto.map(fromDateDto) : null
 }
@@ -8,11 +10,19 @@ function fromDateDto(dateDto) {
         startDate: dateDto.start_date + " UTC",
         endDate: dateDto.end_date + " UTC",
         location: fromLocationDto(dateDto),
-        rooms: JSON.parse(dateDto.rooms),
+        rooms: fromEventRoomDto(dateDto.rooms),
         status: dateDto.status,
         concertStatus: dateDto.is_concert,
         notes: dateDto.notes,
     }
+}
+
+function fromEventRoomDto(rooms) {
+    const roomArray = JSON.parse(rooms);
+    if (!roomArray){
+        return null;
+    }
+    return roomArray.map(room => slugToRoomIndex(room));
 }
 
 function fromLocationDto(dateDto) {

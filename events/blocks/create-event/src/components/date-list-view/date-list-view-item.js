@@ -36,7 +36,6 @@ export const DateListViewItem = forwardRef(function DateListViewItem(props, ref)
             d1.year() === d2.year();
     }
 
-
     let today = dayjs();
 
     useEffect(() => {

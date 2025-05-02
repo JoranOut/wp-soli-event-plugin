@@ -1,0 +1,38 @@
+.open-button {
+  display: flex;
+  gap: 5px;
+
+  img {
+    height: 21px;
+    filter: invert(42%) sepia(94%) saturate(4637%) hue-rotate(179deg) brightness(89%) contrast(105%);
+
+    &:hover {
+      filter: brightness(0) saturate(100%) invert(23%) sepia(28%) saturate(4059%) hue-rotate(175deg) brightness(98%) contrast(100%);
+    }
+  }
+}
+
+.reservation-tool {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 100% auto;
+  gap: 10px;
+  justify-content: center;
+  height: calc(100% - 30px);
+}
+
+.tool-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  grid-column: span 2;
+}
+
+.close-button {
+  grid-column: span 2;
+  justify-self: center;
+}
+
+.components-modal__content > div:last-of-type {
+  height: 100%;
+}

@@ -1,0 +1,18 @@
+.open-button {
+  display: flex;
+  gap: 5px;
+
+  img {
+    height: 21px;
+    filter: invert(42%) sepia(94%) saturate(4637%) hue-rotate(179deg) brightness(89%) contrast(105%);
+
+    &:hover {
+      filter: brightness(0) saturate(100%) invert(23%) sepia(28%) saturate(4059%) hue-rotate(175deg) brightness(98%) contrast(100%);
+    }
+  }
+}
+
+.event-list-item-editor {
+  flex: 1;
+  padding: 20px 15px;
+}

@@ -12,6 +12,14 @@ divsToUpdate.forEach(function (div) {
                     : null;
 
     const adjustable = div.classList.contains("adjustable");
-    
-    render(<CalendarWrapper className="alignwide" calendarType={calendarType} adjustable={adjustable}/>, div)
+
+    const onlyConcerts = div.classList.contains("only-concerts");
+
+    const showRoomsFilter = div.classList.contains("show-rooms-filter");
+
+    render(<CalendarWrapper className="alignwide"
+                            calendarType={calendarType}
+                            adjustable={adjustable}
+                            onlyConcerts={onlyConcerts}
+                            showRoomsFilter={showRoomsFilter}/>, div)
 })

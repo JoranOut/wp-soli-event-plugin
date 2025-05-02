@@ -1,3 +1,5 @@
+const {ROOM_NAMES, ROOM_SLUGS} = require("../../../../../inc/values");
+
 function fromEventDto(eventDto) {
     return eventDto ? eventDto.map(fromDateDto) : [];
 }
@@ -12,17 +14,33 @@ function fromDateDto(dateDto) {
         start: startDate,
         end: endDate,
         url: dateDto.guid,
-        className: ["specialclass", dateDto.status === "PRIVATE" ? "private-event" : "",
-            dateDto.is_concert ? "concert" : ""],
+        color: dateDto.color,
+        className: [
+            "soli-event",
+            dateDto.status === "PRIVATE" ? "private-event" : "",
+            dateDto.is_concert ? "concert-event" : "",
+            ...getRoomClassList(dateDto)
+        ],
         extendedProps: {
             postId: dateDto.post_id,
             isConcert: dateDto.is_concert,
             postStatus: dateDto.status,
+            rooms: getRoomNameList(dateDto),
             locationId: dateDto.location_id,
             locationName: dateDto.location_name,
             locationAddress: dateDto.location_address,
         }
     }
+}
+
+function getRoomClassList(dateDto){
+    const rooms = JSON.parse(dateDto.rooms);
+    return rooms ? rooms.map(room => ROOM_SLUGS[room]) : [];
+}
+
+function getRoomNameList(dateDto){
+    const rooms = JSON.parse(dateDto.rooms);
+    return rooms ? rooms.map(room => ROOM_NAMES[room]) : [];
 }
 
 function parseTime(date) {

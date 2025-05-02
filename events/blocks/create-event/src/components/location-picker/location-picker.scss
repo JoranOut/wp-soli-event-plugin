@@ -2,7 +2,7 @@
   z-index: 100000 !important;
 }
 
-.components-modal__content > div:last-of-type {
+.location-picker-modal {
   display: flex;
   flex-direction: column;
   gap: 10px;

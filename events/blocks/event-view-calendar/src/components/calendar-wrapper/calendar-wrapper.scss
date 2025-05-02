@@ -1,2 +1,18 @@
 .soli-block-view-calendar {
+  .soli-event.private-event .fc-event-title {
+    padding-left: 17px;
+    position: relative;
+
+    &::before {
+      content: '🔒';
+      position: absolute;
+      left: 0;
+    }
+  }
+  .fc-header-toolbar {
+      display: grid;
+      justify-content: center;
+      grid-template-columns: 1fr auto 1fr;
+  }
 }
+
