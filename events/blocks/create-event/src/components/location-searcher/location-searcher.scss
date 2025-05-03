@@ -15,7 +15,7 @@
   .location {
     display: grid;
     grid-column: 1 / span 2;
-    grid-template-columns: subgrid;
+    grid-template-columns: auto min-content;
     grid-template-areas:
             "name submit"
             "address submit";
