@@ -156,8 +156,9 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
-build/
+**/node_modules/
+**/build/
+**/package-lock.json
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
