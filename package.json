@@ -4,6 +4,7 @@
   "description": "",
   "main": "test.js",
   "scripts": {
+    "wp-env": "wp-env start --debug",
     "build": "npm run build --workspace=events/blocks",
     "publish": "npm run build && node ./publish.js"
   },
