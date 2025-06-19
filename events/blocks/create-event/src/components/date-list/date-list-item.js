@@ -9,9 +9,13 @@ import DeleteButton from "../delete-button/delete-button";
 import EventStatusSelector from "../event-status-selector/event-status-selector";
 import NotesEditor from "../notes-editor/notes-editor";
 import ConcertStatusSwitch from "../concert-status-switch/concert-status-switch";
+import MoreDropdown from "../more-dropdown/more-dropdown";
+import ImageButton from "../image-button/image-button";
+import settingsIcon from '../../../../../../inc/assets/img/icons/settings.svg';
 
 function DateListItem(props) {
     const [date, setDate] = useState(props.date)
+    const [active, setActive] = useState(false);
 
     const updateLocation = (rooms, location) => {
         const updatedDate = {...date, location: location ? {...location} : null, rooms: rooms ? [...rooms] : null}; // Create a new copy of the date with updated location and rooms
@@ -59,7 +63,7 @@ function DateListItem(props) {
     let today = dayjs();
 
     return (
-        <div className={['date-list-item', dayjs(date.endDate).isAfter(today) ? "future" : "past"].join(' ')}>
+        <div className={['date-list-item', dayjs(date.endDate).isAfter(today) ? "future" : "past", active ? "active" : ""].join(' ')}>
             <DateRangePicker
                 date={date}
                 updateDate={(date) => updateDate(date)}
@@ -69,12 +73,6 @@ function DateListItem(props) {
                 location={date.location}
                 rooms={date.rooms}
                 onChange={(rooms, location) => updateLocation(rooms, location)}
-            />
-
-            <NotesEditor
-                size={"small"}
-                notes={date.notes}
-                onChange={(notes) => updateNotes(notes)}
             />
 
             <EventStatusSelector
@@ -89,12 +87,29 @@ function DateListItem(props) {
 
             <CopyButton onClick={() => copyDate()}/>
 
-            <TimeGeneratorModalButton
-                date={date}
-                onSubmit={(dates) => addGeneratedDates(dates)}/>
+            <MoreDropdown
+                label={<ImageButton src={settingsIcon}/>}
+                dropdownActive={(isActive) =>
+                    setActive(isActive)
+                }
+            >
+                <NotesEditor
+                    hideNotes={true}
+                    buttonSize={"large"}
+                    notes={date.notes}
+                    onChange={(notes) => updateNotes(notes)}
+                />
+
+                <TimeGeneratorModalButton
+                    date={date}
+                    onSubmit={(dates) => addGeneratedDates(dates)}/>
+
+            </MoreDropdown>
 
             <DeleteButton
                 onClick={() => props.onDelete()}/>
+
+            {date.notes && <p>{date.notes}</p>}
         </div>
     );
 }

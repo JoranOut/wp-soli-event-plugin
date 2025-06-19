@@ -7,4 +7,8 @@
 
 .undo-button, .reset-button, .redo-button {
   width: 44px;
+
+  &:disabled {
+    display: none;
+  }
 }

@@ -3,10 +3,12 @@ import {useState, useEffect} from '@wordpress/element';
 import {Modal, Button} from "@wordpress/components"
 import documentSVG from "../../../../../../inc/assets/img/icons/document_editing.svg";
 import {TextField} from "@mui/material";
+import ImageButton from "../image-button/image-button";
 
-export default function NotesEditor({notes, onChange, size}) {
+export default function NotesEditor({notes, onChange, buttonSize = 'small', hideNotes = false, onOpen, onClose}) {
     const [_notes, setNotes] = useState(notes);
-    const [_size, setSize] = useState(size);
+    const [_buttonSize, setButtonSize] = useState(buttonSize);
+    const [_hideNotes, setHideNotes] = useState(hideNotes);
 
     const [isOpen, setOpen] = useState(false);
 
@@ -14,6 +16,14 @@ export default function NotesEditor({notes, onChange, size}) {
         setOpen(true);
     }
     const closeModal = () => setOpen(false);
+
+    useEffect(() => {
+        if (isOpen && onOpen) {
+            onOpen();
+        } else if (!isOpen && onClose) {
+            onClose();
+        }
+    }, [isOpen]);
 
     const submit = () => {
         if (_notes?.length > 65535) {
@@ -24,30 +34,22 @@ export default function NotesEditor({notes, onChange, size}) {
         closeModal()
     }
 
-    useEffect(() => {
-        setNotes(notes)
-    }, [notes]);
-
-    useEffect(() => {
-        setSize(size)
-    }, [size]);
-
     const handleChange = (event) => {
         const value = event.target.value;
         setNotes(value);
     }
 
     return (
-        <div className={["notes-editor", _size].join(" ")}>
-            {_notes?.length > 0 && <div className="notes-preview">
+        <div className={["notes-editor", _buttonSize].join(" ")}>
+            {_notes?.length > 0 && !_hideNotes && <div className="notes-preview">
                 {_notes}
             </div>}
-            <Button
-                className={["notes-button", _notes?.length > 0 ? "" : "empty"].join(" ")}
-                variant="secondary"
+            <ImageButton
+                label={_buttonSize == 'small' ? undefined : (_notes?.length > 0 ? "Edit notes" : "Add notes")}
+                className={"notes-icon"}
+                src={documentSVG}
                 onClick={openModal}>
-                <img src={documentSVG}/>
-            </Button>
+            </ImageButton>
 
             {isOpen && (
                 <Modal

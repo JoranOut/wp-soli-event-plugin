@@ -25,7 +25,7 @@ export default function ConcertStatusSwitch({concertStatus, onChange}) {
                     onChange={handleChange}
                     inputProps={{ 'aria-label': 'controlled' }}
                 />}
-              label="concert"
+              label="Concert"
             />
         </FormControl>
     );

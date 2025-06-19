@@ -29,6 +29,7 @@ import NumberedInput from "./numbered-input";
 import DateRangePicker from "../daterange-picker/daterange-picker";
 import LocationPicker from "../location-picker/location-picker";
 import EventStatusSelector from "../event-status-selector/event-status-selector";
+import ImageButton from "../image-button/image-button";
 
 function DateViewToggle(props) {
     const [isOpen, setOpen] = useState(false);
@@ -113,6 +114,7 @@ function TimeGeneratorModalButton(props) {
     const [generatedData, setGeneratedData] = useState([]);
     const [method, setMethod] = useState(RepeatingMethod.UNTIL_DATE);
     const [error, setError] = useState(null);
+    const [buttonSize, setButtonSize] = useState(props.buttonSize || 'large');
 
     const [isOpen, setOpen] = useState(false);
     const openModal = () => {
@@ -123,6 +125,14 @@ function TimeGeneratorModalButton(props) {
         props.onSubmit(generatedData);
         setOpen(false);
     }
+
+    useEffect(() => {
+        if (isOpen && props.onOpen) {
+            props.onOpen();
+        } else if (!isOpen && props.onClose) {
+            props.onClose();
+        }
+    }, [isOpen]);
 
     const updateLocation = (rooms, location) => {
         setLocation(location);
@@ -219,10 +229,12 @@ function TimeGeneratorModalButton(props) {
 
     }
 
-    return (<div>
-        <Button className="repeat-button" variant="secondary" onClick={openModal}>
-            <img src={repeatSVG}/>
-        </Button>
+    return (<>
+        <ImageButton
+            label={buttonSize === "small" ? undefined : "Repeat"}
+            className="repeat-button"
+            src={repeatSVG}
+            onClick={openModal}/>
         {isOpen && (<Modal
             className="generate-dates"
             title="Genereer datums"
@@ -439,7 +451,7 @@ function TimeGeneratorModalButton(props) {
                 </div>
             </LocalizationProvider>
         </Modal>)}
-    </div>);
+    </>);
 }
 
 export default TimeGeneratorModalButton

@@ -1,7 +1,7 @@
 .date-list-item {
   display: grid;
   grid-template-columns: subgrid;
-  grid-column: 1 / span 14;
+  grid-column: 1 / span 13;
   border-bottom: 2px solid #deeff7;
   min-height: 40px;
   align-items: center;
@@ -12,6 +12,7 @@
   &.past {
     opacity: .5;
 
+    &.active,
     &:hover {
       opacity: 1;
     }

@@ -110,12 +110,14 @@ function EditComponent({context}) {
                     />
 
                     <NotesEditor
-                        size={"full"}
+                        hideNotes={false}
+                        buttonSize={"small"}
                         notes={dates?.length > 0 ? dates[0].notes : null}
                         onChange={(notes) => updateSingleNotes(notes)}
                     />
 
                     <TimeGeneratorModalButton
+                        buttonSize={"small"}
                         date={dates?.length > 0 ? dates[0] : null}
                         onSubmit={(genDates) => {
                             addGeneratedDates(genDates)

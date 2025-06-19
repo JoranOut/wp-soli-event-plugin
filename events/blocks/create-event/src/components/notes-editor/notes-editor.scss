@@ -24,7 +24,7 @@ form {
   }
 }
 
-.notes-editor.full {
+.notes-editor.small {
   display: flex;
   flex-direction: column;
   margin-top: 10px;
@@ -38,24 +38,6 @@ form {
 
   .notes-preview {
     display: block;
-  }
-}
-
-.notes-editor.small {
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-
-  .notes-preview {
-    display: block;
-    text-wrap: nowrap;
-    max-width: 25ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 5px 10px;
-    border-radius: 5px 0 0 5px;
-    border: 1px solid var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-    border-right: none;
   }
 }
 

@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import {useState, useEffect} from '@wordpress/element';
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {showVenue} from "../../../../../inc/values";
+import {displayRooms, showVenue} from "../../../../../inc/values";
 
 
 function SelectedDate(props) {
@@ -50,7 +50,22 @@ function SelectedDate(props) {
             </LocalizationProvider>
             <div className="location">
                 <img src={locationIcon}/>
-                {showVenue(location, rooms, true)}
+                <div>
+                    {location &&
+                        <>
+                            <span>location.name</span>
+                            <span>location.address</span>
+                        </>
+                    }
+                    {rooms &&
+                        <>
+                            <a href="/muziekcentrum" target="_blank">Muziekcentrum Soli</a>
+                            <br/>
+                            <span>{displayRooms(rooms)}</span>
+                        </>
+                    }
+                    {!location && !rooms && <span>Geen locatie bekend</span>}
+                </div>
             </div>
         </div>);
 }

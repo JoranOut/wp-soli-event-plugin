@@ -1,7 +1,10 @@
 .selected-date {
   display: grid;
   grid-template-columns: min-content auto auto auto auto auto;
-  column-gap: 10px;
+  column-gap: 20px;
+  row-gap: 20px;
+  border-radius: 5px;
+  padding: 10px;
 
   img {
     height: 25px;

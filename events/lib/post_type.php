@@ -63,7 +63,7 @@ function modify_post_type_args( $args, $post_type ) {
         )
       ) ),
       array( 'soli/create-event', array(
-        'align' => array('wide'),
+        'align' => 'wide',
         'lock' => array(
           'move' => true,
           'remove' => true
