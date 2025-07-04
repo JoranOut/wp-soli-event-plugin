@@ -12,8 +12,12 @@ function soli_events_modify_query_clauses($clauses, $wp_query) {
     $event_location_table = $wpdb->prefix . "event_location";
 
     // Modify the JOIN clause to include the event_dates table
-    $clauses['join'] .= " LEFT JOIN $event_dates_table ON $wpdb->posts.ID = $event_dates_table.post_id ";
-    $clauses['join'] .= " LEFT JOIN $event_location_table ON $event_dates_table.location = $event_location_table.id ";
+    if (false === strpos($clauses['join'], "JOIN $event_dates_table")) {
+        $clauses['join'] .= " LEFT JOIN $event_dates_table ON $wpdb->posts.ID = $event_dates_table.post_id ";
+    }
+    if (false === strpos($clauses['join'], "JOIN $event_location_table")) {
+        $clauses['join'] .= " LEFT JOIN $event_location_table ON $event_dates_table.location = $event_location_table.id ";
+    }
 
     // Select additional fields from the event_dates table (e.g., start_date, end_date, location, status)
     $clauses['fields'] .= ", $event_dates_table.start_date, $event_dates_table.end_date, $event_dates_table.status ".
@@ -28,13 +32,18 @@ function soli_events_modify_query_clauses($clauses, $wp_query) {
       // Add a condition to filter out past events
       $clauses['where'] .= $wpdb->prepare(" AND $event_dates_table.end_date >= %s", $current_day_start);
     }
+
+    // lets sort by start_date by default or if specified in the query
+    if (empty($wp_query->query_vars['orderby'])) {
+        // Default order by post date if not specified
+        $order = !isset($_GET['event_filter']) || $_GET['event_filter'] === 'future' ? 'ASC' : 'DESC';
+        $clauses['orderby'] = "$event_dates_table.start_date $order";
+    }
   }
 
   return $clauses;
 }
-
 add_filter('posts_clauses', 'Soli\Events\soli_events_modify_query_clauses', 10, 2);
-
 
 function custom_event_post_count($counts, $post_type, $perm) {
   global $wpdb;
