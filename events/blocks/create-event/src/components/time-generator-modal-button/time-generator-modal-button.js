@@ -61,7 +61,7 @@ function DateViewToggle(props) {
                     </div>);
                 })}
             </div>
-            {props.data.length > 6 && <Button className='expand-button'
+            {props.data.length > 4 && <Button className='expand-button'
                                               onClick={() => toggleOpen()}>
                 {!isOpen ? 'Bekijk alle data' : 'Verberg'}
             </Button>}
@@ -398,7 +398,7 @@ function TimeGeneratorModalButton(props) {
                                         frequency: frequency,
                                         method: RepeatingMethod.TIMES,
                                         endRepeatDate: null,
-                                        amount: val,
+                                        repeatAmount: val,
                                         rooms: rooms,
                                         location: location,
                                         status: status,
