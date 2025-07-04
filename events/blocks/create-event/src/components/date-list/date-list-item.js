@@ -109,7 +109,14 @@ function DateListItem(props) {
             <DeleteButton
                 onClick={() => props.onDelete()}/>
 
-            {date.notes && <p>{date.notes}</p>}
+            {date.notes && <>
+                    <NotesEditor
+                        hideNotes={false}
+                        buttonSize={"line"}
+                        notes={date.notes}
+                        onChange={(notes) => updateNotes(notes)}/>
+                </>
+            }
         </div>
     );
 }
