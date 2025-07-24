@@ -1,7 +1,7 @@
 import "./index.scss"
 import ListView from "./components/list-view/list-view"
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, RangeControl } from '@wordpress/components';
+import { PanelBody, RangeControl, ToggleControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/event-view-list", {
     title: "Event View List",
@@ -13,11 +13,15 @@ wp.blocks.registerBlockType("soli/event-view-list", {
             type: 'number',
             default: 3,
         },
+        show_navigation: {
+            type: 'boolean',
+            default: false,
+        },
     }
 })
 
 function EditComponent({ attributes, setAttributes }) {
-    const { events_per_page } = attributes;
+    const { events_per_page, show_navigation } = attributes;
 
     return (
         <>
@@ -30,10 +34,16 @@ function EditComponent({ attributes, setAttributes }) {
                         min={1}
                         max={20}
                     />
+                    <ToggleControl
+                        label="Show Navigation"
+                        checked={!!show_navigation}
+                        onChange={(value) => setAttributes({ show_navigation: value })}
+                    />
                 </PanelBody>
+
             </InspectorControls>
 
-            <ListView eventsPerPage={events_per_page}/>
+            <ListView eventsPerPage={events_per_page} showNavigation={show_navigation} />
         </>
     )
 }

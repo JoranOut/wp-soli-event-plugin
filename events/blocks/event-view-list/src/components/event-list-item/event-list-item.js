@@ -3,7 +3,6 @@ import DateBox from "../date-box/date-box";
 import SelectedDate from "../selected-date/selected-date";
 
 export default function EventListItem({event}) {
-    console.log(event)
     return (
         <>
             {event &&

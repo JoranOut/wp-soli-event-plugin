@@ -1,0 +1,17 @@
+.soli-block-event-list .nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 15px;
+  font-size: 16px;
+
+  a {
+    color: #0073aa;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
