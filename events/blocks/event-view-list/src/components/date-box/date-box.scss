@@ -1,0 +1,19 @@
+.event-list-date-box {
+  position: absolute;
+  background: #fff;
+  border-radius: 4px;
+  padding: 5px;
+  width: 70px;
+  justify-items: center;
+  top: 10px;
+  left: 10px;
+
+  h1 {
+    margin: 0;
+    font-size: 1.4em;
+  }
+
+  h1:nth-of-type(2) {
+    font-size: 1.3em;
+  }
+}

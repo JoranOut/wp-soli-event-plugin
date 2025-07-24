@@ -1,0 +1,26 @@
+.event-list-date {
+  display: grid;
+  grid-template-columns: min-content auto auto;
+  border-radius: 5px;
+  padding: 10px;
+  gap: 5px;
+
+  .date {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / span 2;
+    align-items: center;
+  }
+
+  img {
+    height: 1em;
+    max-width: initial;
+  }
+
+  .location {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / span 2;
+    align-items: center;
+  }
+}
