@@ -14,5 +14,9 @@
   "license": "ISC",
   "devDependencies": {
     "@wordpress/scripts": "^24.2.0"
+  },
+  "dependencies": {
+    "@mui/x-date-pickers": "^7.4.0",
+    "dayjs": "^1.11.6"
   }
 }

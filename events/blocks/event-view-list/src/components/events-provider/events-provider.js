@@ -3,22 +3,22 @@ import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect} from '@wordpress/element';
 import {fromEventDto} from './event_mapper';
 
-export default function EventsProvider(props) {
+export default function EventsProvider({children, setEvents, eventsPerPage}) {
     const [error, setError] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [loadingBox, setLoadingBox] = useState();
+    const loadPerPage = eventsPerPage ?? 10;
 
     useEffect(() => {
-        if (error === undefined && !isLoading && props.events == null) {
+        if (error === undefined && !isLoading) {
             setLoading(true)
-            apiFetch({path: `soli_event/v1/events/all/${page}/${itemsPerPage}/`})
+            apiFetch({path: `soli_event/v1/events/future/${page}/${loadPerPage}/`})
                 .then(
                     (event) => {
                         setLoading(false)
                         setError(undefined)
-                        props.setEvents(fromEventDto(event))
+                        setEvents(fromEventDto(event))
                     },
                     // Note: It's important to handle errors here instead of a catch() block
                     // so that we don't swallow exceptions from actual bugs in components.
@@ -29,7 +29,7 @@ export default function EventsProvider(props) {
                     }
                 );
         }
-    }, [page])
+    }, [page, loadPerPage])
 
     // If there's an error in fetching the remote data, display the error.
     if (error) {
@@ -42,7 +42,7 @@ export default function EventsProvider(props) {
     } else {
         return (
             <>
-                {!isLoading && !error && props.children}
+                {!isLoading && !error && children}
                 {isLoading && <p className="loadingtext" style={{...loadingBox}}>Loading page {page}...</p>}
             </>
         );

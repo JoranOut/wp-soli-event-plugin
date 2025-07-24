@@ -4,7 +4,7 @@ add_action('rest_api_init', 'soli_event_rest_api', 10, 1);
 function soli_event_rest_api() {
   buildGETEventsBetweenDates();
   buildGETEventDatesFromEvent();
-  buildGETEventsByPageAndItemsPerPage();
+  buildGETFutureEventsByPageAndItemsPerPage();
   buildPOSTEventDates();
 }
 
@@ -54,13 +54,13 @@ function buildGETEventDatesFromEvent() {
   ));
 }
 
-function buildGETEventsByPageAndItemsPerPage() {
-  register_rest_route('soli_event/v1', '/events/all/(?P<page>\d+)/(?P<itemsPerPage>\d+)', array(
+function buildGETFutureEventsByPageAndItemsPerPage() {
+  register_rest_route('soli_event/v1', '/events/future/(?P<page>\d+)/(?P<itemsPerPage>\d+)', array(
     'methods' => 'GET',
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
-      $dates = $eventHandler->getDatesPerPageFromEvent($request['page'], $request['itemsPerPage']);
+      $dates = $eventHandler->getFutureDatesPerPageFromEvent($request['page'], $request['itemsPerPage']);
 
       insertGUID($dates);
       insertFeaturedImage($dates);
@@ -198,8 +198,13 @@ function insertGUID(&$dates) {
   }
   foreach ($dates as &$date) {
     if (isset($date['post_id'])) {
-      $guid = esc_url(get_post_permalink($date['post_id']));
-      $date['guid'] = $guid . "&event=" . $date['id'];
+      // Get permalink to the single event page
+      $permalink = get_permalink($date['post_id']);
+
+      // Append the 'event' URL parameter
+      $url_with_param = add_query_arg('event', $date['id'], $permalink);
+
+      $date['guid'] = esc_url($url_with_param);
     }
   }
 }

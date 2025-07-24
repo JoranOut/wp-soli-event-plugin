@@ -10,8 +10,10 @@
   },
   "workspaces": [
     "events/blocks/create-event",
+    "events/blocks/event-reservation-popup",
     "events/blocks/event-view-list",
-    "events/blocks/event-view-monthly"
+    "events/blocks/event-view-monthly",
+    "events/blocks/get-event-date"
   ],
   "keywords": [],
   "author": "",

@@ -1,14 +1,54 @@
-.event-detail-popup {
+.soli-block-event-list-item {
+  display: block;
+  background: #fff;
+  box-shadow: 0 0 10px -5px #000;
+  border-radius: 5px;
+  overflow: hidden;
+  width: 300px;
+  padding: 10px;
 
-  h2 {
-    font-size: 15px;
-    font-weight: 700;
-    line-height: 1.6;
-    word-break: break-all;
+  .event-list-date-box {
+    position: absolute;
+    background: #fff;
+    border-radius: 4px;
+    padding: 5px;
+    width: 70px;
+    justify-items: center;
+    box-shadow: 0 0 8px -5px;
   }
 
-  p {
-    font-size: 12px;
-    line-height: 2;
+  .image-box {
+    border-radius: 5px;
+    overflow: hidden;
+    height: 160px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    img {
+      background: linear-gradient(-135deg, rgba(170, 42, 42, .7) 0, rgba(75, 33, 191, .7) 100%);
+      aspect-ratio: 1;
+    }
+  }
+
+  .event-list-content {
+    padding: 10px;
+
+    h2 {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+
+    p {
+      font-size: 12px;
+      line-height: 2;
+    }
+
+    a.button {
+      margin: 1em 1em 1em 0;
+    }
   }
 }

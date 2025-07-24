@@ -126,3 +126,26 @@ function soli_event_extend_admin_query_clauses($clauses, $query) {
 
     return $clauses;
 }
+
+add_filter('post_row_actions', 'add_custom_view_link_with_event_param', 10, 2);
+function add_custom_view_link_with_event_param($actions, $post) {
+    if ($post->post_type === 'soli_event') {
+        $event_id = $post->event_id;
+        if (empty($event_id)) {
+            $event_id = $post->ID;
+        }
+
+        // Get permalink to the single event page
+        $permalink = get_permalink($post->ID);
+
+        // Append the 'event' URL parameter
+        $url_with_param = add_query_arg('event', $event_id, $permalink);
+
+        // Add the custom View link opening in a new tab
+        $view = '<a href="' . esc_url($url_with_param) . '" target="_blank">' . __('View', 'your_text_domain') . '</a>';
+
+        $actions['view'] = $view;
+    }
+
+    return $actions;
+}

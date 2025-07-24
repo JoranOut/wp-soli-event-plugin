@@ -51,8 +51,8 @@ class EventsDatesTableHandler {
     return $dates;
   }
 
-  function getDatesPerPageFromEvent($page, $itemsPerPage) {
-    $dates = $this->loadEventDatesPerPageFromDb($page, $itemsPerPage);
+  function getFutureDatesPerPageFromEvent($page, $itemsPerPage) {
+    $dates = $this->loadFutureEventDatesPerPageFromDb($page, $itemsPerPage);
     if (empty($dates)) {
       return null;
     }
@@ -71,22 +71,26 @@ class EventsDatesTableHandler {
     return $this->castIsConcertToBoolean($results);
   }
 
-  function loadEventDatesPerPageFromDb($page, $itemsPerPage) {
+  function loadFutureEventDatesPerPageFromDb($page, $itemsPerPage) {
     $offset = ($page - 1) * $itemsPerPage;
     $limit = $itemsPerPage;
-    $query = $this->wpdb->prepare("
-        SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert, m.meta_value as featured_image_id,
-           w.ID , w.post_author , w.post_title , w.post_excerpt , w.post_status , w.post_name , w.post_modified , w.post_parent , w.post_type,
+    $current_daytime = current_time('Y-m-d H:m:s');
+
+    $query = $this->wpdb->prepare(  "
+        SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
+               m.meta_value as featured_image_id,
+           w.ID as post_id, w.post_author, CASE d.status WHEN 'PRIVATE' THEN 'private' ELSE w.post_title END AS post_title,
+           w.post_status, w.post_name, w.post_modified, w.post_parent, w.guid, w.post_type,
            l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
-        LEFT JOIN wp_posts w
+        LEFT JOIN $this->post_table w
             ON d.post_id = w.id
         LEFT JOIN $this->meta_table m
-            ON d.post_id = w.id and m.meta_key = '_thumbnail_id'
+            ON m.post_id = w.id and m.meta_key = '_thumbnail_id'
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
-        WHERE w.post_status = %s
-        ORDER BY d.start_date desc LIMIT %d OFFSET %d ", 'publish', $limit, $offset);
+        WHERE w.post_status = %s and d.status = %s and d.end_date >= %s
+        ORDER BY d.start_date desc LIMIT %d OFFSET %d ", 'publish', 'public', $current_daytime, $limit, $offset);
     $results = $this->wpdb->get_results($query, ARRAY_A);
     return $this->castIsConcertToBoolean($results);
   }

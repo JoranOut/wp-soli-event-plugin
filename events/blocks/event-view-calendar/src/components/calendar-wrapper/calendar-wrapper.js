@@ -58,6 +58,8 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
                     center: 'title',
                     right: adjustable ? 'dayGridMonth,timeGridWeek,timeGridDay,listMonth' : ''
                 }}
+                height={'max(calc(100vh - 250px), 500px)'}
+                scrollTime="10:00:00"
                 datesSet={handleDates}
                 weekends={true}
                 events={events}

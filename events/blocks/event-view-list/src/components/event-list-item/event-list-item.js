@@ -1,27 +1,22 @@
 import "./event-list-item.scss";
+import DateBox from "../date-box/date-box";
+import SelectedDate from "../selected-date/selected-date";
 
-export default function EventListItem(props) {
-    const isSameDay = (d1, d2) => {
-        return d1.getDate() === d2.getDate() &&
-            d1.getMonth() === d2.getMonth() &&
-            d1.getFullYear() === d2.getFullYear();
-    }
-
-    const parseDate = (start, end) => {
-        if (isSameDay(start, end)){
-            return start.format("dddd D MMMM, YYYY HH:mm") + " - " + end.format("HH:mm")
-        }
-        return start.format("dddd D MMMM, YYYY HH:mm") + " + " + end.format("dddd D MMMM, YYYY HH:mm");
-    }
-
+export default function EventListItem({event}) {
+    console.log(event)
     return (
         <>
-            {props.event &&
-                <div>
-                    <img src={props.event.featuredImage}/>
-                    <h2>{props.event.title}</h2>
-                    <p>{parseDate(props.event.startDate, props.event.endDate)}</p>
-                    <a href={props.event.guid}>visit</a>
+            {event &&
+                <div className="soli-block-event-list-item">
+                    <div className="image-box">
+                        <DateBox date={event}/>
+                        <img src={event.featuredImage}/>
+                    </div>
+                    <div className="event-list-content">
+                        <h2>{event.title}</h2>
+                        <SelectedDate date={event}/>
+                        <a className="button is-secondary" href={event.url}>visit</a>
+                    </div>
                 </div>
             }
         </>
