@@ -51,7 +51,7 @@ class EventsDatesTableHandler {
     return $dates;
   }
 
-  function getFutureDatesPerPageFromEvent($page, $itemsPerPage) {
+  function  getFutureDatesPerPageFromEvent($page, $itemsPerPage) {
     $dates = $this->loadFutureEventDatesPerPageFromDb($page, $itemsPerPage);
     if (empty($dates)) {
       return null;
@@ -90,10 +90,25 @@ class EventsDatesTableHandler {
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
         WHERE w.post_status = %s and d.status = %s and d.end_date >= %s
-        ORDER BY d.start_date desc LIMIT %d OFFSET %d ", 'publish', 'public', $current_daytime, $limit, $offset);
+        ORDER BY d.start_date asc LIMIT %d OFFSET %d ", 'publish', 'public', $current_daytime, $limit, $offset);
     $results = $this->wpdb->get_results($query, ARRAY_A);
     return $this->castIsConcertToBoolean($results);
   }
+
+  function getTotalFutureEvents() {
+      $current_daytime = current_time('Y-m-d H:m:s');
+
+      $query = $this->wpdb->prepare("
+        SELECT COUNT(*) 
+        FROM $this->event_dates_table d
+        LEFT JOIN $this->post_table w ON d.post_id = w.id
+        WHERE w.post_status = %s AND d.status = %s AND d.end_date >= %s
+    ", 'publish', 'public', $current_daytime);
+
+      return (int) $this->wpdb->get_var($query);
+  }
+
+
 
   function getEventsBetweenDates($from, $to) {
     if (empty($from) || empty($to)) {

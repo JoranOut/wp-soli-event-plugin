@@ -60,13 +60,19 @@ function buildGETFutureEventsByPageAndItemsPerPage() {
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
-      $dates = $eventHandler->getFutureDatesPerPageFromEvent($request['page'], $request['itemsPerPage']);
+      $events = $eventHandler->getFutureDatesPerPageFromEvent($request['page'], $request['itemsPerPage']);
+      $totalEvents = $eventHandler->getTotalFutureEvents();
+      $totalPages = ceil($totalEvents / $request['itemsPerPage']);
 
-      insertGUID($dates);
-      insertFeaturedImage($dates);
+      insertGUID($events);
+      insertFeaturedImage($events);
 
-      $response = new WP_REST_Response($dates);
-      if (!$dates) {
+      $response = new WP_REST_Response(array(
+        'events' => $events,
+        'totalEvents' => $totalEvents,
+        'totalPages' => $totalPages,
+      ));
+      if (!$events) {
         $response->set_status(204);
       } else {
         $response->set_status(200);
