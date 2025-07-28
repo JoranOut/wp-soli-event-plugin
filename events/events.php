@@ -30,4 +30,3 @@ require_once 'blocks/create-event/index.php';
 require_once 'blocks/event-view-calendar/index.php';
 require_once 'blocks/event-view-list/index.php';
 require_once 'blocks/event-reservation-popup/index.php';
-require_once 'blocks/get-event-date/index.php';

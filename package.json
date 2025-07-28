@@ -12,8 +12,7 @@
     "events/blocks/create-event",
     "events/blocks/event-reservation-popup",
     "events/blocks/event-view-list",
-    "events/blocks/event-view-monthly",
-    "events/blocks/get-event-date"
+    "events/blocks/event-view-monthly"
   ],
   "keywords": [],
   "author": "",
