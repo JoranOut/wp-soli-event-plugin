@@ -4,9 +4,14 @@
   "description": "",
   "main": "test.js",
   "scripts": {
-    "wp-env": "wp-env start --debug",
+    "wp-env:start": "wp-env start --debug",
+    "wp-env:stop": "wp-env stop --destroy",
     "build": "npm run build --workspace=events/blocks",
-    "publish": "npm run build && node ./publish.js"
+    "publish": "npm run build && node ./publish.js",
+    "test:playwright": "wp-scripts test-playwright",
+    "test:playwright:help": "wp-scripts test-playwright --help",
+    "test:playwright:debug": "wp-scripts test-playwright --debug",
+    "test:playwright:headed": "wp-scripts test-playwright --headed"
   },
   "workspaces": [
     "events/blocks/create-event",
@@ -18,9 +23,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wordpress/scripts": "^24.2.0",
+    "@wordpress/env": "latest",
+    "@wordpress/scripts": "latest",
     "archiver": "^7.0.1",
-    "express": "^4.19.2",
-    "@wordpress/env": "^10.23.0"
+    "express": "^4.19.2"
   }
 }

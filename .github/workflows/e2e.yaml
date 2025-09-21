@@ -1,0 +1,80 @@
+name: E2E (Playwright on wp-env)
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build blocks
+        run: npm run build
+
+      - name: Install Playwright browsers & deps
+        run: npx playwright install --with-deps
+
+      # Start WordPress test environment (Docker) via @wordpress/env
+      - name: Start wp-env
+        env:
+          COMPOSE_HTTP_TIMEOUT: 200
+        run: npm run wp-env:start
+
+      # Wait for the test site (port 8889) to be up before running tests
+      - name: Wait for WordPress (8889)
+        run: |
+          for i in {1..60}; do
+            if curl -sSf http://localhost:8889/wp-login.php >/dev/null; then
+              echo "WordPress is up";
+              break
+            fi
+            echo "Waiting for WordPress... ($i/60)"
+            sleep 5
+          done
+
+      - name: Run Playwright tests
+        env:
+          CI: true
+          BASE_URL: http://localhost:8889
+        run: |
+          # Add any extra flags after "--"
+          npm run test:playwright -- --reporter=html
+
+      # Always collect reports (helpful on failures)
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Playwright traces/videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results
+          if-no-files-found: ignore
+          retention-days: 7
+
+      # Tear down Docker even if tests fail
+      - name: Stop wp-env
+        if: always()
+        run: npm run wp-env:stop
