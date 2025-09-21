@@ -9,6 +9,7 @@ import CopyButton from "./components/copy-button/copy-button";
 import EventStatusSelector from "./components/event-status-selector/event-status-selector";
 import NotesEditor from "./components/notes-editor/notes-editor";
 import ConcertStatusSwitch from "./components/concert-status-switch/concert-status-switch";
+import AdminNotesEditor from "./components/admin-notes-editor/admin-notes-editor";
 
 wp.blocks.registerBlockType("soli/create-event", {
     title: "Create Event",
@@ -53,6 +54,11 @@ function EditComponent({context}) {
     const updateSingleNotes = (notes) => {
         const singleDate = dates[0];
         setDates([{...singleDate, notes: notes}])
+    }
+
+    const updateSingleAdminNotes = (adminNotes) => {
+        const singleDate = dates[0];
+        setDates([{...singleDate, notes: adminNotes}])
     }
 
     const addGeneratedDates = (genDates) => {
@@ -114,6 +120,13 @@ function EditComponent({context}) {
                         buttonSize={"small"}
                         notes={dates?.length > 0 ? dates[0].notes : null}
                         onChange={(notes) => updateSingleNotes(notes)}
+                    />
+
+                    <AdminNotesEditor
+                        hideNotes={false}
+                        buttonSize={"small"}
+                        notes={dates?.length > 0 ? dates[0].adminNotes : null}
+                        onChange={(adminNotes) => updateSingleAdminNotes(adminNotes)}
                     />
 
                     <TimeGeneratorModalButton

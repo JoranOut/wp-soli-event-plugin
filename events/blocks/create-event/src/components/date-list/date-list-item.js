@@ -12,6 +12,7 @@ import ConcertStatusSwitch from "../concert-status-switch/concert-status-switch"
 import MoreDropdown from "../more-dropdown/more-dropdown";
 import ImageButton from "../image-button/image-button";
 import settingsIcon from '../../../../../../inc/assets/img/icons/settings.svg';
+import AdminNotesEditor from "../admin-notes-editor/admin-notes-editor";
 
 function DateListItem(props) {
     const [date, setDate] = useState(props.date)
@@ -37,6 +38,12 @@ function DateListItem(props) {
 
     const updateNotes = (notes) => {
         const updatedDate = {...date, notes}; // Create a new copy of the date with updated location and rooms
+        setDate(updatedDate);
+        props.updateDate(updatedDate);
+    }
+
+    const updateAdminNotes = (adminNotes) => {
+        const updatedDate = {...date, adminNotes}; // Create a new copy of the date with updated location and rooms
         setDate(updatedDate);
         props.updateDate(updatedDate);
     }
@@ -100,6 +107,13 @@ function DateListItem(props) {
                     onChange={(notes) => updateNotes(notes)}
                 />
 
+                <AdminNotesEditor
+                    hideNotes={true}
+                    buttonSize={"large"}
+                    notes={date.adminNotes}
+                    onChange={(adminNotes) => updateAdminNotes(adminNotes)}
+                />
+
                 <TimeGeneratorModalButton
                     date={date}
                     onSubmit={(dates) => addGeneratedDates(dates)}/>
@@ -115,6 +129,14 @@ function DateListItem(props) {
                         buttonSize={"line"}
                         notes={date.notes}
                         onChange={(notes) => updateNotes(notes)}/>
+                </>
+            }
+            {date.adminNotes && <>
+                    <AdminNotesEditor
+                        hideNotes={false}
+                        buttonSize={"line"}
+                        notes={date.adminNotes}
+                        onChange={(adminNotes) => updateAdminNotes(adminNotes)}/>
                 </>
             }
         </div>

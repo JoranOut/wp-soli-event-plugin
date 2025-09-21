@@ -1,0 +1,13 @@
+.notes.admin-notes {
+  color: darkred;
+}
+
+.notes-button.admin-notes {
+  img {
+    filter: brightness(0) saturate(100%) invert(11%) sepia(92%) saturate(3964%) hue-rotate(355deg) brightness(100%) contrast(96%);
+
+    &:hover {
+      filter: brightness(0) saturate(100%) invert(15%) sepia(26%) saturate(6810%) hue-rotate(347deg) brightness(92%) contrast(75%);
+    }
+  }
+}

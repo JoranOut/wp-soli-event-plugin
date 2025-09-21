@@ -32,6 +32,7 @@ class EventsDatesTableHandler {
         rooms TINYTEXT,
         status TINYTEXT NOT NULL DEFAULT 'PLANNED',
         notes TEXT,
+        admin_notes TEXT,
         is_concert BOOLEAN NOT NULL DEFAULT 0,
         PRIMARY KEY  (id)
     ) $this->charset;");
@@ -56,7 +57,7 @@ class EventsDatesTableHandler {
     if (empty($dates)) {
       return null;
     }
-    return $dates;
+    return $this->appendExcerpt($dates);
   }
 
   function loadEventDatesFromDb($event_id) {
@@ -76,7 +77,7 @@ class EventsDatesTableHandler {
     $limit = $itemsPerPage;
     $current_daytime = current_time('Y-m-d H:m:s');
 
-    $query = $this->wpdb->prepare(  "
+    $query = $this->wpdb->prepare("
         SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
                m.meta_value as featured_image_id,
            w.ID as post_id, w.post_author, CASE d.status WHEN 'PRIVATE' THEN 'private' ELSE w.post_title END AS post_title,
@@ -90,7 +91,7 @@ class EventsDatesTableHandler {
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
         WHERE w.post_status = %s and d.status = %s and d.end_date >= %s
-        ORDER BY d.start_date asc LIMIT %d OFFSET %d ", 'publish', 'public', $current_daytime, $limit, $offset);
+        ORDER BY d.start_date asc LIMIT %d OFFSET %d", 'publish', 'public', $current_daytime, $limit, $offset);
     $results = $this->wpdb->get_results($query, ARRAY_A);
     return $this->castIsConcertToBoolean($results);
   }
@@ -183,8 +184,8 @@ class EventsDatesTableHandler {
         $event_id,
         $date->start_date,
         $date->end_date,
-        $date->location ?: 'NULL',
-        $roomsJson ?: 'NULL',
+        $date->location,
+        $roomsJson,
         $date->status,
         $date->notes,
         $date->is_concert ? 1 : 0
@@ -205,8 +206,8 @@ class EventsDatesTableHandler {
                         WHERE id=%d;",
         $date->start_date,
         $date->end_date,
-        $date->location ?: 'NULL',
-        $roomsJson ?: 'NULL',
+        $date->location,
+        $roomsJson,
         $date->status,
         $date->notes,
         $date->is_concert ? 1 : 0,
@@ -240,6 +241,13 @@ class EventsDatesTableHandler {
   private function castIsConcertToBoolean($results) {
     return array_map(function($date) {
       $date['is_concert'] = (bool) $date['is_concert'];
+      return $date;
+    }, $results);
+  }
+
+  private function appendExcerpt($results) {
+    return array_map(function($date) {
+      $date['post_excerpt'] = get_the_excerpt($date['post_id']);
       return $date;
     }, $results);
   }
