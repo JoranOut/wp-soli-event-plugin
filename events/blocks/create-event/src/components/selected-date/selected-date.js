@@ -41,11 +41,11 @@ function SelectedDate(props) {
                 {endDate.isBefore(today) && <p className="warning">( ! ) Dit evenement heeft al plaatsgevonden</p>}
                 <div className="date">
                     <img src={calendarIcon}/>
-                    <span>{startDate.format("DD MMMM YYYY (dddd)")}</span>
-                    <span>{startDate.format("HH:mm")}</span>
+                    <span id="start-date">{startDate.format("DD MMMM YYYY (dddd)")}</span>
+                    <span id="start-time">{startDate.format("HH:mm")}</span>
                     <span> - </span>
-                    <span>{endDate.format("HH:mm")}</span>
-                    <span>{!isSameDay(startDate, endDate) ? endDate.format("DD MMMM YYYY (dddd)") : ""}</span>
+                    <span id="end-time">{endDate.format("HH:mm")}</span>
+                    <span id="end-date">{!isSameDay(startDate, endDate) ? endDate.format("DD MMMM YYYY (dddd)") : ""}</span>
                 </div>
             </LocalizationProvider>
             <div className="location">
@@ -53,8 +53,8 @@ function SelectedDate(props) {
                 <div>
                     {location &&
                         <>
-                            <span>location.name</span>
-                            <span>location.address</span>
+                            <span id="location-name">location.name</span>
+                            <span id="location-address">location.address</span>
                         </>
                     }
                     {rooms &&

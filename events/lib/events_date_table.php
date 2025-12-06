@@ -52,7 +52,7 @@ class EventsDatesTableHandler {
     return $dates;
   }
 
-  function  getFutureDatesPerPageFromEvent($page, $itemsPerPage) {
+  function getFutureDatesPerPageFromEvent($page, $itemsPerPage) {
     $dates = $this->loadFutureEventDatesPerPageFromDb($page, $itemsPerPage);
     if (empty($dates)) {
       return null;
@@ -62,7 +62,7 @@ class EventsDatesTableHandler {
 
   function loadEventDatesFromDb($event_id) {
     $query = $this->wpdb->prepare("
-                SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
+                SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.admin_notes, d.is_concert,
                        l.id as location_id, l.name as location_name, l.address as location_address
                 FROM $this->event_dates_table d
                 LEFT JOIN $this->event_location_table l
@@ -93,6 +93,7 @@ class EventsDatesTableHandler {
         WHERE w.post_status = %s and d.status = %s and d.end_date >= %s
         ORDER BY d.start_date asc LIMIT %d OFFSET %d", 'publish', 'public', $current_daytime, $limit, $offset);
     $results = $this->wpdb->get_results($query, ARRAY_A);
+    $results = $this->appendGUID($results);
     return $this->castIsConcertToBoolean($results);
   }
 
@@ -108,8 +109,6 @@ class EventsDatesTableHandler {
 
       return (int) $this->wpdb->get_var($query);
   }
-
-
 
   function getEventsBetweenDates($from, $to) {
     if (empty($from) || empty($to)) {
@@ -135,6 +134,7 @@ class EventsDatesTableHandler {
         WHERE ((d.start_date between %s and %s) or (d.end_date between %s and %s))
               and w.post_status = %s;", $startDate, $endDate, $startDate, $endDate, 'publish');
     $results = $this->wpdb->get_results($query, ARRAY_A);
+    $results = $this->appendGUID($results);
     return $this->castIsConcertToBoolean($results);
   }
 
@@ -175,25 +175,36 @@ class EventsDatesTableHandler {
 
   function saveDate($event_id, $date) {
     $roomsJson = json_encode(Values\roomIndexesToSlugs($date->rooms));
+    $canEditAdminNotes = current_user_can('soli_event_admin_notes');
 
     if (empty($date->id)) {
       $query = $this->wpdb->prepare("
                         INSERT INTO $this->event_dates_table
-                            (post_id, start_date, end_date, location, rooms, status, notes, is_concert) VALUES
-                            (%d, %s, %s, %s, %s, %s, %s, %d)",
+                            (post_id, start_date, end_date, location, rooms, status, notes, admin_notes, is_concert) VALUES
+                            (%d, %s, %s, %s, %s, %s, %s, %s, %d)",
         $event_id,
         $date->start_date,
         $date->end_date,
-        $date->location,
+        $date->location ?? null,
         $roomsJson,
-        $date->status,
-        $date->notes,
+        $date->status ?? null,
+        $date->notes ?? null,
+        $date->admin_notes ?? null,
         $date->is_concert ? 1 : 0
       );
 
       $this->wpdb->get_results($this->replaceNullWithNull($query), ARRAY_A);
       return $this->wpdb->insert_id;
     } else {
+      if (!$canEditAdminNotes) {
+          $existing = $this->wpdb->get_var(
+              $this->wpdb->prepare("SELECT admin_notes FROM $this->event_dates_table WHERE id = %d", $date->id)
+          );
+          $adminNotes = $existing;
+      } else {
+          $adminNotes = $date->admin_notes ?? null;
+      }
+
       $query = $this->wpdb->prepare("
                         UPDATE $this->event_dates_table
                         SET start_date = %s,
@@ -202,14 +213,16 @@ class EventsDatesTableHandler {
                             rooms = %s,
                             status = %s,
                             notes = %s,
+                            admin_notes = %s,
                             is_concert = %d
                         WHERE id=%d;",
         $date->start_date,
         $date->end_date,
-        $date->location,
+        $date->location ?? null,
         $roomsJson,
-        $date->status,
-        $date->notes,
+        $date->status ?? null,
+        $date->notes ?? null,
+        $adminNotes ?? null,
         $date->is_concert ? 1 : 0,
         $date->id
       );
@@ -241,6 +254,13 @@ class EventsDatesTableHandler {
   private function castIsConcertToBoolean($results) {
     return array_map(function($date) {
       $date['is_concert'] = (bool) $date['is_concert'];
+      return $date;
+    }, $results);
+  }
+
+  private function appendGUID($results) {
+    return array_map(function($date) {
+      $date['guid'] = html_entity_decode($date['guid'].'&event='.$date['id']);
       return $date;
     }, $results);
   }

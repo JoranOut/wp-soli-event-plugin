@@ -17,6 +17,7 @@ import AdminNotesEditor from "../admin-notes-editor/admin-notes-editor";
 function DateListItem(props) {
     const [date, setDate] = useState(props.date)
     const [active, setActive] = useState(false);
+    const userCanAdminNote = window?.createEventPermissions?.canSeeAdminNotes ?? false;
 
     const updateLocation = (rooms, location) => {
         const updatedDate = {...date, location: location ? {...location} : null, rooms: rooms ? [...rooms] : null}; // Create a new copy of the date with updated location and rooms
@@ -107,12 +108,12 @@ function DateListItem(props) {
                     onChange={(notes) => updateNotes(notes)}
                 />
 
-                <AdminNotesEditor
+                {userCanAdminNote && <AdminNotesEditor
                     hideNotes={true}
                     buttonSize={"large"}
                     notes={date.adminNotes}
                     onChange={(adminNotes) => updateAdminNotes(adminNotes)}
-                />
+                />}
 
                 <TimeGeneratorModalButton
                     date={date}
@@ -123,21 +124,19 @@ function DateListItem(props) {
             <DeleteButton
                 onClick={() => props.onDelete()}/>
 
-            {date.notes && <>
-                    <NotesEditor
-                        hideNotes={false}
-                        buttonSize={"line"}
-                        notes={date.notes}
-                        onChange={(notes) => updateNotes(notes)}/>
-                </>
+            {date.notes &&
+                <NotesEditor
+                    hideNotes={false}
+                    buttonSize={"line"}
+                    notes={date.notes}
+                    onChange={(notes) => updateNotes(notes)}/>
             }
-            {date.adminNotes && <>
-                    <AdminNotesEditor
-                        hideNotes={false}
-                        buttonSize={"line"}
-                        notes={date.adminNotes}
-                        onChange={(adminNotes) => updateAdminNotes(adminNotes)}/>
-                </>
+            {date.adminNotes && userCanAdminNote &&
+                <AdminNotesEditor
+                    hideNotes={false}
+                    buttonSize={"line"}
+                    adminNotes={date.adminNotes}
+                    onChange={(adminNotes) => updateAdminNotes(adminNotes)}/>
             }
         </div>
     );

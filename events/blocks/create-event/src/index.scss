@@ -21,9 +21,10 @@
     margin-left: auto;
   }
 
-  .notes-editor {
+  .notes-editor:not(.empty), .admin-notes-editor:not(.empty) {
     width: 100%;
     margin-bottom: 10px;
+    align-items: baseline;
   }
 }
 

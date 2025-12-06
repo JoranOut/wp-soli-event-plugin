@@ -29,18 +29,20 @@ export default function EventDetailPopUp(props) {
     });
 
     const boxybox = (eventBox) => {
+        console.log(eventBox);
+        console.log(ref)
         if (eventBox) {
-            if (eventBox.left + eventBox.width + 255 > window.innerWidth) {
+            if (eventBox.offsetLeft + eventBox.width + 255 > window.innerWidth) {
                 setSide("left")
                 setBox({
-                    top: window.scrollY + eventBox.top + eventBox.height / 2 + 'px',
-                    left: eventBox.left - 5 + 'px',
+                    top: window.scrollY + eventBox.offsetTop - ref.current.offsetHeight/2 + 'px',
+                    left: eventBox.offsetLeft - ref.current.offsetWidth - 10 + 'px',
                 });
             } else {
                 setSide("right")
                 setBox({
-                    top: window.scrollY + eventBox.top + eventBox.height / 2 + 'px',
-                    left: eventBox.left + eventBox.width + 5 + 'px',
+                    top: window.scrollY + eventBox.offsetTop - eventBox.height/2 - ref.current.offsetHeight/2 + 'px',
+                    left: eventBox.offsetLeft + eventBox.width + 10 + 'px',
                 });
             }
 
@@ -54,11 +56,11 @@ export default function EventDetailPopUp(props) {
     return (
         <>
             {props.event &&
-                <div ref={ref} className={side === "left" ? "event-detail-popup left" : "event-detail-popup"} style={box}>
-                    <img src={props.event.raw.featuredImage}/>
+                <div ref={ref} className={["event-detail-popup", side].join(" ")} style={box}>
+                    <img src={props.event.raw?.featuredImage}/>
                     <h2>{props.event.title}</h2>
-                    <p>{parseDate(dayjs(props.event.start.d), dayjs(props.event.end.d))}</p>
-                    <a className="components-button is-primary" href={props.event.raw.guid}>visit</a>
+                    <p>{parseDate(dayjs(props.event.start), dayjs(props.event.end))}</p>
+                    <a className="components-button is-primary" href={props.event.url}>visit</a>
                 </div>
             }
         </>

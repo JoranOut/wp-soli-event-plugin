@@ -11,9 +11,17 @@ export const displayRooms = (rooms) => {
         return "Hele gebouw";
     }
     if (rooms?.length > 0) {
-        return rooms.map(i => ROOM_NAMES[i]).join(' + ');
+        return formatCommaSeperated(rooms.map(i => ROOM_NAMES[i]));
     }
     return null;
+}
+
+function formatCommaSeperated(arr) {
+    if (arr.length === 0) return "";
+    if (arr.length === 1) return arr[0];
+    if (arr.length === 2) return arr.join(" & ");
+
+    return arr.slice(0, -1).join(", ") + " & " + arr[arr.length - 1];
 }
 
 export const showVenue = (itemLocation, itemRooms, fullLocation) => {

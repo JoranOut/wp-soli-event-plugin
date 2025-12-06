@@ -44,6 +44,10 @@ export default function EventsProvider({setEvents, range, filters, children}) {
     }
 
     const filterEvent = (event, filters) => {
+        if (!filters || filters.length === 0) {
+            return true;
+        }
+
         const concert = !filters.includes("only-concerts") || event.is_concert;
 
         let room = true;
@@ -61,7 +65,7 @@ export default function EventsProvider({setEvents, range, filters, children}) {
 
     useEffect(() => {
         const events = splitEvents(filters) ? splitEventsOnRooms(cache) : cache;
-        const filteredEvents = events.filter(event => filterEvent(event, filters));
+        const filteredEvents = !events ? [] : events.filter(event => filterEvent(event, filters));
         setEvents(fromEventDto(filteredEvents));
     }, [filters]);
 
@@ -85,7 +89,7 @@ export default function EventsProvider({setEvents, range, filters, children}) {
                         setError(undefined)
                         setCache(response);
                         const events = splitEvents(filters) ? splitEventsOnRooms(response) : response;
-                        const filteredEvents = events.filter(event => filterEvent(event, filters));
+                        const filteredEvents = !events ? [] : events.filter(event => filterEvent(event, filters));
                         setEvents(fromEventDto(filteredEvents));
                     },
                     // Note: It's important to handle errors here instead of a catch() block

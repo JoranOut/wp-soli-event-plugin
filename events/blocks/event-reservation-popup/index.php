@@ -22,7 +22,7 @@ class SoliBlockEventReservationPopup {
 
   function theHTML($attributes){
     wp_enqueue_script('block-event-reservation-popup-frontend',  plugin_dir_url(__FILE__) . 'build/frontend.js', array('wp-components', 'wp-element', 'wp-api-fetch'), SOLI_EVENT__PLUGIN_VERSION, true);
-    wp_enqueue_style('block-event-reservation-popup-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css', array(), SOLI_EVENT__PLUGIN_VERSION);
+    wp_enqueue_style('block-event-reservation-popup-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css', array('wp-components'), SOLI_EVENT__PLUGIN_VERSION);
 
     ob_start();?>
     <div class="block-event-reservation-popup"></div>

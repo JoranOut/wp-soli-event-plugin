@@ -9,7 +9,6 @@ import ImageButton from "../image-button/image-button";
 export default function NotesEditor({notes, onChange, buttonSize = 'small', hideNotes = false, onOpen, onClose}) {
     const [_notes, setNotes] = useState(notes);
     const [_buttonSize, setButtonSize] = useState(buttonSize);
-    const [_hideNotes, setHideNotes] = useState(hideNotes);
 
     const [isOpen, setOpen] = useState(false);
 
@@ -37,7 +36,7 @@ export default function NotesEditor({notes, onChange, buttonSize = 'small', hide
 
     const handleChange = (event) => {
         const value = event.target.value;
-        setNotes(value);
+        setNotes(value.length > 0 ? value : null);
     }
 
     const ModalContent = (
@@ -66,11 +65,11 @@ export default function NotesEditor({notes, onChange, buttonSize = 'small', hide
                 type="submit"
                 className="submit-button"
                 variant="secondary"
-                onClick={() => submit()}>Save and Exit</Button>
+                onClick={() => submit()}>Close</Button>
         </Modal>
     );
 
-    if(_buttonSize === "line" && !_hideNotes){
+    if(_buttonSize === "line" && !hideNotes){
         return (
             <div className="notes">
                 <img src={documentSVG}/>
@@ -86,9 +85,9 @@ export default function NotesEditor({notes, onChange, buttonSize = 'small', hide
     }
 
     return (
-        <div className={["notes-editor", _buttonSize].join(" ")}>
+        <div className={["notes-editor", _buttonSize, _notes == null ? 'empty' : ''].join(" ")}>
             {_buttonSize === 'line' && <img src={documentSVG}/>}
-            {_notes?.length > 0 && !_hideNotes && <div className="notes-preview">
+            {_notes?.length > 0 && !hideNotes && <div className="notes-preview">
                 {_notes}
             </div>}
             <ImageButton

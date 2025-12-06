@@ -27,17 +27,24 @@ function custom_soli_event_column($column, $post_id) {
   if ($column === 'start_date' || $column === 'end_date') {
     $date_format = get_option('date_format');
     $time_format = get_option('time_format');
+    $tz = wp_timezone();
 
     if ($column === 'start_date') {
-      echo esc_html($post->start_date ?
-        date_i18n("$date_format $time_format", strtotime($post->start_date))
-        : __('—', 'your_text_domain'));
+        if($post->start_date) {
+            $dt = new DateTime($post->start_date, $tz);
+            echo esc_html( $dt->format("$date_format $time_format"));
+        } else {
+            echo esc_html(__('—', 'your_text_domain'));
+        }
     }
 
     if ($column === 'end_date') {
-      echo esc_html($post->end_date ?
-        date_i18n("$date_format $time_format", strtotime($post->end_date))
-        : __('—', 'your_text_domain'));
+        if($post->end_date) {
+            $dt = new DateTime($post->end_date, $tz);
+            echo esc_html( $dt->format("$date_format $time_format"));
+        } else {
+            echo esc_html(__('—', 'your_text_domain'));
+        }
     }
   }
   if ($column === 'location') {
@@ -47,18 +54,42 @@ function custom_soli_event_column($column, $post_id) {
     echo esc_html($post->status ?? __('—', 'your_text_domain'));
   }
   if ($column === 'notes') {
-    if (!empty($post->notes)) {
-      echo '<div title="' . esc_attr($post->notes) . '">' . esc_html($post->notes) . '</div>';
-    } else {
-      echo __('-', 'your_text_domain');
-    }
+      echo extractNotesAndAdminNotes($post);
   }
+}
+
+function extractNotesAndAdminNotes($post): string
+{
+    $output = '';
+
+    // Show admin notes for users with the capability, prefixed with "admin notes:"
+    if (current_user_can('soli_event_admin_notes') && !empty($post->admin_notes)) {
+        $output .= '<div style="font-weight:600; color:red; margin-bottom:4px;" title="' . esc_attr($post->admin_notes) . '">'
+            . esc_html($post->admin_notes)
+            . esc_html__(' (admin notes)', 'soli_events') . ' '
+            . '</div>';
+    }
+
+    // Show regular notes
+    if (!empty($post->notes)) {
+        $output .= '<div title="' . esc_attr($post->notes) . '">' . esc_html($post->notes) . '</div>';
+    }
+
+    if ($output === '') {
+        $output = __('-', 'your_text_domain');
+    }
+
+    return $output;
 }
 
 function getLocationByEvent($post) {
   $rooms = $post->rooms;
   if ($rooms) {
-    return esc_html(Soli\Events\Values\translateLocation($rooms));
+    $rooms = json_decode($rooms);
+    if (is_array($rooms)){
+        return join(", ", $rooms);
+    }
+    return $rooms;
   }
 
   if (!empty($post->location_name)) {
@@ -105,6 +136,7 @@ function soli_event_extend_admin_query_clauses($clauses, $query) {
                                 , $event_dates_table.end_date
                                 , $event_dates_table.status
                                 , $event_dates_table.notes
+                                , $event_dates_table.admin_notes
                                 , $event_dates_table.rooms ";
         $clauses['fields'] .= ", $event_location_table.name
                                 , $event_location_table.address";
@@ -118,8 +150,9 @@ function soli_event_extend_admin_query_clauses($clauses, $query) {
                   OR $event_location_table.name LIKE %s
                   OR $event_location_table.address LIKE %s
                   OR $event_dates_table.status LIKE %s
-                  OR $event_dates_table.notes LIKE %s ",
-                $like, $like, $like, $like, $like, $like
+                  OR $event_dates_table.notes LIKE %s 
+                  OR $event_dates_table.admin_notes LIKE %s ",
+                $like, $like, $like, $like, $like, $like, $like
             );
         }
     }

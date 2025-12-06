@@ -5,15 +5,16 @@ import dayjs from "dayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {displayRooms, showVenue} from "../../../../../inc/values";
-
+import "dayjs/locale/nl";
 
 function SelectedDate({date}) {
     dayjs.locale("nl");
     const startDate = dayjs(date?.start);
     const endDate = dayjs(date?.end);
-    const location = date?.location;
-    const rooms = date?.rooms;
+    const location = date?.extendedProps?.location;
+    const rooms = date?.extendedProps?.rooms;
 
+    console.log(location)
 
     const isSameDay = (d1, d2) => {
         return d1.date() === d2.date() &&
@@ -49,22 +50,21 @@ function SelectedDate({date}) {
             </LocalizationProvider>
             <div className="location">
                 <img src={locationIcon}/>
-                <div>
-                    {location &&
-                        <>
-                            <span>location.name</span>
-                            <span>location.address</span>
-                        </>
-                    }
-                    {rooms &&
-                        <>
-                            <a href="/muziekcentrum" target="_blank">Muziekcentrum Soli</a>
-                            <br/>
-                            <span>{displayRooms(rooms)}</span>
-                        </>
-                    }
-                    {!location && !rooms && <span>Geen locatie bekend</span>}
-                </div>
+                {location &&
+                    <>
+                        <span><b>{location.name}</b></span>
+                        <br/>
+                        <span style={{whiteSpace: "pre-line"}}>{location.address}</span>
+                    </>
+                }
+                {rooms &&
+                    <>
+                        <a href="/muziekcentrum" target="_blank"><b>Muziekcentrum Soli</b></a>
+                        <br/>
+                        <span>{displayRooms(rooms)}</span>
+                    </>
+                }
+                {!location && !rooms && <span>Geen locatie bekend</span>}
             </div>
         </div>);
 }

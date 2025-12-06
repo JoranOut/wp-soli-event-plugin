@@ -44,6 +44,7 @@ function buildGETEventDatesFromEvent() {
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
       $dates = $eventHandler->getDatesFromEvent($request['id']);
       $response = new WP_REST_Response($dates);
+      filterAdminNotesFromDatesIfNoPermission($response);
       if (!$dates) {
         $response->set_status(204);
       } else {
@@ -64,7 +65,6 @@ function buildGETFutureEventsByPageAndItemsPerPage() {
       $totalEvents = $eventHandler->getTotalFutureEvents();
       $totalPages = ceil($totalEvents / $request['itemsPerPage']);
 
-      insertGUID($events);
       insertFeaturedImage($events);
 
       $response = new WP_REST_Response(array(
@@ -111,44 +111,7 @@ function buildPOSTEventDates() {
       $body = json_decode($request->get_body());
       $dates = $eventHandler->setDatesAtEvent($request['id'], $body);
       $response = new WP_REST_Response($dates);
-      if (!$dates) {
-        $response->set_status(204);
-      } else {
-        $response->set_status(200);
-      }
-      return $response;
-    },
-  ));
-}
-
-/**
- * param: {
- *    id: int
- * }
- * body:
- *  {
- *    dates: {
- *      main: #date,
- *      repeated: [#data]
- *    }
- *  }
- * #date: {
- *  id ?: int,
- *  start_date: date,
- *  end_date: date,
- * }
- */
-function buildPOSTEventLocation() {
-  register_rest_route('soli_event/v1', '/location/(?P<id>\d+)', array(
-    'methods' => 'POST',
-    'permission_callback' => function () {
-      return current_user_can('edit_posts');
-    }, // *always set a permission callback
-    'callback' => function ($request) {
-      $eventHandler = new \Soli\Events\EventsLocation();
-      $body = json_decode($request->get_body());
-      $dates = $eventHandler->setDatesAtEvent($request['id'], $body);
-      $response = new WP_REST_Response($dates);
+      filterAdminNotesFromDatesIfNoPermission($response);
       if (!$dates) {
         $response->set_status(204);
       } else {
@@ -198,23 +161,6 @@ function validateMonth($date): DateTime {
   }
 }
 
-function insertGUID(&$dates) {
-  if (empty($dates)) {
-    return;
-  }
-  foreach ($dates as &$date) {
-    if (isset($date['post_id'])) {
-      // Get permalink to the single event page
-      $permalink = get_permalink($date['post_id']);
-
-      // Append the 'event' URL parameter
-      $url_with_param = add_query_arg('event', $date['id'], $permalink);
-
-      $date['guid'] = esc_url($url_with_param);
-    }
-  }
-}
-
 function insertFeaturedImage(&$dates) {
   if (!isset($dates)) {
     return;
@@ -245,4 +191,14 @@ function validateStatii($dates): bool {
 function validateStatus($status): bool {
   $statii = array("PLANNED", "PENDING_APPROVAL", "PUBLIC", "PRIVATE");
   return in_array($status, $statii);
+}
+
+function filterAdminNotesFromDatesIfNoPermission(&$dates) {
+  if (!current_user_can('soli_event_admin_notes')) {
+    foreach ($dates as &$date) {
+      if (isset($date->admin_notes)) {
+        unset($date->admin_notes);
+      }
+    }
+  }
 }

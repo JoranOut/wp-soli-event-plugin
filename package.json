@@ -5,7 +5,7 @@
   "main": "test.js",
   "scripts": {
     "wp-env:start": "wp-env start --debug",
-    "wp-env:stop": "wp-env stop --destroy",
+    "wp-env:stop": "wp-env stop",
     "build": "npm run build --workspace=events/blocks",
     "publish": "npm run build && node ./publish.js",
     "test:playwright": "wp-scripts test-playwright",
@@ -26,6 +26,10 @@
     "@wordpress/env": "latest",
     "@wordpress/scripts": "latest",
     "archiver": "^7.0.1",
+    "date-fns": "^4.1.0",
     "express": "^4.19.2"
+  },
+  "dependencies": {
+    "@wordpress/e2e-test-utils-playwright": "^1.32.0"
   }
 }

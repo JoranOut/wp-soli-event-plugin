@@ -1,7 +1,7 @@
 import "./admin-notes-editor.scss"
 import {useState, useEffect} from '@wordpress/element';
 import {Modal, Button} from "@wordpress/components"
-import documentSVG from "../../../../../../inc/assets/img/icons/document_editing.svg";
+import lockSVG from "../../../../../../inc/assets/img/icons/lock.svg";
 import editSVG from "../../../../../../inc/assets/img/icons/edit.svg";
 import {TextField} from "@mui/material";
 import ImageButton from "../image-button/image-button";
@@ -9,7 +9,6 @@ import ImageButton from "../image-button/image-button";
 export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'small', hideNotes = false, onOpen, onClose}) {
     const [_adminNotes, setAdminNotes] = useState(adminNotes);
     const [_buttonSize, setButtonSize] = useState(buttonSize);
-    const [_hideNotes, setHideNotes] = useState(hideNotes);
 
     const [isOpen, setOpen] = useState(false);
 
@@ -37,7 +36,7 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
 
     const handleChange = (event) => {
         const value = event.target.value;
-        setAdminNotes(value);
+        setAdminNotes(value.length > 0 ? value : null);
     }
 
     const ModalContent = (
@@ -66,14 +65,14 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
                 type="submit"
                 className="submit-button"
                 variant="secondary"
-                onClick={() => submit()}>Save and Exit</Button>
+                onClick={() => submit()}>Close</Button>
         </Modal>
     );
 
-    if(_buttonSize === "line" && !_hideNotes){
+    if(_buttonSize === "line" && !hideNotes){
         return (
             <div className="notes admin-notes">
-                <img src={documentSVG}/>
+                <img src={lockSVG}/>
                 {_adminNotes}
                 <ImageButton
                     className={"edit-notes-icon"}
@@ -86,15 +85,15 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
     }
 
     return (
-        <div className={["admin-notes-editor", _buttonSize].join(" ")}>
-            {_buttonSize === 'line' && <img src={documentSVG}/>}
-            {_adminNotes?.length > 0 && !_hideNotes && <div className="notes-preview">
+        <div className={["admin-notes-editor", _buttonSize, _adminNotes == null ? 'empty' : ''].join(" ")}>
+            {_buttonSize === 'line' && <img src={lockSVG}/>}
+            {_adminNotes?.length > 0 && !hideNotes && <div className="notes-preview">
                 {_adminNotes}
             </div>}
             <ImageButton
                 label={_buttonSize == 'small' ? undefined : "Admin notes"}
                 className={"notes-button"}
-                src={documentSVG}
+                src={lockSVG}
                 onClick={openModal}>
             </ImageButton>
 

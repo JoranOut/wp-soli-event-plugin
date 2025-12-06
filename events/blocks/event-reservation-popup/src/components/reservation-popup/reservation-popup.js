@@ -6,7 +6,7 @@ import {Button} from "@wordpress/components"
 import ReservationTool from "../reservation-tool/reservation-tool";
 
 export default function ReservationPopup({}) {
-    const [showPopup, setShowPopup] = useState(true);
+    const [showPopup, setShowPopup] = useState(false);
 
     const openPopup = () => {
         setShowPopup(true);

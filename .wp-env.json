@@ -1,11 +1,13 @@
 {
-  "plugins": [
-    "."
-  ],
+  "core": "WordPress/WordPress",
+  "plugins": ["."],
   "config": {
-    "WP_DEBUG": true,
-    "WP_DEBUG_LOG": true,
-    "WP_DEBUG_DISPLAY": true,
-    "SCRIPT_DEBUG": true
+    "WP_DEBUG": true
+  },
+  "mappings": {
+    ".wp-env-script.sh": "./.wp-env-script.sh"
+  },
+  "lifecycleScripts": {
+    "afterStart": "wp-env run cli bash /var/www/html/.wp-env-script.sh && wp-env run tests-cli bash /var/www/html/.wp-env-script.sh"
   }
 }

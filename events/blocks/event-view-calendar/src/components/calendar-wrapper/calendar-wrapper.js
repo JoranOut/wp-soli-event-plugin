@@ -13,6 +13,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import CalendarFilter from "../calendar-filter/calendar-filter";
 import {ROOM_SLUGS} from "../../../../../inc/values";
+import {logs} from "@wordpress/env/lib/commands";
 
 const setDefaultFilters = (onlyConcerts, onlyInternal) => {
     const concertFilter = onlyConcerts ? ["only-concerts"] : [];
@@ -34,6 +35,14 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
 
     const handleDates = (rangeInfo) => {
         setRange(rangeInfo)
+    }
+
+    const handleClick = (info) => {
+        info.jsEvent.preventDefault()
+        console.log(info);
+        setSelectedEvent(info.event);
+        const box = info.el.getBoundingClientRect();
+        setSelectedEventBox(box);
     }
 
     return (<div className={`soli-block-view-calendar ${filters.join(' ')}`}>
@@ -59,8 +68,9 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
                     right: adjustable ? 'dayGridMonth,timeGridWeek,timeGridDay,listMonth' : ''
                 }}
                 height={'max(calc(100vh - 250px), 500px)'}
-                scrollTime="10:00:00"
+                scrollTime="11:00:00"
                 datesSet={handleDates}
+                eventClick={handleClick}
                 weekends={true}
                 events={events}
                 locale={nlLocale}

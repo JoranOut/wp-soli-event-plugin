@@ -1,10 +1,8 @@
-const {ROOM_NAMES, ROOM_SLUGS} = require("../../../../../inc/values");
+const { ROOM_SLUGS} = require("../../../../../inc/values");
 
 function fromEventDto(eventDto) {
     return eventDto ? eventDto.map(fromDateDto) : [];
 }
-
-
 
 function fromDateDto(dateDto) {
     const startDate = parseTime(dateDto.start_date)
@@ -29,22 +27,25 @@ function fromDateDto(dateDto) {
             postId: dateDto.post_id,
             isConcert: dateDto.is_concert,
             postStatus: dateDto.status,
-            rooms: getRoomNameList(dateDto),
-            locationId: dateDto.location_id,
-            locationName: dateDto.location_name,
-            locationAddress: dateDto.location_address,
+            rooms: getRoomIndexList(dateDto),
+            location: dateDto.location_id ? {
+                id: dateDto.location_id,
+                name: dateDto.location_name,
+                address: dateDto.location_address,
+            } : null,
         }
     }
 }
 
 function getRoomClassList(dateDto){
     const rooms = JSON.parse(dateDto.rooms);
-    return rooms ? rooms.map(room => ROOM_SLUGS[room]) : [];
+    return rooms ? rooms : [];
 }
 
-function getRoomNameList(dateDto){
+function getRoomIndexList(dateDto){
     const rooms = JSON.parse(dateDto.rooms);
-    return rooms ? rooms.map(room => ROOM_NAMES[room]) : [];
+    return rooms ? rooms
+        .map(room => ROOM_SLUGS.indexOf(room)) : null;
 }
 
 function parseTime(date) {

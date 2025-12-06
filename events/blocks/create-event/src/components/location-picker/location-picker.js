@@ -38,7 +38,7 @@ function LocationPicker({location, rooms, onChange}) {
 
     return (
         <div className="location-picker">
-            <Button variant="secondary" onClick={openModal}>
+            <Button variant="secondary" className="max200px" onClick={openModal}>
                 {
                     displayLocation() ??
                     displayRooms(_rooms) ??

@@ -1,6 +1,8 @@
 import {defineConfig} from '@playwright/test';
+const baseConfig = require( '@wordpress/scripts/config/playwright.config' );
 
-export default defineConfig({
+const config = defineConfig({
+    ...baseConfig,
     testDir: 'e2e',
     retries: process.env.CI ? 1 : 0,                 // enables "on-first-retry" if you prefer it
     reporter: [['html', { open: 'never' }]],
@@ -11,5 +13,10 @@ export default defineConfig({
         trace: 'retain-on-failure',                         // full click-by-click trace on failure
     },
     outputDir: 'test-results',                            // where videos/traces/screens land
-    webServer: undefined
+    webServer: {
+        ...baseConfig.webServer,
+        command: 'npm run env:start',
+    }
 });
+
+export default config;

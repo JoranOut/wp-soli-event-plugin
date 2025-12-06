@@ -3,7 +3,7 @@
 namespace Soli\Events;
 /*
   Plugin Name: Soli Event Plugin
-  Version: 1.0.5
+  Version: 1.1.0
   Author: Joran Out
 */
 
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
 define('SOLI_EVENT__PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
 define('SOLI_EVENT__PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('SOLI_EVENT__PLUGIN_DIR_URL', plugin_dir_url(__FILE__));
-define('SOLI_EVENT__PLUGIN_VERSION', "1.0.5");
+define('SOLI_EVENT__PLUGIN_VERSION', "1.1.0");
 
 require_once 'events/events.php';
 

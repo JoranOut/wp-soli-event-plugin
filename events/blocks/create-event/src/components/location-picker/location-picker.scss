@@ -11,6 +11,14 @@
 .location-picker {
   width: 100%;
 
+  button.max200px {
+    max-width: 200px;
+    white-space: pre-wrap;
+    width: max-content;
+    text-align: left;
+    height: auto;
+  }
+
   .location-creator {
     display: block;
     position: absolute;

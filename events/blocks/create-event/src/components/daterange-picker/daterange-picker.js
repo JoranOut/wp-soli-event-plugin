@@ -92,7 +92,7 @@ function DateRangePicker(props) {
                                 setEndDate(newEndDate);
                                 updateDate(newStartDate, newEndDate);
                             }}
-                            format=" D MMMM, YYYY"
+                            format="D MMMM, YYYY"
                         />
                     </div>
                     <TimePicker
@@ -153,7 +153,7 @@ function DateRangePicker(props) {
                                     }}
                                     minDateTime={startDate}
 
-                                    format=" D MMMM, YYYY"
+                                    format="D MMMM, YYYY"
                                     ampm={false}
                                     viewRenderers={{
                                         hours: renderTimeViewClock,

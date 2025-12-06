@@ -1,5 +1,6 @@
 .soli-block-event-list-item {
-  display: block;
+  display: flex;
+  flex-direction: column;
   background: #fff;
   box-shadow: 0 0 10px -5px #000;
   border-radius: 5px;
@@ -34,6 +35,9 @@
 
   .event-list-content {
     padding: 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 
     h2 {
       font-size: 15px;
@@ -49,6 +53,7 @@
 
     a.button {
       margin: 1em 1em 1em 0;
+      width: fit-content;
     }
   }
 }

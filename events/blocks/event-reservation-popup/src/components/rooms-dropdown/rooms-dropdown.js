@@ -16,7 +16,8 @@ const MenuProps = {
             maxHeight: ITEM_HEIGHT * 5.5 + ITEM_PADDING_TOP,
         },
     },
-};
+    container: () => document.querySelector('.components-modal__screen-overlay') || document.body,
+}
 
 export default function RoomsDropdown({rooms, onChange, disabled}) {
     const [_rooms, setRooms] = useState([...rooms]);

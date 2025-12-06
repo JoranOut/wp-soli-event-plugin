@@ -28,6 +28,7 @@ wp.blocks.registerBlockType("soli/create-event", {
 function EditComponent({context}) {
     const {postId} = context;
     const [dates, setDates] = useState();
+    const userCanAdminNote = window?.createEventPermissions?.canSeeAdminNotes ?? false;
 
     const updateSingleDate = (date) => {
         if (dates?.length > 0){
@@ -58,7 +59,7 @@ function EditComponent({context}) {
 
     const updateSingleAdminNotes = (adminNotes) => {
         const singleDate = dates[0];
-        setDates([{...singleDate, notes: adminNotes}])
+        setDates([{...singleDate, adminNotes: adminNotes}])
     }
 
     const addGeneratedDates = (genDates) => {
@@ -77,6 +78,8 @@ function EditComponent({context}) {
     const updateRepeatingDates = (newDates) => {
         setDates(newDates)
     }
+
+    console.log("Rendering Create Event Block with dates:", dates);
 
     return (<div className="soli-block-create-event">
         <AdminEventsProvider
@@ -116,18 +119,20 @@ function EditComponent({context}) {
                     />
 
                     <NotesEditor
-                        hideNotes={false}
+                        hideNotes={!(dates?.length > 0 && dates[0]?.notes)}
                         buttonSize={"small"}
                         notes={dates?.length > 0 ? dates[0].notes : null}
                         onChange={(notes) => updateSingleNotes(notes)}
                     />
 
-                    <AdminNotesEditor
-                        hideNotes={false}
-                        buttonSize={"small"}
-                        notes={dates?.length > 0 ? dates[0].adminNotes : null}
-                        onChange={(adminNotes) => updateSingleAdminNotes(adminNotes)}
-                    />
+                    {userCanAdminNote &&
+                        <AdminNotesEditor
+                            hideNotes={!(dates?.length > 0 && dates[0]?.adminNotes)}
+                            buttonSize={"small"}
+                            adminNotes={dates?.length > 0 ? dates[0].adminNotes : null}
+                            onChange={(adminNotes) => updateSingleAdminNotes(adminNotes)}
+                        />
+                    }
 
                     <TimeGeneratorModalButton
                         buttonSize={"small"}

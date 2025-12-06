@@ -7,13 +7,14 @@ function fromEventDto(eventDto) {
 function fromDateDto(dateDto) {
     return {
         id: dateDto.id,
-        startDate: dateDto.start_date + " UTC",
-        endDate: dateDto.end_date + " UTC",
+        startDate: dateDto.start_date,
+        endDate: dateDto.end_date,
         location: fromLocationDto(dateDto),
         rooms: fromEventRoomDto(dateDto.rooms),
         status: dateDto.status,
         concertStatus: dateDto.is_concert,
-        notes: dateDto.notes,
+        notes: dateDto.notes?.length > 0 ? dateDto.notes : null,
+        adminNotes: dateDto.admin_notes?.length > 0 ? dateDto.admin_notes : null,
     }
 }
 
@@ -43,14 +44,20 @@ function toEventDto(event) {
 function toDateDto(date) {
     return {
         id: date.id,
-        start_date: date.startDate,
-        end_date: date.endDate,
+        start_date: utcToLocal(new Date(date.startDate)),
+        end_date: utcToLocal(new Date(date.endDate)),
         location: !date.location ? null : date.location.id,
         rooms: !date.rooms ? null : JSON.stringify(date.rooms),
         status: date.status,
         is_concert: date.concertStatus,
-        notes: date.notes,
+        notes: date.notes?.length > 0 ? date.notes : null,
+        admin_notes: date.adminNotes?.length > 0 ? date.adminNotes : null
     }
+}
+
+function utcToLocal(date) {
+    const localOffset = date.getTimezoneOffset();
+    return date.addHours(-localOffset / 60);
 }
 
 Date.prototype.addHours = function (h) {
