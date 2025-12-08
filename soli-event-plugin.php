@@ -3,7 +3,7 @@
 namespace Soli\Events;
 /*
   Plugin Name: Soli Event Plugin
-  Version: 1.1.1
+  Version: 1.1.2
   Author: Joran Out
 */
 
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
 define('SOLI_EVENT__PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
 define('SOLI_EVENT__PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('SOLI_EVENT__PLUGIN_DIR_URL', plugin_dir_url(__FILE__));
-define('SOLI_EVENT__PLUGIN_VERSION', "1.1.1");
+define('SOLI_EVENT__PLUGIN_VERSION', "1.1.2");
 
 require_once 'events/events.php';
 
@@ -49,9 +49,9 @@ add_action('init', function () {
 
     $config = array(
       'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
-      'proper_folder_name' => plugin_basename(__FILE__), // this is the name of the folder your plugin lives in
+      'proper_folder_name' => dirname( plugin_basename( __FILE__ ) ), // this is the name of the folder your plugin lives in
       'api_url' => 'https://api.github.com/repos/JoranOut/wp-soli-event-plugin', // the GitHub API url of your GitHub repo
-      'raw_url' => 'https://raw.github.com/JoranOut/wp-soli-event-plugin/master', // the GitHub raw url of your GitHub repo
+      'raw_url' => 'https://raw.github.com/JoranOut/wp-soli-event-plugin/main', // the GitHub raw url of your GitHub repo
       'github_url' => 'https://github.com/JoranOut/wp-soli-event-plugin', // the GitHub url of your GitHub repo
       'zip_url' => 'https://github.com/JoranOut/wp-soli-event-plugin/archive/refs/heads/main.zip', // the zip url of the GitHub repo
       'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
