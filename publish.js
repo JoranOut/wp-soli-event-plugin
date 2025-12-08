@@ -73,6 +73,11 @@ archive.glob('**/*', {
         '.gitignore',
         '*.zip',
         'publish.js',
+        'e2e/**',
+        'test-results/**',
+        'playwright-report/**',
+        'playwright.config.js',
+        'artefacts/**',
     ]
 });
 
