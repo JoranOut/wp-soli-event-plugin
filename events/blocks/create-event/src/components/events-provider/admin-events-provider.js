@@ -1,101 +1,115 @@
 import apiFetch from '@wordpress/api-fetch';
-import { useSelect, useDispatch } from '@wordpress/data';
+import {useSelect, useDispatch} from '@wordpress/data';
 import {useState, useEffect} from '@wordpress/element';
 import {fromEventDto, toEventDto} from "./event-mapper";
+import {EventsProvider, useEventState} from "../events-context";
 
-export default function AdminEventsProvider(props) {
-    const [error, setError] = useState(undefined);
-    const [isLoading, setLoading] = useState(false);
-    const [initialData, setInitialData] = useState(null);
-    const { isSavingPost, isNewPost } = useSelect((select) => ({
+function AdminSaveBridge({postId, onSaveComplete}) {
+    const {events} = useEventState();
+    const {isSavingPost} = useSelect((select) => ({
         isSavingPost: select('core/editor').isSavingPost(),
-        isNewPost: !select('core/editor').getCurrentPostId(),
     }));
-    const { editPost } = useDispatch('core/editor');
+    const {editPost} = useDispatch('core/editor');
 
     useEffect(() => {
-        if (error === undefined && !isLoading && props.dates == null) {
-            setLoading(true)
-            apiFetch({path: 'soli_event/v1/events/' + props.post_id})
-                .then(
-                    (event) => {
-                        const eventData = fromEventDto(event);
-                        props.setDates(eventData);
-                        setInitialData(eventData);
-                        setLoading(false)
-                        setError(null)
-                    },
-                    // Note: It's important to handle errors here instead of a catch() block
-                    // so that we don't swallow exceptions from actual bugs in components.
-                    (error) => {
-                        console.error(error)
-                        setLoading(false)
-                        setError(error)
-                    }
-                );
-        }
-    });
+        if (!isSavingPost) return;
 
-    useEffect(() => {
-        if (initialData && props.dates && JSON.stringify(initialData) !== JSON.stringify(props.dates)) {
-            editPost({ meta: { hasNewEventData: true } });
-            if (isNewPost) {
-                editPost({ status: 'draft' });
-            }
-        }
-    }, [props.dates]);
+        const hasInvalidForms = () =>
+            document.querySelector(`.soli-block-create-event:has(.invalid)`);
 
-    const hasInvalidForms = () => {
-        return document.querySelector(`.soli-block-create-event:has(.invalid)`);
-    }
-
-    const postAPI = () => {
-        if (hasInvalidForms()){
-            console.log("the form has invalid inputs")
+        if (hasInvalidForms()) {
+            console.log('the form has invalid inputs');
             return;
         }
 
         apiFetch({
-            path: 'soli_event/v1/events/' + props.post_id,
+            path: 'soli_event/v1/events/' + postId,
             method: 'POST',
-            data: toEventDto(props.dates)
+            data: toEventDto(events),
         }).then(
             (event) => {
-                props.setDates(fromEventDto(event))
-                setLoading(false)
-                editPost({ meta: { hasNewEventData: false } });
+                const eventData = fromEventDto(event);
+                editPost({meta: {hasNewEventData: false}});
+                if (onSaveComplete) {
+                    onSaveComplete(eventData);
+                }
             },
-            // Note: It's important to handle errors here instead of a catch() block
-            // so that we don't swallow exceptions from actual bugs in components.
             (error) => {
-                setLoading(false)
-                setError(error)
+                console.error('Failed to save events:', error);
             }
         );
+    }, [isSavingPost, events, postId, editPost, onSaveComplete]);
+
+    return null;
+}
+
+function getDefaultDate(h) {
+    const date = new Date();
+    if (h) {
+        date.setTime(date.getTime() + (h * 60 * 60 * 1000));
     }
+    return date.toISOString();
+}
+
+export default function AdminEventsProvider({post_id, children}) {
+    const [error, setError] = useState(undefined);
+    const [isLoading, setLoading] = useState(false);
+    const [initialEvents, setInitialEvents] = useState(null);
+    const {editPost} = useDispatch('core/editor');
+    const {isNewPost} = useSelect((select) => ({
+        isNewPost: !select('core/editor').getCurrentPostId(),
+    }));
 
     useEffect(() => {
-        if (isSavingPost) {
-            postAPI();
+        if (error === undefined && !isLoading && initialEvents == null) {
+            setLoading(true);
+            apiFetch({path: 'soli_event/v1/events/' + post_id}).then(
+                (event) => {
+                    let eventData = fromEventDto(event);
+                    if (!eventData || eventData.length === 0) {
+                        eventData = [{
+                            startDate: getDefaultDate(),
+                            endDate: getDefaultDate(1)
+                        }];
+                    }
+                    setInitialEvents(eventData);
+                    setLoading(false);
+                    setError(null);
+                },
+                (err) => {
+                    console.error(err);
+                    setLoading(false);
+                    setError(err);
+                }
+            );
         }
-    }, [isSavingPost]);
+    }, [post_id, error, isLoading, initialEvents]);
 
-    // If there's an error in fetching the remote data, display the error.
+    const handleDirtyChange = (isDirty) => {
+        if (isDirty) {
+            editPost({meta: {hasNewEventData: true}});
+            if (isNewPost) {
+                editPost({status: 'draft'});
+            }
+        }
+    };
+
     if (error) {
-        return (
-            <>
-                <div>Error: {error.message}</div>
-            </>
-        );
-        // If the data is still being loaded, show a loading message/icon/etc.
-    } else if (isLoading) {
-        return <div>Loading...</div>;
-        // Data loaded successfully; so let's show it.
-    } else {
-        return (
-            <>
-                {props.children}
-            </>
-        );
+        return <div>Error: {error.message}</div>;
     }
+    if (isLoading || !initialEvents) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <EventsProvider
+            mode="admin"
+            readOnly={false}
+            initialEvents={initialEvents}
+            onDirtyChange={handleDirtyChange}
+        >
+            <AdminSaveBridge postId={post_id}/>
+            {children}
+        </EventsProvider>
+    );
 }

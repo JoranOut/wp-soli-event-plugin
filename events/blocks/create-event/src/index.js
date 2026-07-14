@@ -1,5 +1,4 @@
 import "./index.scss"
-import {useState} from '@wordpress/element';
 import EditableDateTable from "./components/editable-date-table/editable-date-table";
 import AdminEventsProvider from "./components/events-provider/admin-events-provider";
 import DateRangePicker from "./components/daterange-picker/daterange-picker";
@@ -10,13 +9,14 @@ import EventStatusSelector from "./components/event-status-selector/event-status
 import NotesEditor from "./components/notes-editor/notes-editor";
 import ConcertStatusSwitch from "./components/concert-status-switch/concert-status-switch";
 import AdminNotesEditor from "./components/admin-notes-editor/admin-notes-editor";
+import {useEventState, useEventActions} from "./components/events-context";
 
 wp.blocks.registerBlockType("soli/create-event", {
     title: "Create Event",
     icon: "smiley",
     category: "soli",
     supports: {
-        align: [ "wide" ]
+        align: ["wide"]
     },
     edit: EditComponent,
     save: function () {
@@ -25,150 +25,104 @@ wp.blocks.registerBlockType("soli/create-event", {
     usesContext: ['postId']
 })
 
+function SingleEventEditor({userCanAdminNote}) {
+    const {events} = useEventState();
+    const {
+        updateEventDate,
+        updateEventLocation,
+        updateEventStatus,
+        updateEventConcertStatus,
+        updateEventNotes,
+        updateEventAdminNotes,
+        addGeneratedEvents,
+        duplicateEvent
+    } = useEventActions();
+
+    const single = events[0] || {};
+
+    return (
+        <div className="single-event">
+            <DateRangePicker
+                date={single}
+                minimalDate={new Date()}
+                updateDate={({id, startDate, endDate}) =>
+                    updateEventDate(0, startDate, endDate)
+                }
+                defaultDate={true}
+            />
+
+            <LocationPicker
+                location={single.location}
+                rooms={single.rooms}
+                onChange={(rooms, location) =>
+                    updateEventLocation(0, rooms, location)
+                }
+            />
+
+            <ConcertStatusSwitch
+                concertStatus={single.concertStatus}
+                onChange={(status) => updateEventConcertStatus(0, status)}
+            />
+
+            <NotesEditor
+                hideNotes={!single?.notes}
+                buttonSize="small"
+                notes={single.notes}
+                onChange={(notes) => updateEventNotes(0, notes)}
+            />
+
+            {userCanAdminNote && (
+                <AdminNotesEditor
+                    hideNotes={!single?.adminNotes}
+                    buttonSize="small"
+                    adminNotes={single.adminNotes}
+                    onChange={(adminNotes) => updateEventAdminNotes(0, adminNotes)}
+                />
+            )}
+
+            <TimeGeneratorModalButton
+                buttonSize="small"
+                date={single}
+                onSubmit={(genDates) => addGeneratedEvents(genDates)}
+            />
+
+            <CopyButton onClick={() => duplicateEvent(0)}/>
+
+            <EventStatusSelector
+                status={single.status}
+                onChange={(status) => updateEventStatus(0, status)}
+            />
+        </div>
+    );
+}
+
+function MultiEventEditor() {
+    return <EditableDateTable/>;
+}
+
+function InnerEdit({userCanAdminNote}) {
+    const {events} = useEventState();
+    const hasMultiple = events.length > 1;
+
+    console.log("Rendering Create Event Block with events:", events);
+
+    return (
+        <>
+            {!hasMultiple && <SingleEventEditor userCanAdminNote={userCanAdminNote}/>}
+            {hasMultiple && <MultiEventEditor/>}
+        </>
+    );
+}
+
 function EditComponent({context}) {
     const {postId} = context;
-    const [dates, setDates] = useState();
     const userCanAdminNote = window?.createEventPermissions?.canSeeAdminNotes ?? false;
 
-    const updateSingleDate = (date) => {
-        if (dates?.length > 0){
-            const singleDate = dates[0];
-            setDates([{...singleDate, ...date}]);
-        }
-    }
-
-    const updateSingleLocation = (rooms, location) => {
-        const singleDate = dates[0];
-        setDates([{...singleDate, rooms: rooms, location: location}])
-    }
-
-    const updateSingleStatus = (status) => {
-        const singleDate = dates[0];
-        setDates([{...singleDate, status: status}])
-    }
-
-    const updateSingleConcertStatus = (concertStatus) => {
-        const singleDate = dates[0];
-        setDates([{...singleDate, concertStatus: concertStatus}])
-    }
-
-    const updateSingleNotes = (notes) => {
-        const singleDate = dates[0];
-        setDates([{...singleDate, notes: notes}])
-    }
-
-    const updateSingleAdminNotes = (adminNotes) => {
-        const singleDate = dates[0];
-        setDates([{...singleDate, adminNotes: adminNotes}])
-    }
-
-    const addGeneratedDates = (genDates) => {
-        const newDates = dates ? [...dates] : [];
-        newDates.push(...genDates);
-        setDates(newDates);
-    }
-
-    const copySingleDate = () => {
-        if (dates?.length > 0) {
-            const {id: _, ...cleanCopy} = dates[0];
-            setDates([...dates, cleanCopy]);
-        }
-    }
-
-    const updateRepeatingDates = (newDates) => {
-        setDates(newDates)
-    }
-
-    console.log("Rendering Create Event Block with dates:", dates);
-
-    return (<div className="soli-block-create-event">
-        <AdminEventsProvider
-            post_id={postId}
-            dates={dates}
-            setDates={(newDates) => {
-                if (newDates?.length > 0){
-                    setDates(newDates);
-                } else {
-                    setDates([{
-                        startDate: getDefaultDate(),
-                        endDate: getDefaultDate(1)
-                    }]);
-                }
-            }}
-            enableSaveButton={true}
-        >
-            {
-                (!dates || dates.length < 2) &&
-                <div className="single-event">
-                    <DateRangePicker
-                        date={dates?.length > 0 ? dates[0] : null}
-                        minimalDate={new Date()}
-                        updateDate={(date) => updateSingleDate(date)}
-                        defaultDate={true}
-                    />
-
-                    <LocationPicker
-                        location={dates?.length > 0 ? dates[0].location : null}
-                        rooms={dates?.length > 0 ? dates[0].rooms : null}
-                        onChange={(rooms, location) => updateSingleLocation(rooms, location)}
-                    />
-
-                    <ConcertStatusSwitch
-                        concertStatus={dates?.length > 0 ? dates[0].concertStatus : null}
-                        onChange={(status) => updateSingleConcertStatus(status)}
-                    />
-
-                    <NotesEditor
-                        hideNotes={!(dates?.length > 0 && dates[0]?.notes)}
-                        buttonSize={"small"}
-                        notes={dates?.length > 0 ? dates[0].notes : null}
-                        onChange={(notes) => updateSingleNotes(notes)}
-                    />
-
-                    {userCanAdminNote &&
-                        <AdminNotesEditor
-                            hideNotes={!(dates?.length > 0 && dates[0]?.adminNotes)}
-                            buttonSize={"small"}
-                            adminNotes={dates?.length > 0 ? dates[0].adminNotes : null}
-                            onChange={(adminNotes) => updateSingleAdminNotes(adminNotes)}
-                        />
-                    }
-
-                    <TimeGeneratorModalButton
-                        buttonSize={"small"}
-                        date={dates?.length > 0 ? dates[0] : null}
-                        onSubmit={(genDates) => {
-                            addGeneratedDates(genDates)
-                        }}/>
-                    <CopyButton onClick={() => copySingleDate()}/>
-
-                    <EventStatusSelector
-                        status={dates?.length > 0 ? dates[0].status : null}
-                        onChange={(status) => updateSingleStatus(status)}
-                    />
-                </div>
-            }
-            {
-                dates && dates.length > 1 &&
-                <EditableDateTable
-                    dates={dates}
-                    onChange={newDates => {
-                        updateRepeatingDates(newDates)
-                    }}
-                />
-            }
-        </AdminEventsProvider>
-    </div>)
+    return (
+        <div className="soli-block-create-event">
+            <AdminEventsProvider post_id={postId}>
+                <InnerEdit userCanAdminNote={userCanAdminNote}/>
+            </AdminEventsProvider>
+        </div>
+    );
 }
-
-function addHours(date, hours) {
-    if (hours) {
-        date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
-    }
-    return date;
-}
-
-function getDefaultDate(h) {
-    return addHours(new Date(), h).toISOString();
-}
-
