@@ -1,39 +1,18 @@
-import { test, expect, RequestUtils } from '@wordpress/e2e-test-utils-playwright';
+import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import { addDays, format } from 'date-fns';
 import { nl, enUS } from 'date-fns/locale';
 
+// Unique per-test identifier so concurrent tests never collide on shared state.
+function uniqueTitle(base: string) {
+    return `${base} ${Math.random().toString(36).slice(2, 10)}`;
+}
+
 test.describe('Event Tests',  () => {
-    test.beforeEach(async ({page, requestUtils}) => {
-
-        await page.goto('/wp-login.php');
-        await page.fill('#user_login', 'admin');
-        await page.fill('#user_pass', 'password');
-        await page.click('#wp-submit');
-
-        // WordPress periodically shows an "administration email verification"
-        // interstitial after login, which has no admin bar. Dismiss it.
-        const remindLater = page.getByRole('link', { name: /remind me later/i });
-        if (await remindLater.isVisible().catch(() => false)) {
-            await remindLater.click();
-        }
-
-        await expect(page.locator('#wpadminbar')).toBeVisible();
-
-        await deleteAllPostsOfType(requestUtils, 'soli_event');
-        await deleteAllPostsOfType(requestUtils, 'pages');
-
-        await page.evaluate(() => {
-            // Post editor
-            window.wp?.data?.dispatch('core/preferences')
-                ?.set('core/edit-post', 'welcomeGuide', false);
-            // Site editor (if you touch it)
-            window.wp?.data?.dispatch('core/preferences')
-                ?.set('core/edit-site', 'welcomeGuide', false);
-            // Widgets editor (if you touch it)
-            window.wp?.data?.dispatch('core/preferences')
-                ?.set('core/edit-widgets', 'welcomeGuide', false);
-        });
-    });
+    // Tests share one WordPress instance; each isolates itself with a unique
+    // event title (see uniqueTitle) rather than wiping global state, so they
+    // are safe to run concurrently. Authentication comes from the framework's
+    // storageState (see playwright.config.js), so no per-test login is needed.
+    test.describe.configure({ mode: 'parallel' });
 
     test( 'Should load properly', async ( { admin, page }) => {
         await admin.visitAdminPage( '/' );
@@ -44,18 +23,25 @@ test.describe('Event Tests',  () => {
 
     test( 'displays a message in the posts table when no posts are present',
         async ( {admin, page} ) => {
-        await admin.visitAdminPage( '/edit.php?post_type=soli_event' );
+        // Search for a term no event can match, so the empty-state message
+        // shows regardless of events created by concurrent tests.
+        const missing = uniqueTitle('no-such-event');
+        await admin.visitAdminPage(
+            `/edit.php?post_type=soli_event&s=${encodeURIComponent(missing)}`
+        );
         await expect(
             page.getByRole( 'cell', { name: 'No Events Found' } )
         ).toBeVisible();
     });
 
     test('Single event appears correctly in events table', async ({ admin, page }) => {
-        const ctx = await createSingleEvent({ admin, page });
+        const ctx = await createSingleEvent({ admin, page }, { title: uniqueTitle('Single Event Concert') });
 
-        await admin.visitAdminPage('/edit.php?post_type=soli_event');
+        // Search by the unique title so our event is the only row, regardless
+        // of events accumulated by concurrent tests (avoids list pagination).
+        await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
 
-        const eventRow = page.locator('tr.type-soli_event');
+        const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
         await expect(eventRow.locator('td.column-title a.row-title')).toContainText(ctx.title);
         await expect(eventRow.locator('td.column-start_date')).toContainText(
             `${ctx.formattedUS} ${ctx.startTime}`
@@ -68,11 +54,13 @@ test.describe('Event Tests',  () => {
     });
 
     test('Single event shows correct data in editor', async ({ admin, page }) => {
-        const ctx = await createSingleEvent({ admin, page });
+        const ctx = await createSingleEvent({ admin, page }, { title: uniqueTitle('Single Event Concert') });
 
-        await admin.visitAdminPage('/edit.php?post_type=soli_event');
+        // Search by the unique title so our event is the only row, regardless
+        // of events accumulated by concurrent tests (avoids list pagination).
+        await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
 
-        const eventRow = page.locator('tr.type-soli_event');
+        const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
         await eventRow.locator('td.column-title a.row-title').click();
 
         await expect(page.getByLabel('Add title')).toContainText(ctx.title);
@@ -84,11 +72,13 @@ test.describe('Event Tests',  () => {
     });
 
     test('Single event shows correct data on frontend', async ({ admin, page }) => {
-        const ctx = await createSingleEvent({ admin, page });
+        const ctx = await createSingleEvent({ admin, page }, { title: uniqueTitle('Single Event Concert') });
 
         // open event from editor snackbar or from list
-        await admin.visitAdminPage('/edit.php?post_type=soli_event');
-        const eventRow = page.locator('tr.type-soli_event');
+        // Search by the unique title so our event is the only row, regardless
+        // of events accumulated by concurrent tests (avoids list pagination).
+        await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
+        const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
         await eventRow.locator('td.column-title a.row-title').click();
 
         const page2Promise = page.waitForEvent('popup');
@@ -105,61 +95,58 @@ test.describe('Event Tests',  () => {
         await page2.close();
     });
 
-    test('Calendar page shows event in calendar', async ({ admin, page }) => {
-        const today = new Date();
-
+    test('Calendar page shows event in calendar', async ({ admin, page, editor }) => {
         const eventCtx = await createSingleEvent(
             { admin, page },
             {
-                title: 'Concert',
-                date: today,
+                title: uniqueTitle('Concert'),
+                date: new Date(),
                 startTime: '12:12',
                 endTime: '13:13',
             }
         );
 
-        await createCalendarPage({ admin, page });
+        await createCalendarPage({ admin, page, editor });
 
-        // We are now on the front-end Calendar page
-        await expect(page.getByRole('link', { name: eventCtx.title })).toBeVisible();
-        await expect(page.getByRole('link', { name: eventCtx.title })).toContainText(
-            eventCtx.startTime
-        );
+        // We are now on the front-end Calendar page. Scope to our unique event;
+        // the calendar renders every event, including concurrent tests'.
+        const eventLink = page.getByRole('link', { name: eventCtx.title });
+        await expect(eventLink).toBeVisible({ timeout: 30000 });
+        await expect(eventLink).toContainText(eventCtx.startTime);
     });
 
-    test('Calendar page reservation popup shows correct event details', async ({ admin, page }) => {
-        const today = new Date();
-
+    test('Calendar page reservation popup shows correct event details', async ({ admin, page, editor }) => {
         const eventCtx = await createSingleEvent(
             { admin, page },
             {
-                title: 'Concert',
-                date: today,
+                title: uniqueTitle('Concert'),
+                date: new Date(),
                 startTime: '12:12',
                 endTime: '13:13',
             }
         );
 
-        await createCalendarPage({ admin, page });
+        await createCalendarPage({ admin, page, editor });
 
-        // Open reservation popup
+        // Open reservation popup. The tool lists every event, so scope to the
+        // link for our unique event rather than assuming a single result.
         await page.getByRole('button', { name: 'Reserveer' }).click();
-        await expect(page.getByRole('link')).toContainText(
-            `${eventCtx.title} - grote-zaal`
+        const detail = page.getByRole('link').filter({ hasText: eventCtx.title });
+        await expect(detail).toContainText(
+            `${eventCtx.title} - grote-zaal`,
+            { timeout: 30000 }
         );
-        await expect(page.getByRole('link')).toContainText(
+        await expect(detail).toContainText(
             `${eventCtx.startTime} - ${eventCtx.endTime}`
         );
     });
 
     test('Admin calendar view shows event with correct time and room', async ({ admin, page }) => {
-        const today = new Date();
-
         const eventCtx = await createSingleEvent(
             { admin, page },
             {
-                title: 'Concert',
-                date: today,
+                title: uniqueTitle('Concert'),
+                date: new Date(),
                 startTime: '12:12',
                 endTime: '13:13',
             }
@@ -170,10 +157,12 @@ test.describe('Event Tests',  () => {
         // editor (left open by createSingleEvent) is active.
         await admin.visitAdminPage('/edit.php?post_type=soli_event&page=soli_event_admin_view');
 
+        // Scope to our unique event; the week view shows all events in the week.
         const calendarEventLink = page.getByRole('link', { name: eventCtx.title });
 
         await expect(calendarEventLink).toContainText(
-            `${eventCtx.startTime} - ${eventCtx.endTime}`
+            `${eventCtx.startTime} - ${eventCtx.endTime}`,
+            { timeout: 30000 }
         );
         // still using slug here per your TODO-fix
         await expect(calendarEventLink).toContainText('grote-zaal');
@@ -181,119 +170,6 @@ test.describe('Event Tests',  () => {
 
 
 });
-
-/**
- * Delete all posts of a given post type using the REST API.
- *
- * @param {RequestUtils} requestUtils
- * @param {string} postType - The REST base of your CPT (e.g., 'soli_event')
- */
-export async function deleteAllPostsOfType(requestUtils, postType = 'posts') {
-    // 1. Fetch all posts of that type
-    const posts = await requestUtils.rest({
-        path: `/wp/v2/${postType}`,
-        params: {
-            per_page: 100,
-            status: 'publish,future,draft,pending,private,trash',
-            event_filter: 'all',
-        },
-    });
-
-    console.log(`Found ${posts.length} posts of type ${postType} to delete.`);
-
-    // 2. Delete each one
-    await Promise.all(
-        posts.map((post) => {
-            console.log(`Deleting ${postType} ID ${post.id}...`);
-            return requestUtils.rest({
-                method: 'DELETE',
-                path: `/wp/v2/${postType}/${post.id}`,
-                params: { force: true },
-            })
-        })
-    );
-}
-
-//
-// /**
-//  * Delete all posts of a given post type using the WP REST API.
-//  *
-//  * @param {RequestUtils} requestUtils - Your authenticated REST helper (e.g., apiFetch wrapper).
-//  * @param {string} postTypeHint - Either the post type slug OR its rest_base (e.g., 'post', 'page', 'soli_event').
-//  */
-// export async function deleteAllPostsOfType(requestUtils, postTypeHint = 'posts') {
-//     // 0) Resolve the correct REST base for the given post type hint.
-//     //    /wp/v2/types returns an object keyed by slug; each item has a `rest_base`.
-//     const types = await requestUtils.rest({
-//         path: '/wp/v2/types',
-//         params: { context: 'edit' }, // requires proper auth to see everything
-//     });
-//
-//     const typeEntry = Object.values(types).find(
-//         (t) => t.slug === postTypeHint || t.rest_base === postTypeHint
-//     );
-//
-//     if (!typeEntry) {
-//         throw new Error(
-//             `Unknown post type or rest_base "${postTypeHint}". ` +
-//             `Available: ${Object.values(types).map((t) => `${t.slug} (rest_base: ${t.rest_base})`).join(', ')}`
-//         );
-//     }
-//
-//     const restBase = typeEntry.rest_base;
-//
-//     // 1) Fetch ALL IDs (paginate). Use a comma-separated list for statuses.
-//     const statuses = ['publish', 'future', 'draft', 'pending', 'private', 'trash']; // 'auto-draft' & 'inherit' usually won’t list here
-//     const statusParam = statuses.join(',');
-//
-//     const ids = [];
-//     let page = 1;
-//
-//     for (;;) {
-//         const batch = await requestUtils.rest({
-//             path: `/wp/v2/${restBase}`,
-//             params: {
-//                 _fields: 'id',
-//                 per_page: 100,
-//                 page,
-//                 status: statusParam,
-//                 context: 'edit', // see drafts/private/etc (needs caps)
-//                 orderby: 'id',
-//                 order: 'asc',
-//             },
-//         });
-//
-//         if (!Array.isArray(batch) || batch.length === 0) break;
-//
-//         ids.push(...batch.map((p) => p.id));
-//         if (batch.length < 100) break; // last page
-//         page += 1;
-//     }
-//
-//     console.log(`Found ${ids.length} items to delete in "${restBase}".`);
-//
-//     if (ids.length === 0) return { deleted: 0, failed: [] };
-//
-//     // 2) Delete each one. Use allSettled so one failure doesn’t stop the rest.
-//     const results = await Promise.allSettled(
-//         ids.map((id) =>
-//             requestUtils.rest({
-//                 method: 'DELETE',
-//                 path: `/wp/v2/${restBase}/${id}`,
-//                 params: { force: true }, // bypass trash if supported
-//             })
-//         )
-//     );
-//
-//     const failed = results
-//         .map((r, i) => ({ r, id: ids[i] }))
-//         .filter(({ r }) => r.status === 'rejected')
-//         .map(({ id, r }) => ({ id, reason: r.reason?.message || String(r.reason) }));
-//
-//     console.log(`Deleted ${ids.length - failed.length}, failed ${failed.length}.`, failed);
-//
-//     return { deleted: ids.length - failed.length, failed };
-// }
 
 type CreateEventOptions = {
     title?: string;
@@ -405,48 +281,27 @@ type CreateCalendarPageOptions = {
 };
 
 async function createCalendarPage(
-    { admin, page }: { admin: any; page: any },
+    { admin, page, editor }: { admin: any; page: any; editor: any },
     options: CreateCalendarPageOptions = {}
 ) {
     const { title = 'Calendar' } = options;
 
-    // Go directly to "Add New Page"
-    await admin.visitAdminPage('/post-new.php?post_type=page');
+    // Use the official editor fixtures instead of hand-driving the iframe
+    // canvas: createNewPost handles editor load + welcome guide + title, and
+    // insertBlock inserts programmatically (no timing-sensitive canvas clicks,
+    // which were flaky on CI's headless runner).
+    await admin.createNewPost({ postType: 'page', title });
 
-    // The page editor renders its content inside an iframe canvas (unlike the
-    // soli_event editor, whose MUI block forces the non-iframe canvas), so the
-    // title, appender and blocks must be reached through the canvas frame.
-    const canvas = page.frameLocator('iframe[name="editor-canvas"]');
+    await editor.insertBlock({ name: 'soli/event-view-calendar' });
+    await editor.insertBlock({ name: 'soli/event-reservation-popup' });
 
-    await canvas.getByRole('textbox', { name: 'Add title' }).click();
-    await canvas.getByRole('textbox', { name: 'Add title' }).fill(title);
+    await editor.publishPost();
 
-    // Insert calendar block
-    await canvas.getByRole('button', { name: 'Add default block' }).click();
-    await canvas
-        .getByRole('document', { name: 'Empty block; start writing or' })
-        .pressSequentially('/soli calendar');
-    await page.getByRole('option', { name: 'Event View Calendar', exact: false }).click();
-
-    // Insert reservation popup block
-    await page.getByRole('button', { name: 'Block Inserter' }).click();
-    await page.getByRole('searchbox', { name: 'Search' }).fill('soli event reservation');
-    await page
-        .getByRole('option', { name: 'Event Reservation Popup', exact: false })
-        .click();
-
-    // Publish page
-    await page.getByRole('button', { name: 'Publish', exact: true }).click();
-    await page
-        .getByLabel('Editor publish')
-        .getByRole('button', { name: 'Publish', exact: true })
-        .click();
-
-    // View page on frontend
-    await page
-        .getByLabel('Editor publish')
-        .getByRole('link', { name: 'View Page' })
-        .click();
+    // Navigate to the published page on the front end.
+    const permalink = await page.evaluate(() =>
+        window.wp.data.select('core/editor').getPermalink()
+    );
+    await page.goto(permalink);
 
     // At this point, `page` is the front-end Calendar page.
     return { title };
