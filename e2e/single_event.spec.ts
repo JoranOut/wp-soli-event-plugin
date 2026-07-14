@@ -10,7 +10,14 @@ test.describe('Event Tests',  () => {
         await page.fill('#user_pass', 'password');
         await page.click('#wp-submit');
 
-        expect(page.locator('#wpadminbar')).toBeVisible();
+        // WordPress periodically shows an "administration email verification"
+        // interstitial after login, which has no admin bar. Dismiss it.
+        const remindLater = page.getByRole('link', { name: /remind me later/i });
+        if (await remindLater.isVisible().catch(() => false)) {
+            await remindLater.click();
+        }
+
+        await expect(page.locator('#wpadminbar')).toBeVisible();
 
         await deleteAllPostsOfType(requestUtils, 'soli_event');
         await deleteAllPostsOfType(requestUtils, 'pages');
@@ -158,10 +165,10 @@ test.describe('Event Tests',  () => {
             }
         );
 
-        // Go to plugin calendar view
-        await page.getByRole('menuitem', { name: ' wp-soli-event-plugin' }).click();
-        await page.getByRole('link', { name: 'Events' }).first().click();
-        await page.getByRole('link', { name: 'Calendar View' }).click();
+        // Go to the plugin's admin Calendar View. Navigate directly rather than
+        // via the admin sidebar, which is hidden while the fullscreen block
+        // editor (left open by createSingleEvent) is active.
+        await admin.visitAdminPage('/edit.php?post_type=soli_event&page=soli_event_admin_view');
 
         const calendarEventLink = page.getByRole('link', { name: eventCtx.title });
 
@@ -196,13 +203,14 @@ export async function deleteAllPostsOfType(requestUtils, postType = 'posts') {
 
     // 2. Delete each one
     await Promise.all(
-        posts.map((post) =>
-            requestUtils.rest({
+        posts.map((post) => {
+            console.log(`Deleting ${postType} ID ${post.id}...`);
+            return requestUtils.rest({
                 method: 'DELETE',
                 path: `/wp/v2/${postType}/${post.id}`,
                 params: { force: true },
             })
-        )
+        })
     );
 }
 
@@ -335,11 +343,18 @@ async function createSingleEvent(
     // Fill in event details
     await page.getByRole('textbox', { name: 'Add title' }).fill(title);
 
-    const sequentialDigits = format(date, 'ddMMyyyy', { locale: enUS });
+    // Enter the date into the MUI masked field (D MMMM, YYYY). Land on the
+    // leftmost (day) section, then type the digits consecutively and let MUI's
+    // section auto-advance carry across day -> month -> year. A single ddMMyyyy
+    // blast (or manual ArrowRight between sections) misaligns and yields garbage.
     const dateInput = page.getByRole('textbox', { name: 'DD MMMM, YYYY' }).first();
     await dateInput.click();
     await dateInput.press('ArrowLeft');
-    await dateInput.pressSequentially(sequentialDigits);
+    await dateInput.press('ArrowLeft');
+    await dateInput.press('ArrowLeft');
+    await page.keyboard.type(format(date, 'dd', { locale: enUS }), { delay: 100 });
+    await page.keyboard.type(format(date, 'MM', { locale: enUS }), { delay: 100 });
+    await page.keyboard.type(format(date, 'yyyy', { locale: enUS }), { delay: 100 });
     await dateInput.press('Tab');
 
     await page.getByRole('textbox', { name: 'hh:mm' }).first().fill(startTime);
@@ -398,12 +413,17 @@ async function createCalendarPage(
     // Go directly to "Add New Page"
     await admin.visitAdminPage('/post-new.php?post_type=page');
 
-    await page.getByRole('textbox', { name: 'Add title' }).click();
-    await page.getByRole('textbox', { name: 'Add title' }).fill(title);
+    // The page editor renders its content inside an iframe canvas (unlike the
+    // soli_event editor, whose MUI block forces the non-iframe canvas), so the
+    // title, appender and blocks must be reached through the canvas frame.
+    const canvas = page.frameLocator('iframe[name="editor-canvas"]');
+
+    await canvas.getByRole('textbox', { name: 'Add title' }).click();
+    await canvas.getByRole('textbox', { name: 'Add title' }).fill(title);
 
     // Insert calendar block
-    await page.getByRole('button', { name: 'Add default block' }).click();
-    await page
+    await canvas.getByRole('button', { name: 'Add default block' }).click();
+    await canvas
         .getByRole('document', { name: 'Empty block; start writing or' })
         .pressSequentially('/soli calendar');
     await page.getByRole('option', { name: 'Event View Calendar', exact: false }).click();
