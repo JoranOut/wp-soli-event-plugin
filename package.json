@@ -16,6 +16,7 @@
   "workspaces": [
     "events/blocks/create-event",
     "events/blocks/event-reservation-popup",
+    "events/blocks/event-view-calendar",
     "events/blocks/event-view-list",
     "events/blocks/event-view-monthly"
   ],
