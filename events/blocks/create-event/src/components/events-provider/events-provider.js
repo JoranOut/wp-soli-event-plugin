@@ -1,49 +1,46 @@
 import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect} from '@wordpress/element';
 import {fromEventDto} from "./event-mapper";
+import {EventsProvider} from "../events-context";
 
-export default function EventsProvider(props) {
+export default function FrontendEventsProvider({post_id, children}) {
     const [error, setError] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
+    const [initialEvents, setInitialEvents] = useState(null);
 
     useEffect(() => {
-        if (error === undefined && !isLoading && props.dates == null) {
-            setLoading(true)
-            apiFetch({path: 'soli_event/v1/events/' + props.post_id})
-                .then(
-                    (event) => {
-                        const eventData = fromEventDto(event);
-                        props.setDates(eventData);
-                        setLoading(false)
-                        setError(null)
-                    },
-                    // Note: It's important to handle errors here instead of a catch() block
-                    // so that we don't swallow exceptions from actual bugs in components.
-                    (error) => {
-                        console.error(error)
-                        setLoading(false)
-                        setError(error)
-                    }
-                );
+        if (error === undefined && !isLoading && initialEvents == null) {
+            setLoading(true);
+            apiFetch({path: 'soli_event/v1/events/' + post_id}).then(
+                (event) => {
+                    const eventData = fromEventDto(event);
+                    setInitialEvents(eventData || []);
+                    setLoading(false);
+                    setError(null);
+                },
+                (err) => {
+                    console.error(err);
+                    setLoading(false);
+                    setError(err);
+                }
+            );
         }
-    });
+    }, [post_id, error, isLoading, initialEvents]);
 
-    // If there's an error in fetching the remote data, display the error.
     if (error) {
-        return (
-            <>
-                <div>Error: {error.message}</div>
-            </>
-        );
-        // If the data is still being loaded, show a loading message/icon/etc.
-    } else if (isLoading) {
-        return <div>Loading...</div>;
-        // Data loaded successfully; so let's show it.
-    } else {
-        return (
-            <>
-                {props.children}
-            </>
-        );
+        return <div>Error: {error.message}</div>;
     }
+    if (isLoading || !initialEvents) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <EventsProvider
+            mode="frontend"
+            readOnly={true}
+            initialEvents={initialEvents}
+        >
+            {children}
+        </EventsProvider>
+    );
 }

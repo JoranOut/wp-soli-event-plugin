@@ -12,3 +12,7 @@ wp rewrite flush --hard
 # Disable welcome guide for user 1
 wp user meta update 1 wp_persistent_preferences \
   '{"core/edit-post":{"welcomeGuide":false}}'
+
+# Disable the periodic "administration email verification" interstitial, which
+# otherwise interrupts the post-login redirect and has no admin bar.
+wp option update admin_email_lifespan 99999999999

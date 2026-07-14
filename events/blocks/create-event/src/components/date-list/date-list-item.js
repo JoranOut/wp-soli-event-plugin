@@ -1,6 +1,6 @@
 import './date-list-item.scss';
 import DateRangePicker from "../daterange-picker/daterange-picker";
-import {useState, useEffect} from '@wordpress/element';
+import {useState} from '@wordpress/element';
 import LocationPicker from "../location-picker/location-picker";
 import dayjs from "dayjs";
 import TimeGeneratorModalButton from "../time-generator-modal-button/time-generator-modal-button";
@@ -13,131 +13,104 @@ import MoreDropdown from "../more-dropdown/more-dropdown";
 import ImageButton from "../image-button/image-button";
 import settingsIcon from '../../../../../../inc/assets/img/icons/settings.svg';
 import AdminNotesEditor from "../admin-notes-editor/admin-notes-editor";
+import {useEventActions} from "../events-context";
 
-function DateListItem(props) {
-    const [date, setDate] = useState(props.date)
+function DateListItem({index, date, addGeneratedDates, addDateCopy, onDelete}) {
     const [active, setActive] = useState(false);
     const userCanAdminNote = window?.createEventPermissions?.canSeeAdminNotes ?? false;
 
-    const updateLocation = (rooms, location) => {
-        const updatedDate = {...date, location: location ? {...location} : null, rooms: rooms ? [...rooms] : null}; // Create a new copy of the date with updated location and rooms
-        setDate(updatedDate);
-        props.updateDate(updatedDate);
-    }
+    const {
+        updateEventDate,
+        updateEventLocation,
+        updateEventStatus,
+        updateEventConcertStatus,
+        updateEventNotes,
+        updateEventAdminNotes,
+    } = useEventActions();
 
-    const updateStatus = (status) => {
-        const updatedDate = {...date, status}; // Create a new copy of the date with updated location and rooms
-        setDate(updatedDate);
-        props.updateDate(updatedDate);
-    }
-
-    const updateConcertStatus = (concertStatus) => {
-        const updatedDate = {...date, concertStatus}; // Create a new copy of the date with updated location and rooms
-        setDate(updatedDate);
-        props.updateDate(updatedDate);
-    }
-
-    const updateNotes = (notes) => {
-        const updatedDate = {...date, notes}; // Create a new copy of the date with updated location and rooms
-        setDate(updatedDate);
-        props.updateDate(updatedDate);
-    }
-
-    const updateAdminNotes = (adminNotes) => {
-        const updatedDate = {...date, adminNotes}; // Create a new copy of the date with updated location and rooms
-        setDate(updatedDate);
-        props.updateDate(updatedDate);
-    }
-
-    const updateDate = (newDate) => {
-        const updatedDate = {...date, ...newDate};
-        setDate(updatedDate);
-        props.updateDate(updatedDate);
-    }
-
-    const addGeneratedDates = (dates) => {
-        props.addGeneratedDates(dates);
-    }
-
-    const copyDate = () => {
-        const {id: _, ...cleanCopy} = date;
-        props.addDateCopy(cleanCopy);
-    }
-
-    useEffect(() => {
-        setDate(props.date); // Update the date state when props.date changes
-    }, [props.date]);
-
-    let today = dayjs();
+    const today = dayjs();
 
     return (
-        <div className={['date-list-item', dayjs(date.endDate).isAfter(today) ? "future" : "past", active ? "active" : ""].join(' ')}>
+        <div
+            className={[
+                'date-list-item',
+                dayjs(date.endDate).isAfter(today) ? 'future' : 'past',
+                active ? 'active' : '',
+            ].join(' ')}
+        >
             <DateRangePicker
                 date={date}
-                updateDate={(date) => updateDate(date)}
+                updateDate={({startDate, endDate}) =>
+                    updateEventDate(index, startDate, endDate)
+                }
                 style="line"
             />
+
             <LocationPicker
                 location={date.location}
                 rooms={date.rooms}
-                onChange={(rooms, location) => updateLocation(rooms, location)}
+                onChange={(rooms, location) =>
+                    updateEventLocation(index, rooms, location)
+                }
             />
 
             <EventStatusSelector
                 status={date.status}
-                onChange={(status) => updateStatus(status)}
+                onChange={(status) => updateEventStatus(index, status)}
             />
 
             <ConcertStatusSwitch
                 concertStatus={date.concertStatus}
-                onChange={(status) => updateConcertStatus(status)}
+                onChange={(status) => updateEventConcertStatus(index, status)}
             />
 
-            <CopyButton onClick={() => copyDate()}/>
+            <CopyButton onClick={addDateCopy}/>
 
             <MoreDropdown
                 label={<ImageButton src={settingsIcon}/>}
-                dropdownActive={(isActive) =>
-                    setActive(isActive)
-                }
+                dropdownActive={(isActive) => setActive(isActive)}
             >
                 <NotesEditor
                     hideNotes={true}
-                    buttonSize={"large"}
+                    buttonSize="large"
                     notes={date.notes}
-                    onChange={(notes) => updateNotes(notes)}
+                    onChange={(notes) => updateEventNotes(index, notes)}
                 />
 
-                {userCanAdminNote && <AdminNotesEditor
-                    hideNotes={true}
-                    buttonSize={"large"}
-                    notes={date.adminNotes}
-                    onChange={(adminNotes) => updateAdminNotes(adminNotes)}
-                />}
+                {userCanAdminNote && (
+                    <AdminNotesEditor
+                        hideNotes={true}
+                        buttonSize="large"
+                        adminNotes={date.adminNotes}
+                        onChange={(adminNotes) => updateEventAdminNotes(index, adminNotes)}
+                    />
+                )}
 
                 <TimeGeneratorModalButton
                     date={date}
-                    onSubmit={(dates) => addGeneratedDates(dates)}/>
-
+                    onSubmit={(dates) => addGeneratedDates(dates)}
+                />
             </MoreDropdown>
 
-            <DeleteButton
-                onClick={() => props.onDelete()}/>
+            <DeleteButton onClick={onDelete}/>
 
-            {date.notes &&
+            {date.notes && (
                 <NotesEditor
                     hideNotes={false}
-                    buttonSize={"line"}
+                    buttonSize="line"
                     notes={date.notes}
-                    onChange={(notes) => updateNotes(notes)}/>
-            }
-            {date.adminNotes && userCanAdminNote &&
+                    onChange={(notes) => updateEventNotes(index, notes)}
+                />
+            )}
+
+            {date.adminNotes && userCanAdminNote && (
                 <AdminNotesEditor
                     hideNotes={false}
-                    buttonSize={"line"}
+                    buttonSize="line"
                     adminNotes={date.adminNotes}
-                    onChange={(adminNotes) => updateAdminNotes(adminNotes)}/>
-            }
+                    onChange={(adminNotes) => updateEventAdminNotes(index, adminNotes)}
+                />
+            )}
         </div>
     );
 }
