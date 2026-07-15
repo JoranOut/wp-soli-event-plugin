@@ -137,6 +137,18 @@ test.describe('Event Tests',  () => {
         await page2.close();
     });
 
+    test('Default event status is visible in the events admin table', async ({ admin, page }) => {
+        const ctx = await createSingleEvent(
+            { admin, page },
+            { title: uniqueTitle('Default Status Concert'), keepDefaultStatus: true }
+        );
+
+        await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
+
+        const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
+        await expect(eventRow.locator('td.column-status')).toContainText(DEFAULT_EVENT_STATUS);
+    });
+
     test('Calendar page shows event in calendar', async ({ admin, page, editor }) => {
         const eventCtx = await createSingleEvent(
             { admin, page },
@@ -224,7 +236,12 @@ type CreateEventOptions = {
     // When set, create the event with a named external location (via the
     // "Nieuwe locatie" creator) instead of the internal Muziekcentrum rooms.
     namedLocation?: { name: string; address: string };
+    // When true, leave the status at the block's default instead of selecting one.
+    keepDefaultStatus?: boolean;
 };
+
+// The status a new event defaults to (EVENT_STATUS[0] in inc/values.js).
+const DEFAULT_EVENT_STATUS = 'OPTION';
 
 // Reusable helper to create a single event with default settings
 async function createSingleEvent(
@@ -240,6 +257,7 @@ async function createSingleEvent(
         roomLabel = 'Grote zaal',
         status = 'PUBLIC',
         namedLocation,
+        keepDefaultStatus = false,
     } = overrides;
 
     // Go to Events -> Add New Event
@@ -306,8 +324,10 @@ async function createSingleEvent(
 
     // Make it public & publish
     await page.locator('.MuiButtonBase-root.MuiSwitch-switchBase').click();
-    await page.getByRole('combobox', { name: 'OPTION' }).click();
-    await page.getByRole('option', { name: status }).click();
+    if (!keepDefaultStatus) {
+        await page.getByRole('combobox', { name: 'OPTION' }).click();
+        await page.getByRole('option', { name: status }).click();
+    }
     await page.getByRole('button', { name: 'Publish', exact: true }).click();
     await page
         .getByLabel('Editor publish')
@@ -331,7 +351,7 @@ async function createSingleEvent(
         endTime,
         locationLabel,
         roomLabel,
-        status,
+        status: keepDefaultStatus ? DEFAULT_EVENT_STATUS : status,
         namedLocation,
     };
 }

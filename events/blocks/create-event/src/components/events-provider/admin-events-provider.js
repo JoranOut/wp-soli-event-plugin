@@ -3,6 +3,7 @@ import {useSelect, useDispatch} from '@wordpress/data';
 import {useState, useEffect, useCallback, useRef} from '@wordpress/element';
 import {fromEventDto, toEventDto} from "./event-mapper";
 import {EventsProvider, useEventState, useEventActions} from "../events-context";
+import {EVENT_STATUS} from "../../../../../inc/values";
 
 function AdminSaveBridge({postId}) {
     const {events} = useEventState();
@@ -112,7 +113,10 @@ export default function AdminEventsProvider({post_id, children}) {
                     if (!eventData || eventData.length === 0) {
                         eventData = [{
                             startDate: getDefaultDate(),
-                            endDate: getDefaultDate(1)
+                            endDate: getDefaultDate(1),
+                            // Persist the selector's default so a new event saves
+                            // with a status and it shows in the admin table.
+                            status: EVENT_STATUS[0]
                         }];
                     }
                     setInitialEvents(eventData);
