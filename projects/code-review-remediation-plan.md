@@ -8,6 +8,34 @@ This plan is ordered by risk. Each phase is independently shippable as one or mo
 
 ---
 
+## Execution status (2026-07-15)
+
+Executed as five stacked branches (each builds on the previous):
+`feature/security-hardening-rest` → `feature/fix-crashes-and-broken-features`
+→ `feature/save-and-fetch-lifecycle` → `feature/build-and-standards-infra`
+→ `feature/dedup-and-i18n`. All four blocks build; the e2e suite passes (8/8)
+on the cumulative branch.
+
+- **Phase 1 (security):** ✅ done. Also absorbed 2.1 (location UPDATE) while
+  removing the `replaceNullWithNull` hack.
+- **Phase 2 (crashes/broken features):** ✅ done.
+- **Phase 3 (save & fetch lifecycle):** ✅ done.
+- **Phase 4 (build/versioning/migrations):** ✅ done. Version synced to 1.1.3
+  (owner-confirmed).
+- **Phase 5:** correctness cleanups (5.3), dead-code removal (5.4), high-value
+  accessibility (5.5), calendar editor attributes, and the recurrence/mapper
+  correctness fixes are ✅ done. i18n (5.2) has its **infrastructure** done
+  (text domain, loader, `wp_set_script_translations`, `/languages`, build
+  scripts); the **exhaustive JS string wrapping + nl_NL/en_US catalogs are
+  deferred** (large, and needs an owner decision on source language). The full
+  **shared-module dedup (5.1) is deferred** — it is purely structural (the
+  room-mapper bug it would prevent is already fixed in each copy) and is the
+  highest-regression-risk change, best done as its own PR with e2e coverage.
+
+Not yet pushed / no PRs opened — awaiting go-ahead.
+
+---
+
 ## How to work this plan
 
 - Follow the branch/PR workflow in the root `CLAUDE.md` (feature branches, no version bumps during dev; releases are a separate, owner-driven flow).
