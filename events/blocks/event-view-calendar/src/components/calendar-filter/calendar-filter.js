@@ -28,7 +28,13 @@ export default function CalendarFilter({filters, onChange, showRoomFilters}) {
     }
 
     const updateRoomFilters = (roomFilters) => {
-        onChange([...roomFilters, _concertOnly && "only-concerts", _internalEventsOnly && "only-internal"]);
+        // Only append the toggle tokens that are actually on — pushing
+        // `false` into the array pollutes the wrapper className and the
+        // rooms-dropdown value.
+        const toggles = [];
+        if (_concertOnly) toggles.push("only-concerts");
+        if (_internalEventsOnly) toggles.push("only-internal");
+        onChange([...roomFilters, ...toggles]);
     }
 
     return (

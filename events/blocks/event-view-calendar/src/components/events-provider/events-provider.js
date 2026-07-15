@@ -53,7 +53,7 @@ export default function EventsProvider({setEvents, range, filters, children}) {
         let room = true;
         const rooms = JSON.parse(event.rooms);
         const internal = !filters.includes("only-internal") || !!rooms;
-        const roomFilters = filters.filter(f => f !== "only-concerts" || f !== "only-internal");
+        const roomFilters = filters.filter(f => f !== "only-concerts" && f !== "only-internal");
         if (filters.includes("only-internal") && roomFilters.length > 0) {
             if (!rooms || !rooms.some(r => roomFilters.includes(r))) {
                 room = false;

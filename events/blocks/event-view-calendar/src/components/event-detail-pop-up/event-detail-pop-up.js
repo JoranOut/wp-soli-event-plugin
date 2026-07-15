@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 export default function EventDetailPopUp(props) {
     const [box, setBox] = useState({});
     const [side, setSide] = useState("right");
-    const [outsideClickCount, setOutsideClickCount] = useState(0);
     const ref = useRef();
 
     const isSingleDay = (d1, d2) => {
@@ -21,11 +20,13 @@ export default function EventDetailPopUp(props) {
         return start.format("dddd D MMMM, YYYY HH:mm") + " + " + end.format("dddd D MMMM, YYYY HH:mm");
     }
 
-    useOutsideClick(ref, () => {
-        if (outsideClickCount > 0) {
-            props.clearEvent();
+    useOutsideClick(ref, (e) => {
+        // Clicking another calendar event should switch the popup, not close it;
+        // any other click outside the popup dismisses it on the first try.
+        if (e.target.closest && e.target.closest('.fc-event')) {
+            return;
         }
-        setOutsideClickCount(1)
+        props.clearEvent();
     });
 
     const boxybox = (eventBox) => {
@@ -76,7 +77,7 @@ export default function EventDetailPopUp(props) {
 const useOutsideClick = (ref, callback) => {
     const handleClick = e => {
         if (ref.current && !ref.current.contains(e.target)) {
-            callback();
+            callback(e);
         }
     };
 

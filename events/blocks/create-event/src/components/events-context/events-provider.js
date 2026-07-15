@@ -28,24 +28,7 @@ export default function EventsProvider({
     stateRef.current = state;
 
     const dispatch = useMemo(() => (action) => {
-        const prevState = stateRef.current;
-        const prevEvents = prevState.events;
-
         rawDispatch(action);
-
-        if (action.type !== ActionTypes.INIT) {
-            const nextState = eventsReducer(prevState, action);
-            console.groupCollapsed(
-                `%c[EventsContext] ${action.type}`,
-                'color: #6366f1; font-weight: bold;'
-            );
-            console.log('Payload:', action.payload);
-            console.log('Prev events:', prevEvents);
-            console.log('Next events:', nextState.events);
-            console.log('Is dirty:', nextState.isDirty);
-            console.log('History index:', nextState.historyIndex, '/', nextState.history.length - 1);
-            console.groupEnd();
-        }
     }, []);
 
     useEffect(() => {
@@ -54,11 +37,6 @@ export default function EventsProvider({
                 type: ActionTypes.INIT,
                 payload: {events: initialEvents},
             });
-            console.log(
-                `%c[EventsContext] INIT`,
-                'color: #22c55e; font-weight: bold;',
-                'Loaded', initialEvents?.length ?? 0, 'events'
-            );
         }
     }, [initialEvents, state.isInitialized, dispatch]);
 

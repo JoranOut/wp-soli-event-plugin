@@ -31,10 +31,9 @@ function LocationSearcher({location, onSelected}) {
 
         abortControllerRef.current = newAbortController;
 
-        let query;
-        if (queryElem) {
-            query = encodeURI(queryElem);
-        }
+        // addQueryArgs already URL-encodes values; encodeURI here would
+        // double-encode the search term.
+        const query = queryElem ? queryElem : undefined;
         setLoading(true);
 
         apiFetch({
@@ -49,10 +48,13 @@ function LocationSearcher({location, onSelected}) {
             // Note: It's important to handle errors here instead of a catch() block
             // so that we don't swallow exceptions from actual bugs in components.
             (error) => {
-                if (abortControllerRef.current.signal.aborted) {
-                    setLoading(false)
-                    setError(error)
+                // A superseded request rejects with an abort; that is expected,
+                // so ignore it. Any other rejection is a real error to surface.
+                if (newAbortController.signal.aborted) {
+                    return;
                 }
+                setLoading(false)
+                setError(error)
             },
         );
     }

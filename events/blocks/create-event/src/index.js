@@ -104,8 +104,6 @@ function InnerEdit({userCanAdminNote}) {
     const {events} = useEventState();
     const hasMultiple = events.length > 1;
 
-    console.log("Rendering Create Event Block with events:", events);
-
     return (
         <>
             {!hasMultiple && <SingleEventEditor userCanAdminNote={userCanAdminNote}/>}

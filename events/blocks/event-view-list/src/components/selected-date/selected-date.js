@@ -14,8 +14,6 @@ function SelectedDate({date}) {
     const location = date?.extendedProps?.location;
     const rooms = date?.extendedProps?.rooms;
 
-    console.log(location)
-
     const isSameDay = (d1, d2) => {
         return d1.date() === d2.date() &&
             d1.month() === d2.month() &&

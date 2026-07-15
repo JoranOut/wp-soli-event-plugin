@@ -8,9 +8,13 @@ import ImageButton from "../image-button/image-button";
 
 export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'small', hideNotes = false, onOpen, onClose}) {
     const [_adminNotes, setAdminNotes] = useState(adminNotes);
-    const [_buttonSize, setButtonSize] = useState(buttonSize);
 
     const [isOpen, setOpen] = useState(false);
+
+    // Resync when the adminNotes prop changes underneath us (undo/redo/reset).
+    useEffect(() => {
+        setAdminNotes(adminNotes);
+    }, [adminNotes]);
 
     const openModal = () => {
         setOpen(true);
@@ -69,7 +73,7 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
         </Modal>
     );
 
-    if(_buttonSize === "line" && !hideNotes){
+    if(buttonSize === "line" && !hideNotes){
         return (
             <div className="notes admin-notes">
                 <img src={lockSVG}/>
@@ -85,13 +89,13 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
     }
 
     return (
-        <div className={["admin-notes-editor", _buttonSize, _adminNotes == null ? 'empty' : ''].join(" ")}>
-            {_buttonSize === 'line' && <img src={lockSVG}/>}
+        <div className={["admin-notes-editor", buttonSize, _adminNotes == null ? 'empty' : ''].join(" ")}>
+            {buttonSize === 'line' && <img src={lockSVG}/>}
             {_adminNotes?.length > 0 && !hideNotes && <div className="notes-preview">
                 {_adminNotes}
             </div>}
             <ImageButton
-                label={_buttonSize == 'small' ? undefined : "Admin notes"}
+                label={buttonSize == 'small' ? undefined : "Admin notes"}
                 className={"notes-button"}
                 src={lockSVG}
                 onClick={openModal}>

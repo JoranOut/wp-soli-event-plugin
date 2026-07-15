@@ -8,9 +8,14 @@ import ImageButton from "../image-button/image-button";
 
 export default function NotesEditor({notes, onChange, buttonSize = 'small', hideNotes = false, onOpen, onClose}) {
     const [_notes, setNotes] = useState(notes);
-    const [_buttonSize, setButtonSize] = useState(buttonSize);
 
     const [isOpen, setOpen] = useState(false);
+
+    // Resync when the notes prop changes underneath us (undo/redo/reset), so the
+    // preview and the modal don't keep editing a stale copy.
+    useEffect(() => {
+        setNotes(notes);
+    }, [notes]);
 
     const openModal = () => {
         setOpen(true);
@@ -69,7 +74,7 @@ export default function NotesEditor({notes, onChange, buttonSize = 'small', hide
         </Modal>
     );
 
-    if(_buttonSize === "line" && !hideNotes){
+    if(buttonSize === "line" && !hideNotes){
         return (
             <div className="notes">
                 <img src={documentSVG}/>
@@ -85,13 +90,13 @@ export default function NotesEditor({notes, onChange, buttonSize = 'small', hide
     }
 
     return (
-        <div className={["notes-editor", _buttonSize, _notes == null ? 'empty' : ''].join(" ")}>
-            {_buttonSize === 'line' && <img src={documentSVG}/>}
+        <div className={["notes-editor", buttonSize, _notes == null ? 'empty' : ''].join(" ")}>
+            {buttonSize === 'line' && <img src={documentSVG}/>}
             {_notes?.length > 0 && !hideNotes && <div className="notes-preview">
                 {_notes}
             </div>}
             <ImageButton
-                label={_buttonSize == 'small' ? undefined : (_notes?.length > 0 ? "Edit notes" : "Add notes")}
+                label={buttonSize == 'small' ? undefined : (_notes?.length > 0 ? "Edit notes" : "Add notes")}
                 className={"notes-icon"}
                 src={documentSVG}
                 onClick={openModal}>

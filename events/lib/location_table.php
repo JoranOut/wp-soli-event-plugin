@@ -41,7 +41,7 @@ class LocationTableHandler {
     if (empty($event_id)) {
       return null;
     }
-    $this->loadLocationByEvent($event_id);
+    return $this->loadLocationByEvent($event_id);
   }
 
   function loadLocationByEvent($event_id) {

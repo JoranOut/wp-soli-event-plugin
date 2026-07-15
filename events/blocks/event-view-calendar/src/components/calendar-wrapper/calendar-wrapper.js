@@ -4,8 +4,8 @@ import EventsProvider from "../events-provider/events-provider";
 import EventDetailPopUp from "../event-detail-pop-up/event-detail-pop-up";
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/list'
-import listPlugin from '@fullcalendar/timegrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import listPlugin from '@fullcalendar/list'
 import nlLocale from '@fullcalendar/core/locales/nl';
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -38,7 +38,6 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
 
     const handleClick = (info) => {
         info.jsEvent.preventDefault()
-        console.log(info);
         setSelectedEvent(info.event);
         const box = info.el.getBoundingClientRect();
         setSelectedEventBox(box);
