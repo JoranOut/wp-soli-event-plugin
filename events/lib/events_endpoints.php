@@ -193,12 +193,24 @@ function validateStatus($status): bool {
   return in_array($status, $statii);
 }
 
-function filterAdminNotesFromDatesIfNoPermission(&$dates) {
-  if (!current_user_can('soli_event_admin_notes')) {
-    foreach ($dates as &$date) {
-      if (isset($date->admin_notes)) {
-        unset($date->admin_notes);
-      }
+function filterAdminNotesFromDatesIfNoPermission($response) {
+  if (current_user_can('soli_event_admin_notes')) {
+    return;
+  }
+
+  $data = $response->get_data();
+  if (!is_array($data)) {
+    return;
+  }
+
+  foreach ($data as &$date) {
+    if (is_array($date)) {
+      unset($date['admin_notes']);
+    } elseif (is_object($date)) {
+      unset($date->admin_notes);
     }
   }
+  unset($date);
+
+  $response->set_data($data);
 }

@@ -12,7 +12,11 @@ function buildGETSearchLocation() {
     'permission_callback' => '__return_true', // *always set a permission callback
     'callback' => function ($request) {
       $query = $request->get_param('query');
-      $limit = $request->get_param('limit');
+      $limit = (int) $request->get_param('limit');
+      if ($limit < 1) {
+        $limit = 10;
+      }
+      $limit = min($limit, 50);
 
       $eventHandler = new \Soli\Events\LocationTableHandler();
       $dates = $eventHandler->searchLocation($query, $limit);

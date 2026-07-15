@@ -132,7 +132,8 @@ class EventsDatesTableHandler {
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
         WHERE ((d.start_date between %s and %s) or (d.end_date between %s and %s))
-              and w.post_status = %s;", $startDate, $endDate, $startDate, $endDate, 'publish');
+              and w.post_status = %s
+              and d.status in ('PUBLIC', 'PRIVATE');", $startDate, $endDate, $startDate, $endDate, 'publish');
     $results = $this->wpdb->get_results($query, ARRAY_A);
     $results = $this->appendGUID($results);
     return $this->castIsConcertToBoolean($results);
@@ -154,7 +155,9 @@ class EventsDatesTableHandler {
   function removeRedundantDates($post_id, $dates) {
     $nonRedundant = array();
     if ($dates) {
-      $nonRedundant = array_merge($nonRedundant, array_column($dates, 'id'));
+      // Cast every id to int before it reaches the SQL string: these ids come
+      // from the request body and are interpolated (not bound) into the IN clause.
+      $nonRedundant = array_filter(array_map('intval', array_column($dates, 'id')));
     }
     if (empty($nonRedundant)) {
       $query = $this->wpdb->prepare("
@@ -177,59 +180,37 @@ class EventsDatesTableHandler {
     $roomsJson = json_encode(Values\roomIndexesToSlugs($date->rooms));
     $canEditAdminNotes = current_user_can('soli_event_admin_notes');
 
+    $data = array(
+      'start_date'  => $date->start_date,
+      'end_date'    => $date->end_date,
+      'location'    => $date->location ?? null,
+      'rooms'       => $roomsJson,
+      'status'      => $date->status ?? null,
+      'notes'       => $date->notes ?? null,
+      'is_concert'  => $date->is_concert ? 1 : 0,
+    );
+
     if (empty($date->id)) {
-      $query = $this->wpdb->prepare("
-                        INSERT INTO $this->event_dates_table
-                            (post_id, start_date, end_date, location, rooms, status, notes, admin_notes, is_concert) VALUES
-                            (%d, %s, %s, %s, %s, %s, %s, %s, %d)",
-        $event_id,
-        $date->start_date,
-        $date->end_date,
-        $date->location ?? null,
-        $roomsJson,
-        $date->status ?? null,
-        $date->notes ?? null,
-        $date->admin_notes ?? null,
-        $date->is_concert ? 1 : 0
-      );
-
-      $this->wpdb->get_results($this->replaceNullWithNull($query), ARRAY_A);
+      // A brand new date can only be created by a user editing the event, so
+      // admin_notes may be set directly (it is capability-gated on read anyway).
+      $data['post_id']     = $event_id;
+      $data['admin_notes'] = $canEditAdminNotes ? ($date->admin_notes ?? null) : null;
+      $this->wpdb->insert($this->event_dates_table, $data);
       return $this->wpdb->insert_id;
-    } else {
-      if (!$canEditAdminNotes) {
-          $existing = $this->wpdb->get_var(
-              $this->wpdb->prepare("SELECT admin_notes FROM $this->event_dates_table WHERE id = %d", $date->id)
-          );
-          $adminNotes = $existing;
-      } else {
-          $adminNotes = $date->admin_notes ?? null;
-      }
-
-      $query = $this->wpdb->prepare("
-                        UPDATE $this->event_dates_table
-                        SET start_date = %s,
-                            end_date = %s,
-                            location = %s,
-                            rooms = %s,
-                            status = %s,
-                            notes = %s,
-                            admin_notes = %s,
-                            is_concert = %d
-                        WHERE id=%d;",
-        $date->start_date,
-        $date->end_date,
-        $date->location ?? null,
-        $roomsJson,
-        $date->status ?? null,
-        $date->notes ?? null,
-        $adminNotes ?? null,
-        $date->is_concert ? 1 : 0,
-        $date->id
-      );
-
-      $this->wpdb->get_results($this->replaceNullWithNull($query), ARRAY_A);
-      return $date->id;
     }
+
+    // Users without the capability must never overwrite existing admin notes:
+    // keep whatever is already stored.
+    if ($canEditAdminNotes) {
+      $data['admin_notes'] = $date->admin_notes ?? null;
+    } else {
+      $data['admin_notes'] = $this->wpdb->get_var(
+        $this->wpdb->prepare("SELECT admin_notes FROM $this->event_dates_table WHERE id = %d", $date->id)
+      );
+    }
+
+    $this->wpdb->update($this->event_dates_table, $data, array('id' => $date->id));
+    return $date->id;
   }
 
   function validateDates($dates): bool {
@@ -245,10 +226,6 @@ class EventsDatesTableHandler {
     return isset($date)
       && is_string($date->start_date)
       && is_string($date->end_date);
-  }
-
-  function replaceNullWithNull($query) {
-    return str_replace("'NULL'", "NULL", $query);
   }
 
   private function castIsConcertToBoolean($results) {
