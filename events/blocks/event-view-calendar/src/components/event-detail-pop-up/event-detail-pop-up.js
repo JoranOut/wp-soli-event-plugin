@@ -62,7 +62,8 @@ export default function EventDetailPopUp(props) {
     return (
         <>
             {props.event &&
-                <div ref={ref} className={["event-detail-popup", side].join(" ")} style={box}>
+                <div ref={ref} role="dialog" aria-label={props.event.title}
+                     className={["event-detail-popup", side].join(" ")} style={box}>
                     {props.event.extendedProps?.featuredImage &&
                         <img src={props.event.extendedProps.featuredImage} alt={props.event.title}/>}
                     <h2>{props.event.title}</h2>

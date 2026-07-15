@@ -9,7 +9,7 @@ export default function EventListItem({event}) {
                 <div className="soli-block-event-list-item">
                     <div className="image-box">
                         <DateBox date={event}/>
-                        <img src={event.featuredImage}/>
+                        {event.featuredImage && <img src={event.featuredImage} alt={event.title || ''}/>}
                     </div>
                     <div className="event-list-content">
                         <h2>{event.title}</h2>
