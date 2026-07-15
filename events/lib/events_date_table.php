@@ -177,7 +177,11 @@ class EventsDatesTableHandler {
   }
 
   function saveDate($event_id, $date) {
-    $roomsJson = json_encode(Values\roomIndexesToSlugs($date->rooms));
+    // Store real NULL when there are no rooms. json_encode(null) would yield the
+    // 4-char string "null", which readers then mistake for a rooms value (e.g.
+    // the admin table would print "null" instead of the named location).
+    $roomSlugs = Values\roomIndexesToSlugs($date->rooms);
+    $roomsJson = empty($roomSlugs) ? null : json_encode($roomSlugs);
     $canEditAdminNotes = current_user_can('soli_event_admin_notes');
 
     $data = array(

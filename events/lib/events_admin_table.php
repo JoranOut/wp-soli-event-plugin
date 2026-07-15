@@ -84,12 +84,11 @@ function extractNotesAndAdminNotes($post): string
 
 function getLocationByEvent($post) {
   $rooms = $post->rooms;
-  if ($rooms) {
-    $rooms = json_decode($rooms);
-    if (is_array($rooms)){
-        return join(", ", $rooms);
+  if (!empty($rooms) && $rooms !== 'null') {
+    $decoded = json_decode($rooms);
+    if (is_array($decoded) && count($decoded) > 0) {
+      return join(", ", $decoded);
     }
-    return $rooms;
   }
 
   if (!empty($post->location_name)) {
@@ -138,8 +137,8 @@ function soli_event_extend_admin_query_clauses($clauses, $query) {
                                 , $event_dates_table.notes
                                 , $event_dates_table.admin_notes
                                 , $event_dates_table.rooms ";
-        $clauses['fields'] .= ", $event_location_table.name
-                                , $event_location_table.address";
+        $clauses['fields'] .= ", $event_location_table.name as location_name
+                                , $event_location_table.address as location_address";
 
         if ($search_term = $query->get('s')) {
             $like = '%' . $wpdb->esc_like($search_term) . '%';

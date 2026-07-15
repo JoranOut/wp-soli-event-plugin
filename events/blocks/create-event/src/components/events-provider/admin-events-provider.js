@@ -80,6 +80,16 @@ function getDefaultDate(h) {
     const date = new Date();
     if (h) {
         date.setTime(date.getTime() + (h * 60 * 60 * 1000));
+        // Keep a new event's default end on the same calendar day as its start;
+        // near midnight, start + 1h would otherwise spill into the next day and
+        // default a brand-new event to spanning midnight.
+        const start = new Date();
+        if (date.getFullYear() !== start.getFullYear()
+            || date.getMonth() !== start.getMonth()
+            || date.getDate() !== start.getDate()) {
+            date.setFullYear(start.getFullYear(), start.getMonth(), start.getDate());
+            date.setHours(23, 59, 0, 0);
+        }
     }
     return date.toISOString();
 }

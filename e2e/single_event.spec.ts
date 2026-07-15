@@ -99,6 +99,43 @@ test.describe('Event Tests',  () => {
         await page2.close();
     });
 
+    test('Named location shows in the events admin table', async ({ admin, page }) => {
+        const name = `Venue ${Math.random().toString(36).slice(2, 8)}`;
+        const address = 'Teststraat 1, Driehuis';
+        const ctx = await createSingleEvent(
+            { admin, page },
+            { title: uniqueTitle('Located Concert'), namedLocation: { name, address } }
+        );
+
+        await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
+
+        const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
+        await expect(eventRow.locator('td.column-location')).toContainText(name);
+    });
+
+    test('Named location shows on the frontend single-event page', async ({ admin, page }) => {
+        const name = `Venue ${Math.random().toString(36).slice(2, 8)}`;
+        const address = 'Teststraat 1, Driehuis';
+        const ctx = await createSingleEvent(
+            { admin, page },
+            { title: uniqueTitle('Located Concert'), namedLocation: { name, address } }
+        );
+
+        await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
+        const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
+        await eventRow.locator('td.column-title a.row-title').click();
+
+        const page2Promise = page.waitForEvent('popup');
+        await page.getByRole('link', { name: 'View Event' }).click();
+        const page2 = await page2Promise;
+
+        await expect(page2.locator('h1')).toContainText(ctx.title);
+        await expect(page2.locator('#location-name')).toContainText(name);
+        await expect(page2.locator('#location-address')).toContainText(address);
+
+        await page2.close();
+    });
+
     test('Calendar page shows event in calendar', async ({ admin, page, editor }) => {
         const eventCtx = await createSingleEvent(
             { admin, page },
@@ -183,6 +220,9 @@ type CreateEventOptions = {
     locationLabel?: string;
     roomLabel?: string;
     status?: string;
+    // When set, create the event with a named external location (via the
+    // "Nieuwe locatie" creator) instead of the internal Muziekcentrum rooms.
+    namedLocation?: { name: string; address: string };
 };
 
 // Reusable helper to create a single event with default settings
@@ -198,6 +238,7 @@ async function createSingleEvent(
         locationLabel = 'Muziekcentrum',
         roomLabel = 'Grote zaal',
         status = 'PUBLIC',
+        namedLocation,
     } = overrides;
 
     // Go to Events -> Add New Event
@@ -246,13 +287,21 @@ async function createSingleEvent(
     await page.getByRole('textbox', { name: 'hh:mm' }).nth(1).fill(endTime);
 
     await page.getByRole('button', { name: 'Kies een locatie' }).click();
-    await page.getByRole('checkbox', { name: locationLabel }).check();
-    await page
-        .locator('label')
-        .filter({ hasText: roomLabel })
-        .getByTestId('CheckBoxOutlineBlankIcon')
-        .click();
-    await page.getByRole('button', { name: 'Opslaan' }).click();
+    if (namedLocation) {
+        // External location path: create and select a named venue.
+        await page.getByRole('button', { name: 'Nieuwe locatie' }).click();
+        await page.locator('input[name="name"]').fill(namedLocation.name);
+        await page.locator('textarea[name="address"]').fill(namedLocation.address);
+        await page.getByRole('button', { name: 'Opslaan en selecteren' }).click();
+    } else {
+        await page.getByRole('checkbox', { name: locationLabel }).check();
+        await page
+            .locator('label')
+            .filter({ hasText: roomLabel })
+            .getByTestId('CheckBoxOutlineBlankIcon')
+            .click();
+        await page.getByRole('button', { name: 'Opslaan' }).click();
+    }
 
     // Make it public & publish
     await page.locator('.MuiButtonBase-root.MuiSwitch-switchBase').click();
@@ -282,6 +331,7 @@ async function createSingleEvent(
         locationLabel,
         roomLabel,
         status,
+        namedLocation,
     };
 }
 
