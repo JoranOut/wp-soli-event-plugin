@@ -19,7 +19,7 @@ add_action('admin_menu', 'Soli\Events\soli_events_add_admin_view_page');
 
 function soli_events_render_admin_view_page() {?>
     <div class="wrap">
-        <h1><?php echo esc_html__('Calendar View', 'soli_events'); ?></h1>
+        <h1><?php echo esc_html__('Calendar View', 'soli-event'); ?></h1>
         <p><?php echo esc_html__('This page displays various calendar views for managing your events.'); ?></p>
 
         <!-- Block Container -->

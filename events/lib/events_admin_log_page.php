@@ -21,7 +21,7 @@ add_action('admin_menu', 'Soli\Events\soli_events_add_admin_log_page');
 
 function soli_events_add_admin_log_page_content() {?>
     <div class="wrap">
-        <h1><?php echo esc_html__('Log View', 'soli_events'); ?></h1>
+        <h1><?php echo esc_html__('Log View', 'soli-event'); ?></h1>
         <p><?php echo esc_html__('This page displays all last updated event posts.'); ?></p>
 
         <?php

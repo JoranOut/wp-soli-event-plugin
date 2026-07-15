@@ -18,6 +18,7 @@ class SoliBlockEventViewCalendar {
       'editor_style' => 'block-event-view-calendar-css',
       'render_callback' => array($this, 'theHTML')
     ));
+    wp_set_script_translations('block-event-view-calendar-js', 'soli-event', SOLI_EVENT__PLUGIN_DIR_PATH . 'languages');
   }
 
   function theHTML($attributes){

@@ -18,6 +18,7 @@ class SoliBlockEventReservationPopup {
       'editor_style' => 'block-event-reservation-popup-css',
       'render_callback' => array($this, 'theHTML')
     ));
+    wp_set_script_translations('block-event-reservation-popup-js', 'soli-event', SOLI_EVENT__PLUGIN_DIR_PATH . 'languages');
   }
 
   function theHTML($attributes){

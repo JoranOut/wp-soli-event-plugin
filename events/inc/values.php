@@ -47,13 +47,13 @@ function translateLocation($ROOMS): ?string {
 function niceNameEventStatus($statusEnum){
   switch ($statusEnum) {
     case "PUBLIC":
-      return __("public", 'your_text_domain');
+      return __("public", 'soli-event');
     case "PRIVATE":
-      return __("private", 'your_text_domain');
+      return __("private", 'soli-event');
     case "PLANNED":
-      return __("planned", 'your_text_domain');
+      return __("planned", 'soli-event');
     case "PENDING_APPROVAL":
     default:
-      return __("pending approval", 'your_text_domain');
+      return __("pending approval", 'soli-event');
   }
 }

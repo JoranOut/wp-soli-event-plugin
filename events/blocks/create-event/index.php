@@ -20,6 +20,7 @@ class SoliBlockCreateEvent {
       'editor_style' => 'block-create-event-css',
       'render_callback' => array($this, 'theHTML')
     ));
+    wp_set_script_translations('block-create-event-js', 'soli-event', SOLI_EVENT__PLUGIN_DIR_PATH . 'languages');
   }
 
   function theHTML($attributes) {
