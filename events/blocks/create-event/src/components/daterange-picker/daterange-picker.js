@@ -41,7 +41,9 @@ function DateRangePicker(props) {
     }
 
     const isDateInValid = (date) => {
-        return isNaN(date.year());
+        // MUI passes null when a field is cleared and an invalid dayjs while the
+        // user is mid-typing; both must be treated as invalid without throwing.
+        return !date || isNaN(date.year());
     }
 
     useEffect(() => {
@@ -99,6 +101,11 @@ function DateRangePicker(props) {
                         className="start-time time"
                         value={startDate}
                         onChange={(newStartDate) => {
+                            if (isDateInValid(newStartDate)) {
+                                setValidStartDate(false);
+                                return;
+                            }
+                            setValidStartDate(true);
                             setStartDate(newStartDate);
                             updateDate(newStartDate, endDate);
                         }}
@@ -114,6 +121,11 @@ function DateRangePicker(props) {
                         className="end-time time"
                         value={endDate}
                         onChange={(newEndDate) => {
+                            if (isDateInValid(newEndDate)) {
+                                setValidEndDate(false);
+                                return;
+                            }
+                            setValidEndDate(true);
                             setEndDate(newEndDate);
                             updateDate(startDate, newEndDate);
                         }}
@@ -165,6 +177,11 @@ function DateRangePicker(props) {
                                 className="end-time time"
                                 value={endDate}
                                 onChange={(newEndDate) => {
+                                    if (isDateInValid(newEndDate)) {
+                                        setValidEndDate(false);
+                                        return;
+                                    }
+                                    setValidEndDate(true);
                                     setEndDate(newEndDate);
                                     updateDate(startDate, newEndDate);
                                 }}

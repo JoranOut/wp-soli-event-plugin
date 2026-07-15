@@ -90,6 +90,13 @@ export default function EventsProvider({
                 dispatch({type: ActionTypes.REPLACE_ALL, payload: {events}});
             },
 
+            // Reset the dirty baseline to a freshly persisted set of events
+            // (used after a successful save so ids/hash reflect the DB).
+            rebaseEvents: (events) => {
+                if (!canMutate) return;
+                dispatch({type: ActionTypes.INIT, payload: {events}});
+            },
+
             updateEvent: (index, patch) => {
                 if (!canMutate) return;
                 dispatch({type: ActionTypes.UPDATE_EVENT, payload: {index, patch}});

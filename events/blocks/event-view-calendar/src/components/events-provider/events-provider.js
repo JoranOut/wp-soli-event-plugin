@@ -63,12 +63,17 @@ export default function EventsProvider({setEvents, range, filters, children}) {
         return concert && internal && room;
     }
 
+    // Derive the visible events from the cached fetch result plus the active
+    // filters. Depending on [cache, filters] keeps the calendar in sync when
+    // either the data or the filter set changes — no stale-filter race.
     useEffect(() => {
         const events = splitEvents(filters) ? splitEventsOnRooms(cache) : cache;
         const filteredEvents = !events ? [] : events.filter(event => filterEvent(event, filters));
         setEvents(fromEventDto(filteredEvents));
-    }, [filters]);
+    }, [cache, filters]);
 
+    // Fetch the raw events for the visible range. Runs on every range change
+    // (no isLoading/error dead-end); stale responses are dropped on cleanup.
     useEffect(() => {
         if (wrapperRef && wrapperRef.current) {
             setLoadingBox({
@@ -77,30 +82,32 @@ export default function EventsProvider({setEvents, range, filters, children}) {
                     wrapperRef.current.getBoundingClientRect().height / 2 + "px"
             });
         }
-        if (error === undefined && !isLoading && range) {
-            setLoading(true)
-            const startDate = toDateString(range.start);
-            const endDate = toDateString(range.end);
+        if (!range) return;
 
-            apiFetch({path: `soli_event/v1/events/?start_date=${startDate}&end_date=${endDate}`})
-                .then(
-                    (response) => {
-                        setLoading(false)
-                        setError(undefined)
-                        setCache(response);
-                        const events = splitEvents(filters) ? splitEventsOnRooms(response) : response;
-                        const filteredEvents = !events ? [] : events.filter(event => filterEvent(event, filters));
-                        setEvents(fromEventDto(filteredEvents));
-                    },
-                    // Note: It's important to handle errors here instead of a catch() block
-                    // so that we don't swallow exceptions from actual bugs in components.
-                    (error) => {
-                        console.error(error)
-                        setLoading(false)
-                        setError(error)
-                    }
-                );
-        }
+        let cancelled = false;
+        setLoading(true)
+        setError(undefined)
+        const startDate = toDateString(range.start);
+        const endDate = toDateString(range.end);
+
+        apiFetch({path: `soli_event/v1/events/?start_date=${startDate}&end_date=${endDate}`})
+            .then(
+                (response) => {
+                    if (cancelled) return;
+                    setLoading(false)
+                    // 204 (no events in range) resolves to null.
+                    setCache(response || []);
+                },
+                // Note: It's important to handle errors here instead of a catch() block
+                // so that we don't swallow exceptions from actual bugs in components.
+                (error) => {
+                    if (cancelled) return;
+                    console.error(error)
+                    setLoading(false)
+                    setError(error)
+                }
+            );
+        return () => { cancelled = true; };
     }, [range])
 
     // If there's an error in fetching the remote data, display the error.
