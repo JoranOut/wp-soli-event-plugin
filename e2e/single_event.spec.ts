@@ -111,6 +111,7 @@ test.describe('Event Tests',  () => {
 
         const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
         await expect(eventRow.locator('td.column-location')).toContainText(name);
+        await expect(eventRow.locator('td.column-location')).toContainText(address);
     });
 
     test('Named location shows on the frontend single-event page', async ({ admin, page }) => {

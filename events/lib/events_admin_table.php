@@ -92,7 +92,9 @@ function getLocationByEvent($post) {
   }
 
   if (!empty($post->location_name)) {
-    return "<div style='cursor: help; text-decoration: underline' title='" . esc_html($post->location_address) . "'>" . esc_html($post->location_name) . "</div>";
+    $name = esc_html($post->location_name);
+    $address = esc_html($post->location_address);
+    return "<div>" . $name . ($address !== '' ? "<br>" . $address : '') . "</div>";
   }
 
   return __('—', 'soli-event');
