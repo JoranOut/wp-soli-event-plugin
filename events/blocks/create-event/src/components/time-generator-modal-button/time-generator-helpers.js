@@ -69,6 +69,14 @@ export function generateMonthsTimes(startDate, endDate, endRepeatDate, times) {
 
 function incrementByMonth(date) {
     const newDate = new Date(date);
+    const day = newDate.getDate();
+    // Move to the first of the month before changing month so a high day-of-month
+    // (e.g. the 31st) can't overflow into a later month — a bare setMonth(+1) on
+    // Jan 31 yields Mar 3, silently skipping February. Then clamp to the target
+    // month's last day.
+    newDate.setDate(1);
     newDate.setMonth(newDate.getMonth() + 1);
+    const lastDayOfMonth = new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).getDate();
+    newDate.setDate(Math.min(day, lastDayOfMonth));
     return newDate;
 }

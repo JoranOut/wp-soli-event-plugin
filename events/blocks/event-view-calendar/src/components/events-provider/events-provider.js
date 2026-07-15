@@ -2,7 +2,7 @@ import "./events-provider.scss";
 import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect, useRef} from '@wordpress/element';
 import {fromEventDto} from "./event-mapper";
-import {ROOM_COLORS} from "../../../../../inc/values";
+import {ROOM_COLORS, ROOM_NAMES, ROOM_SLUGS} from "../../../../../inc/values";
 
 export default function EventsProvider({setEvents, range, filters, children}) {
     const [error, setError] = useState(undefined);
@@ -32,10 +32,11 @@ export default function EventsProvider({setEvents, range, filters, children}) {
                 return event;
             }
             return rooms.map((room, index) => {
+                const roomName = ROOM_NAMES[ROOM_SLUGS.indexOf(room)] ?? room;
                 return {
                     ...event,
                     id: `${event.id}.${index}`,
-                    post_title: `${event.post_title} - ${room}`,
+                    post_title: `${event.post_title} - ${roomName}`,
                     rooms: JSON.stringify([room]),
                     color: ROOM_COLORS[room]
                 }

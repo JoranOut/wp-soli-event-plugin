@@ -19,6 +19,9 @@ function fromDateDto(dateDto) {
 }
 
 function fromEventRoomDto(rooms) {
+    if (!rooms) {
+        return null;
+    }
     const roomArray = JSON.parse(rooms);
     if (!roomArray){
         return null;
@@ -56,13 +59,10 @@ function toDateDto(date) {
 }
 
 function utcToLocal(date) {
+    // Shift the timestamp by the local offset so serialization emits local wall
+    // time. Returns a new Date rather than mutating the global Date prototype.
     const localOffset = date.getTimezoneOffset();
-    return date.addHours(-localOffset / 60);
-}
-
-Date.prototype.addHours = function (h) {
-    this.setTime(this.getTime() + (h * 60 * 60 * 1000));
-    return this;
+    return new Date(date.getTime() + (-localOffset / 60) * 60 * 60 * 1000);
 }
 
 module.exports = {

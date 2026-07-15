@@ -60,10 +60,11 @@ function splitEventsOnRooms(events) {
                 return event;
             }
             return rooms.map((room, index) => {
+                const roomName = ROOM_NAMES[ROOM_SLUGS.indexOf(room)] ?? room;
                 return {
                     ...event,
                     id: `${event.id}.${index}`,
-                    post_title: `${event.post_title} - ${room}`,
+                    post_title: `${event.post_title} - ${roomName}`,
                     rooms: JSON.stringify([room]),
                     color: ROOM_COLORS[room]
                 }
