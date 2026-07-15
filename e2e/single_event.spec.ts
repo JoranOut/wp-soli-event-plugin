@@ -7,6 +7,10 @@ function uniqueTitle(base: string) {
     return `${base} ${Math.random().toString(36).slice(2, 10)}`;
 }
 
+// The MUI-heavy Create Event block can take several seconds to paint on CI's
+// constrained runner (fast locally). Give block-load waits generous headroom.
+const BLOCK_LOAD_TIMEOUT = 30_000;
+
 test.describe('Event Tests',  () => {
     // Tests share one WordPress instance; each isolates itself with a unique
     // event title (see uniqueTitle) rather than wiping global state, so they
@@ -201,19 +205,24 @@ async function createSingleEvent(
     await page.getByRole('link', { name: 'Events' }).first().click();
     await page.locator('#wpbody-content').getByRole('link', { name: 'Add New Event' }).click();
 
-    await page.locator('#editor').waitFor({ state: 'visible' });
+    await page.locator('#editor').waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
     const guide = page.locator('.components-guide');
     const eventBlock = page.getByLabel('Block: Create Event');
 
+    // The Create Event block renders a stack of heavy MUI components
+    // (date/time pickers, selectors, editors) synchronously. On CI's
+    // constrained runner this paint can take several seconds, so allow a
+    // generous timeout — the welcome guide is disabled, so its waitFor only
+    // rejects at the timeout and must not lose the race before the block paints.
     const winner = await Promise.race([
-        guide.waitFor({ state: 'visible', timeout: 5000 }).then(() => 'guide'),
-        eventBlock.waitFor({ state: 'visible', timeout: 5000 }).then(() => 'title'),
+        guide.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'guide'),
+        eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'title'),
     ]);
 
     if (winner === 'guide') {
         await page.keyboard.press('Escape');
         await expect(guide).toBeHidden();
-        await eventBlock.waitFor({ state: 'visible' });
+        await eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
     }
 
     // Fill in event details
