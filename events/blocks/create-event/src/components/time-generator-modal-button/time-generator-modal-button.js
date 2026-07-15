@@ -313,9 +313,9 @@ function TimeGeneratorModalButton(props) {
                         />
                         <FormControlLabel control={
                             <Switch
-                                value={useNotes}
-                                onChange={(useNotes) => {
-                                    setNotes(useNotes);
+                                checked={useNotes}
+                                onChange={(event, checked) => {
+                                    setUseNotes(checked);
                                     generateData({
                                         startDate: startDate,
                                         endDate: endDate,
@@ -326,7 +326,7 @@ function TimeGeneratorModalButton(props) {
                                         rooms: rooms,
                                         location: location,
                                         status: status,
-                                        useNotes: useNotes,
+                                        useNotes: checked,
                                     });
                                 }}
                             />

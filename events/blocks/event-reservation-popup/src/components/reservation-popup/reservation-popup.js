@@ -5,7 +5,7 @@ import addEventSVG from "../../../../../../inc/assets/img/icons/add event.svg";
 import {Button} from "@wordpress/components"
 import ReservationTool from "../reservation-tool/reservation-tool";
 
-export default function ReservationPopup({}) {
+export default function ReservationPopup({recipient}) {
     const [showPopup, setShowPopup] = useState(false);
 
     const openPopup = () => {
@@ -28,6 +28,7 @@ export default function ReservationPopup({}) {
             {showPopup && (
                 <ReservationTool
                     closePopup={closePopup}
+                    recipient={recipient}
                 />
             )}
         </div>

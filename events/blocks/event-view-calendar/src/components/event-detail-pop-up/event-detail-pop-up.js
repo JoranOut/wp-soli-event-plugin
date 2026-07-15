@@ -29,23 +29,28 @@ export default function EventDetailPopUp(props) {
     });
 
     const boxybox = (eventBox) => {
-        console.log(eventBox);
-        console.log(ref)
-        if (eventBox) {
-            if (eventBox.offsetLeft + eventBox.width + 255 > window.innerWidth) {
-                setSide("left")
-                setBox({
-                    top: window.scrollY + eventBox.offsetTop - ref.current.offsetHeight/2 + 'px',
-                    left: eventBox.offsetLeft - ref.current.offsetWidth - 10 + 'px',
-                });
-            } else {
-                setSide("right")
-                setBox({
-                    top: window.scrollY + eventBox.offsetTop - eventBox.height/2 - ref.current.offsetHeight/2 + 'px',
-                    left: eventBox.offsetLeft + eventBox.width + 10 + 'px',
-                });
-            }
+        // eventBox is a DOMRect from getBoundingClientRect(): its coordinates are
+        // viewport-relative and it has no offsetLeft/offsetTop. Convert to
+        // document coordinates with the scroll offset for absolute positioning.
+        if (!eventBox || !ref.current) {
+            return;
+        }
+        const popupHeight = ref.current.offsetHeight;
+        const popupWidth = ref.current.offsetWidth;
+        const docTop = window.scrollY + eventBox.top;
 
+        if (eventBox.left + eventBox.width + 255 > window.innerWidth) {
+            setSide("left")
+            setBox({
+                top: docTop - popupHeight / 2 + 'px',
+                left: window.scrollX + eventBox.left - popupWidth - 10 + 'px',
+            });
+        } else {
+            setSide("right")
+            setBox({
+                top: docTop - eventBox.height / 2 - popupHeight / 2 + 'px',
+                left: window.scrollX + eventBox.left + eventBox.width + 10 + 'px',
+            });
         }
     }
 
@@ -57,7 +62,8 @@ export default function EventDetailPopUp(props) {
         <>
             {props.event &&
                 <div ref={ref} className={["event-detail-popup", side].join(" ")} style={box}>
-                    <img src={props.event.raw?.featuredImage}/>
+                    {props.event.extendedProps?.featuredImage &&
+                        <img src={props.event.extendedProps.featuredImage} alt={props.event.title}/>}
                     <h2>{props.event.title}</h2>
                     <p>{parseDate(dayjs(props.event.start), dayjs(props.event.end))}</p>
                     <a className="components-button is-primary" href={props.event.url}>visit</a>

@@ -18,7 +18,7 @@ function renderRooms(selected){
 }
 
 
-const ReservationEmail = ({onSend}) => {
+const ReservationEmail = ({onSend, recipient}) => {
     const rawReservations = useSelector(selectEvents);
     const reservations = !rawReservations ? [] : rawReservations.map(r => { return {
         start: dayjs(r.beginDate).format("DD MMMM YYYY (dddd) HH:mm"),
@@ -38,8 +38,11 @@ const ReservationEmail = ({onSend}) => {
     const footer = "\n\nMet vriendelijke groet,\n[Uw Naam]";
     const emailBody = header + reservationList + footer;
 
-    // URL-encode the email body for the mailto link.
-    const mailtoLink = `mail` + `to` + `:recipient@` + `example.com?subject='Reservering ruimte Soli Muziekcentrum'&body=${encodeURIComponent(emailBody)}`;
+    // URL-encode the email body for the mailto link. The recipient is supplied
+    // by the block (data-recipient), defaulting server-side to the site admin.
+    const to = recipient || '';
+    const subject = encodeURIComponent('Reservering ruimte Soli Muziekcentrum');
+    const mailtoLink = `mailto:${to}?subject=${subject}&body=${encodeURIComponent(emailBody)}`;
 
     const sendEmail = () => {
         window.location = mailtoLink;

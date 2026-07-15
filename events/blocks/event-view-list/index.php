@@ -25,9 +25,10 @@ class SoliBlockEventViewList {
     wp_enqueue_style('block-event-view-list-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css', array(), SOLI_EVENT__PLUGIN_VERSION);
 
     $events_per_page = isset( $attributes['events_per_page'] ) ? (int) $attributes['events_per_page'] : 3;
+    $show_navigation = !empty( $attributes['show_navigation'] ) ? 'true' : 'false';
     ob_start();?>
 
-    <div class="block-event-view-list" data-events_per_page="<?php echo $events_per_page; ?>"></div>
+    <div class="block-event-view-list" data-events_per_page="<?php echo esc_attr( $events_per_page ); ?>" data-navigation="<?php echo esc_attr( $show_navigation ); ?>"></div>
     <?php return ob_get_clean();
   }
 

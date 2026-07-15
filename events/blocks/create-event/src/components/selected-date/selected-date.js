@@ -53,8 +53,8 @@ function SelectedDate(props) {
                 <div>
                     {location &&
                         <>
-                            <span id="location-name">location.name</span>
-                            <span id="location-address">location.address</span>
+                            <span id="location-name">{location.name}</span>
+                            <span id="location-address">{location.address}</span>
                         </>
                     }
                     {rooms &&
