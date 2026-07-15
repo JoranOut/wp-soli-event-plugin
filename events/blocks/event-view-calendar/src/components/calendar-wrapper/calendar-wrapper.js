@@ -13,7 +13,6 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import CalendarFilter from "../calendar-filter/calendar-filter";
 import {ROOM_SLUGS} from "../../../../../inc/values";
-import {logs} from "@wordpress/env/lib/commands";
 
 const setDefaultFilters = (onlyConcerts, onlyInternal) => {
     const concertFilter = onlyConcerts ? ["only-concerts"] : [];
