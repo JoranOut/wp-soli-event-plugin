@@ -137,7 +137,7 @@ test.describe('Event Tests',  () => {
         await page.getByRole('button', { name: 'Reserveer' }).click();
         const detail = page.getByRole('link').filter({ hasText: eventCtx.title });
         await expect(detail).toContainText(
-            `${eventCtx.title} - grote-zaal`,
+            `${eventCtx.title} - Grote zaal`,
             { timeout: 30000 }
         );
         await expect(detail).toContainText(
@@ -168,8 +168,8 @@ test.describe('Event Tests',  () => {
             `${eventCtx.startTime} - ${eventCtx.endTime}`,
             { timeout: 30000 }
         );
-        // still using slug here per your TODO-fix
-        await expect(calendarEventLink).toContainText('grote-zaal');
+        // Room name is now shown as its display label, not the raw slug.
+        await expect(calendarEventLink).toContainText('Grote zaal');
     });
 
 
