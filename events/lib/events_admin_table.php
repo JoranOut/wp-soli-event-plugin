@@ -94,7 +94,7 @@ function getLocationByEvent($post) {
   if (!empty($post->location_name)) {
     $name = esc_html($post->location_name);
     $address = esc_html($post->location_address);
-    return "<div>" . $name . ($address !== '' ? "<br>" . $address : '') . "</div>";
+    return "<div>" . $name . ($address !== '' ? "<br><span style='font-style: italic'>" . $address . "</span>" : '') . "</div>";
   }
 
   return __('—', 'soli-event');

@@ -55,7 +55,7 @@ function SelectedDate(props) {
                         <>
                             <span id="location-name">{location.name}</span>
                             <br/>
-                            <span id="location-address">{location.address}</span>
+                            <span id="location-address" style={{fontStyle: 'italic'}}>{location.address}</span>
                         </>
                     }
                     {rooms &&
