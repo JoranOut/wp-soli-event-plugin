@@ -14,11 +14,15 @@ import {selectEvents} from "../../redux/events-slice";
 import {splitEventsOnRooms} from "../events-provider/event-mapper";
 
 function dateToDayRange(date) {
+    // Use local day boundaries, not UTC: events are created and displayed in
+    // local time, so a UTC day (setUTCHours/setUTCDate) would show and fetch the
+    // wrong day between local midnight and the UTC offset (e.g. 00:00–02:00 CEST),
+    // hiding an event created "today".
     const startOfDay = new Date(date);
-    startOfDay.setUTCHours(0, 0, 0, 0);
+    startOfDay.setHours(0, 0, 0, 0);
 
     const nextDay = new Date(startOfDay);
-    nextDay.setUTCDate(startOfDay.getUTCDate() + 1);
+    nextDay.setDate(startOfDay.getDate() + 1);
 
     return {
         start: startOfDay,
