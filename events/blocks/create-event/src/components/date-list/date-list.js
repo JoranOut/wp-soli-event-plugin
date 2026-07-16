@@ -12,8 +12,21 @@ export default function DateList() {
     const {replaceAllEvents, addGeneratedEvents, deleteEvent, duplicateEvent} = useEventActions();
     const {undo, redo, reset, canUndo, canRedo, canReset} = useEventHistory();
 
-    const sortByStartDate = (a, b) =>
-        dayjs(a.startDate) < dayjs(b.startDate) ? -1 : 1;
+    const sortByStartDate = (a, b) => {
+        const da = dayjs(a.startDate);
+        const db = dayjs(b.startDate);
+        if (da.isBefore(db)) return -1;
+        if (da.isAfter(db)) return 1;
+        return 0;
+    };
+
+    // Render the dates ordered by start date without reordering the underlying
+    // state: each row keeps its original state index so edit/delete actions
+    // still target the correct event. Because this recomputes on every change,
+    // editing a date's start time re-sorts the list live.
+    const orderedEvents = events
+        .map((date, index) => ({date, index}))
+        .sort((a, b) => sortByStartDate(a.date, b.date));
 
     const handleAddGeneratedDates = (genDates) => {
         if (!genDates?.length) return;
@@ -41,14 +54,14 @@ export default function DateList() {
 
             <div className="date-list">
                 <h3>Alle datums</h3>
-                {events.map((date, i) => (
+                {orderedEvents.map(({date, index}) => (
                     <DateListItem
-                        key={date.id || i}
-                        index={i}
+                        key={date.id || index}
+                        index={index}
                         date={date}
                         addGeneratedDates={handleAddGeneratedDates}
-                        addDateCopy={() => handleAddDateCopy(i)}
-                        onDelete={() => deleteEvent(i)}
+                        addDateCopy={() => handleAddDateCopy(index)}
+                        onDelete={() => deleteEvent(index)}
                     />
                 ))}
             </div>
