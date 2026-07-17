@@ -41,3 +41,42 @@
     }
   }
 }
+
+// When the list is narrower than 1050px, restack each row: the date/time picker
+// on the first row, the controls on the second, and any notes on a third.
+@container date-list (max-width: 1050px) {
+  .date-list-item {
+    // Leave the 13-column subgrid table and become a wrapping flex row (still
+    // spanning the full list width as a grid item of .date-list).
+    display: flex;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 6px;
+  }
+
+  // Row 1: the date/time picker takes the full width.
+  .date-list-item > .date-range-picker {
+    flex: 1 0 100%;
+  }
+
+  // The "line" variant is a subgrid of the parent's 7 tracks; now that the item
+  // is a flexbox, give the picker its own self-contained tracks.
+  .date-list-item > .date-range-picker.line.single-day {
+    grid-column: auto;
+    grid-template: "start-date start-time tot end-time" / repeat(4, max-content);
+    justify-content: start;
+  }
+
+  .date-list-item > .date-range-picker.line.multi-day {
+    grid-column: auto;
+    grid-template: "start-date start-time tot end-time end-date" / repeat(5, max-content);
+    justify-content: start;
+  }
+
+  // Row 3: notes (and admin notes) each take their own row.
+  .date-list-item > .notes {
+    flex: 1 0 100%;
+  }
+}

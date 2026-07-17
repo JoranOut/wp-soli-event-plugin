@@ -6,6 +6,11 @@
   padding: 30px 0 40px;
   position: relative;
   column-gap: 10px;
+  // Establish a query container so each row can restack based on the list's
+  // width rather than the viewport (see the @container rule in
+  // date-list-item.scss).
+  container-type: inline-size;
+  container-name: date-list;
 
   h3 {
     color: #007cba;
