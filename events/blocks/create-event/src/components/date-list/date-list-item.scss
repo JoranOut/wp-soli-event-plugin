@@ -56,23 +56,17 @@
     row-gap: 6px;
   }
 
-  // Row 1: the date/time picker takes the full width.
-  .date-list-item > .date-range-picker {
+  // Row 1: the date/time picker takes the full width. Replace the subgrid
+  // "line" layout (which is tied to the parent's 7 tracks and would collapse the
+  // "tot" spacing here) with a simple flex row so the date/time parts just flow
+  // with real gaps and can't overlap.
+  .date-list-item > .date-range-picker.line {
     flex: 1 0 100%;
-  }
-
-  // The "line" variant is a subgrid of the parent's 7 tracks; now that the item
-  // is a flexbox, give the picker its own self-contained tracks.
-  .date-list-item > .date-range-picker.line.single-day {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 12px;
     grid-column: auto;
-    grid-template: "start-date start-time tot end-time" / repeat(4, max-content);
-    justify-content: start;
-  }
-
-  .date-list-item > .date-range-picker.line.multi-day {
-    grid-column: auto;
-    grid-template: "start-date start-time tot end-time end-date" / repeat(5, max-content);
-    justify-content: start;
   }
 
   // Row 3: notes (and admin notes) each take their own row.
