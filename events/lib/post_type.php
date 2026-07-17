@@ -20,7 +20,11 @@ function soli_events_register_post_type() {
     'excerpt',
     'author',
     'thumbnail',
-    'revisions'
+    'revisions',
+    // Required for the REST API to expose registered post meta; the block
+    // editor delivers event dates through the soli_event_dates transport meta
+    // (see lib/events_save.php), which is silently dropped without this.
+    'custom-fields'
   );
 
   /*

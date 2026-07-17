@@ -27,6 +27,8 @@ function onActivate() {
   $eventsDatesTableHandler->createEventTable();
   $eventsLocationTableHandler = new LocationTableHandler();
   $eventsLocationTableHandler->createLocationTable();
+  $eventsLogTableHandler = new EventsLogTableHandler();
+  $eventsLogTableHandler->createEventLogTable();
   flush_rewrite_rules();
 }
 
@@ -36,6 +38,11 @@ function onUninstall() {
   $eventsDatesTableHandler->dropEventTable();
   $eventsLocationTableHandler = new LocationTableHandler();
   $eventsLocationTableHandler->dropLocationTable();
+  $eventsLogTableHandler = new EventsLogTableHandler();
+  $eventsLogTableHandler->dropEventLogTable();
+  // Transport meta is normally deleted right after each save; clean up any
+  // rows left behind by interrupted saves.
+  delete_post_meta_by_key(SOLI_EVENT_DATES_META_KEY);
 }
 
 register_deactivation_hook(__FILE__, 'Soli\Events\onDeactivate');

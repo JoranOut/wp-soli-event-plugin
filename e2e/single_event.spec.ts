@@ -195,6 +195,42 @@ test.describe('Event Tests',  () => {
         );
     });
 
+    test('Saving clears the unsaved-changes state and logs one aggregated entry', async ({ admin, page }) => {
+        const ctx = await createSingleEvent(
+            { admin, page },
+            { title: uniqueTitle('Dirty State Concert') }
+        );
+
+        const isDirty = () =>
+            page.evaluate(() =>
+                (window as any).wp.data.select('core/editor').isEditedPostDirty()
+            );
+
+        // Publishing saved the event dates inside the post save; once the
+        // post-save rebase settles, the editor must be clean again (no
+        // "leave tab?" warning).
+        await expect.poll(isDirty).toBe(false);
+
+        // Editing an event field alone must mark the post dirty...
+        await page.getByRole('textbox', { name: 'hh:mm' }).first().fill('14:14');
+        await expect.poll(isDirty).toBe(true);
+
+        // ...and updating must clear it again.
+        await page.getByRole('button', { name: 'Save', exact: true }).click();
+        await expect(page.getByTestId('snackbar')).toContainText('updated');
+        await expect.poll(isDirty).toBe(false);
+
+        // Both saves happened within the idle window, so the Log View must
+        // show exactly one aggregated entry for this event.
+        await admin.visitAdminPage(
+            '/edit.php?post_type=soli_event&page=soli_event_admin_log'
+        );
+        const logRows = page.locator('tbody tr').filter({ hasText: ctx.title });
+        await expect(logRows).toHaveCount(1);
+        await expect(logRows.first()).toContainText('Added');
+        await expect(logRows.first()).toContainText('14:14');
+    });
+
     test('Admin calendar view shows event with correct time and room', async ({ admin, page }) => {
         const eventCtx = await createSingleEvent(
             { admin, page },

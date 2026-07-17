@@ -107,9 +107,10 @@ function buildPOSTEventDates() {
       return current_user_can('edit_posts');
     }, // *always set a permission callback
     'callback' => function ($request) {
-      $eventHandler = new \Soli\Events\EventsDatesTableHandler();
       $body = json_decode($request->get_body());
-      $dates = $eventHandler->setDatesAtEvent($request['id'], $body);
+      // Shared write path with the post-save transport meta, so changes made
+      // through this endpoint land in the change log too.
+      $dates = \Soli\Events\soli_event_apply_dates($request['id'], $body);
       $response = new WP_REST_Response($dates);
       filterAdminNotesFromDatesIfNoPermission($response);
       if (!$dates) {

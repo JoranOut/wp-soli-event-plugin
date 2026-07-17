@@ -29,4 +29,5 @@ function soli_event_run_migrations($installed_version) {
     // schema with these without touching data.
     (new EventsDatesTableHandler())->createEventTable();
     (new LocationTableHandler())->createLocationTable();
+    (new EventsLogTableHandler())->createEventLogTable();
 }

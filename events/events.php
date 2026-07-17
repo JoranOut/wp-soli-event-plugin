@@ -20,6 +20,8 @@ require_once 'lib/location_table.php';
 require_once 'lib/migrations.php';
 require_once 'lib/location_endpoints.php';
 require_once 'lib/events_date_table.php';
+require_once 'lib/events_log_table.php';
+require_once 'lib/events_save.php';
 require_once 'lib/events_endpoints.php';
 require_once 'lib/events_admin_table.php';
 require_once 'lib/post_type.php';
