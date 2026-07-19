@@ -11,7 +11,7 @@ const SOLI_EVENT_DATES_META_KEY = 'soli_event_dates';
  * they travel inside the regular post save request (manual and programmatic
  * saves alike). After WordPress persists the post, the rest_after_insert hook
  * below moves the payload into the custom event_dates table and clears the
- * meta again. The meta is transport only — the event_dates table stays the
+ * meta again. The meta is transport only - the event_dates table stays the
  * single source of truth, and Gutenberg's native dirty tracking (Update
  * button, leave-tab warning) now covers event edits for free.
  *

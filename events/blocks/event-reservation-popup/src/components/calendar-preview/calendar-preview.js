@@ -1,5 +1,6 @@
 import './calendar-preview.scss';
 
+import {__} from '@wordpress/i18n';
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from '@fullcalendar/timegrid'
 import nlLocale from '@fullcalendar/core/locales/nl';
@@ -16,7 +17,7 @@ import {splitEventsOnRooms} from "../events-provider/event-mapper";
 function dateToDayRange(date) {
     // Use local day boundaries, not UTC: events are created and displayed in
     // local time, so a UTC day (setUTCHours/setUTCDate) would show and fetch the
-    // wrong day between local midnight and the UTC offset (e.g. 00:00–02:00 CEST),
+    // wrong day between local midnight and the UTC offset (e.g. 00:00-02:00 CEST),
     // hiding an event created "today".
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
@@ -33,7 +34,7 @@ function dateToDayRange(date) {
 function reservationToCalendarEvent(reservation) {
     return {
         id: reservation.id,
-        post_title: "Reservering",
+        post_title: __('Reservation', 'soli-event'),
         start: reservation.beginDate,
         end: reservation.endDate,
         rooms: JSON.stringify(reservation.rooms),

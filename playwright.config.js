@@ -12,7 +12,7 @@ const config = defineConfig({
     reporter: [['html', { open: 'never' }]],
     use: {
         // Spread the base `use` so we keep its `storageState` (authenticated
-        // session) and `contextOptions` — otherwise the browser context loads
+        // session) and `contextOptions` - otherwise the browser context loads
         // no auth and every test would need to log in manually.
         ...baseConfig.use,
         baseURL: process.env.BASE_URL || 'http://localhost:8889',

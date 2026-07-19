@@ -6,7 +6,7 @@ namespace Soli\Events;
  * Run database migrations when the stored schema version is older than the
  * plugin version. dbDelta() (used by the table handlers' create* methods) is
  * idempotent: it adds new columns/indexes and adjusts column definitions, and
- * never drops anything — so re-running it on every upgrade is safe.
+ * never drops anything - so re-running it on every upgrade is safe.
  *
  * This runs on admin page loads rather than only on activation, so that
  * installations updated in place (e.g. via the GitHub updater) also receive

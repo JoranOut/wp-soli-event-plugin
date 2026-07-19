@@ -138,7 +138,7 @@ function soli_events_index_dates_by_id($dates) {
 }
 
 function soli_events_describe_date_row($row) {
-  return ($row['start_date'] ?? '?') . ' – ' . ($row['end_date'] ?? '?');
+  return ($row['start_date'] ?? '?') . ' - ' . ($row['end_date'] ?? '?');
 }
 
 function soli_events_diff_date_row($before, $after) {

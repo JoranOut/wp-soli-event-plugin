@@ -34,7 +34,7 @@ function custom_soli_event_column($column, $post_id) {
             $dt = new DateTime($post->start_date, $tz);
             echo esc_html( $dt->format("$date_format $time_format"));
         } else {
-            echo esc_html(__('—', 'soli-event'));
+            echo esc_html(__('-', 'soli-event'));
         }
     }
 
@@ -43,7 +43,7 @@ function custom_soli_event_column($column, $post_id) {
             $dt = new DateTime($post->end_date, $tz);
             echo esc_html( $dt->format("$date_format $time_format"));
         } else {
-            echo esc_html(__('—', 'soli-event'));
+            echo esc_html(__('-', 'soli-event'));
         }
     }
   }
@@ -51,7 +51,7 @@ function custom_soli_event_column($column, $post_id) {
     echo getLocationByEvent($post);
   }
   if ($column === 'status') {
-    echo esc_html($post->status ?? __('—', 'soli-event'));
+    echo esc_html($post->status ?? __('-', 'soli-event'));
   }
   if ($column === 'notes') {
       echo extractNotesAndAdminNotes($post);
@@ -97,7 +97,7 @@ function getLocationByEvent($post) {
     return "<div>" . $name . ($address !== '' ? "<br><span style='font-style: italic'>" . $address . "</span>" : '') . "</div>";
   }
 
-  return __('—', 'soli-event');
+  return __('-', 'soli-event');
 }
 
 function load_events_admin_style($hook) {
