@@ -1,0 +1,259 @@
+// Concert hero - ported from the Soli mock-up (localhost:5178).
+// Design tokens are scoped to the block so they never leak into the theme.
+// Playfair Display / Inter are expected to be provided by the active theme;
+// robust serif/sans fallbacks keep the layout intact if they are absent.
+.soli-concert-hero {
+  --sch-cream: #faf6ee;
+  --sch-gold: #c9a24a;
+  --sch-ink: #1a1a2e;
+  --sch-line: #e6e2da;
+  --sch-maroon: #7a1f2b;
+  --sch-muted: #5a5a5e;
+  --sch-lead: #e7e0d2;
+  --sch-font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --sch-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  background: var(--sch-ink);
+  color: var(--sch-cream);
+
+  * {
+    box-sizing: border-box;
+  }
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+  }
+
+  &__bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      rgba(26, 26, 46, 0.88) 0%,
+      rgba(26, 26, 46, 0.55) 55%,
+      rgba(26, 26, 46, 0.3) 100%
+    );
+  }
+
+  &__inner {
+    position: relative;
+    // Keep the hero substantial even with a short title / no excerpt; it still
+    // grows past this when the content is taller. Drives the section height, so
+    // the background fill stays correct.
+    min-height: 70vh;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px clamp(20px, 3.5vw, 40px) 80px;
+    // Pin the eyebrow to the top and the body (title/CTAs + card) to the bottom.
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 48px;
+  }
+
+  &__body {
+    display: grid;
+    gap: 48px;
+    align-items: end;
+  }
+
+  &__eyebrow {
+    margin: 0 0 20px;
+    font-family: var(--sch-font-sans);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    color: var(--sch-gold);
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--sch-font-display);
+    font-weight: 700;
+    font-size: clamp(56px, 8vw, 120px);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    color: var(--sch-cream);
+  }
+
+  // Two-tone title: leading words in paper, the last word italic + gold
+  // (matches the mock-up). Preset colours come from the theme, with the
+  // block's own tokens as a fallback for themes that don't define them.
+  &__title-lead {
+    color: var(--wp--preset--color--paper, #f5efe6);
+  }
+
+  &__title-accent {
+    font-style: italic;
+    color: var(--wp--preset--color--gold, var(--sch-gold));
+  }
+
+  &__lead {
+    margin: 28px 0 0;
+    max-width: 52ch;
+    font-family: var(--sch-font-sans);
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--sch-lead);
+  }
+
+  &__actions {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-family: var(--sch-font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.12s, color 0.12s, border-color 0.12s;
+
+    &--primary {
+      background: var(--sch-gold);
+      color: var(--sch-ink);
+      border-color: var(--sch-gold);
+
+      &:hover {
+        background: transparent;
+        color: var(--sch-gold);
+      }
+    }
+
+    &--outline {
+      background: transparent;
+      color: var(--sch-cream);
+      border-color: var(--sch-cream);
+
+      &:hover {
+        background: var(--sch-cream);
+        color: var(--sch-ink);
+      }
+    }
+  }
+
+  &__aside {
+    justify-self: start;
+  }
+
+  &__card {
+    max-width: 340px;
+    padding: 28px;
+    border-radius: 10px 10px 3px 10px;
+    background: var(--sch-cream);
+    color: var(--sch-ink);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+    outline: 4px solid rgba(201, 162, 74, 0.4);
+    outline-offset: 0;
+  }
+
+  &__card-kicker {
+    margin: 0;
+    font-family: var(--sch-font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--sch-maroon);
+  }
+
+  &__card-date {
+    margin: 8px 0 0;
+    font-family: var(--sch-font-display);
+    font-size: 24px;
+    line-height: 1.1;
+  }
+
+  &__card-rule {
+    margin: 16px 0;
+    border: 0;
+    border-top: 1px solid var(--sch-line);
+  }
+
+  &__card-list {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px 20px;
+    font-family: var(--sch-font-sans);
+    font-size: 14px;
+
+    dt {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--sch-muted);
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__card-muted {
+    color: var(--sch-muted);
+  }
+
+  &__card-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding-bottom: 2px;
+    font-family: var(--sch-font-sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    color: var(--sch-maroon);
+    border-bottom: 1px solid var(--sch-maroon);
+  }
+
+  // Two-column layout once the hero itself is wide enough.
+  @container (min-width: 900px) {
+    &__inner {
+      min-height: min(85vh, 820px);
+      padding-top: 80px;
+      padding-bottom: 112px;
+    }
+
+    &__body {
+      grid-template-columns: 1.4fr 1fr;
+    }
+
+    &__aside {
+      justify-self: end;
+    }
+  }
+
+  // Editor empty-state notice.
+  &--empty {
+    padding: 40px;
+    text-align: center;
+    background: #f5efe6;
+    color: #5a5a5e;
+    border: 1px dashed #c9a24a;
+    border-radius: 8px;
+  }
+}

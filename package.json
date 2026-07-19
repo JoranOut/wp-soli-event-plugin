@@ -10,7 +10,7 @@
     "publish": "npm run build && node ./publish.js",
     "i18n:make-pot": "wp-env run cli wp i18n make-pot wp-content/plugins/wp-soli-event-plugin wp-content/plugins/wp-soli-event-plugin/languages/soli-event.pot --domain=soli-event --exclude=node_modules,build,e2e",
     "i18n:make-mo": "wp-env run cli wp i18n make-mo wp-content/plugins/wp-soli-event-plugin/languages",
-    "i18n:make-json": "wp-env run cli wp i18n make-json wp-content/plugins/wp-soli-event-plugin/languages --no-purge",
+    "i18n:make-json": "wp-env run cli wp i18n make-json wp-content/plugins/wp-soli-event-plugin/languages --no-purge --use-map=wp-content/plugins/wp-soli-event-plugin/i18n-map.json && wp-env run cli wp i18n make-json wp-content/plugins/wp-soli-event-plugin/languages --no-purge --use-map=wp-content/plugins/wp-soli-event-plugin/i18n-map-frontend.json",
     "i18n:build": "npm run i18n:make-pot && npm run i18n:make-mo && npm run i18n:make-json",
     "test:playwright": "wp-scripts test-playwright",
     "test:playwright:help": "wp-scripts test-playwright --help",
@@ -21,7 +21,10 @@
     "events/blocks/create-event",
     "events/blocks/event-reservation-popup",
     "events/blocks/event-view-calendar",
-    "events/blocks/event-view-list"
+    "events/blocks/event-view-list",
+    "events/blocks/concert-hero",
+    "events/blocks/next-concert",
+    "events/blocks/event-dates"
   ],
   "keywords": [],
   "author": "",
