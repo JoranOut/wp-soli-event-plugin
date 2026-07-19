@@ -52,6 +52,69 @@ class EventsDatesTableHandler {
     return $dates;
   }
 
+  function getNextConcert() {
+    $current_daytime = current_time('Y-m-d H:i:s');
+
+    $query = $this->wpdb->prepare("
+        SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
+               m.meta_value as featured_image_id,
+           w.ID as post_id, w.post_title, w.post_status, w.post_name,
+           l.id as location_id, l.name as location_name, l.address as location_address
+        FROM $this->event_dates_table d
+        LEFT JOIN $this->post_table w
+            ON d.post_id = w.id
+        LEFT JOIN $this->meta_table m
+            ON m.post_id = w.id and m.meta_key = '_thumbnail_id'
+        LEFT JOIN $this->event_location_table l
+            on d.location = l.id
+        WHERE w.post_status = %s and d.status = %s and d.end_date >= %s and d.is_concert = 1
+        ORDER BY d.start_date asc LIMIT 1", 'publish', 'public', $current_daytime);
+    $concert = $this->wpdb->get_row($query, ARRAY_A);
+    if (empty($concert)) {
+      return null;
+    }
+
+    $concert['is_concert'] = (bool) $concert['is_concert'];
+    $concert['post_excerpt'] = get_the_excerpt($concert['post_id']);
+    if (!empty($concert['featured_image_id'])) {
+      $img = wp_get_attachment_image_src($concert['featured_image_id'], 'full');
+      if ($img) {
+        $concert['featured_image'] = $img[0];
+      }
+    }
+    return $concert;
+  }
+
+  // Upcoming dates for a single event, ordered by start date. Used by the
+  // soli/event-dates block to show the event's own recurrence schedule, so it
+  // returns every future date of the event regardless of status. Pass a $limit
+  // to cap the number of rows.
+  function getUpcomingDatesForEvent($event_id, $limit = null) {
+    $event_id = absint($event_id);
+    if (!$event_id) {
+      return array();
+    }
+
+    $current_daytime = current_time('Y-m-d H:i:s');
+    $sql = "
+        SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
+               l.id as location_id, l.name as location_name, l.address as location_address
+        FROM $this->event_dates_table d
+        LEFT JOIN $this->event_location_table l
+            on d.location = l.id
+        WHERE d.post_id = %d and d.end_date >= %s
+        ORDER BY d.start_date asc";
+
+    if ($limit !== null) {
+      $query = $this->wpdb->prepare($sql . " LIMIT %d", $event_id, $current_daytime, absint($limit));
+    } else {
+      $query = $this->wpdb->prepare($sql, $event_id, $current_daytime);
+    }
+
+    $results = $this->wpdb->get_results($query, ARRAY_A);
+    return $this->castIsConcertToBoolean($results);
+  }
+
   function getFutureDatesPerPageFromEvent($page, $itemsPerPage) {
     $dates = $this->loadFutureEventDatesPerPageFromDb($page, $itemsPerPage);
     if (empty($dates)) {

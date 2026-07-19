@@ -1,50 +1,126 @@
+/* Event detail popup, styled as a soli card (see soli_mockup agenda cards):
+   white card with a line ring, the diagonal card radius, serif title, maroon
+   kicker and CTA. Tokens fall back to the mockup's values so the popup looks
+   right even when the theme does not define the --color-* properties. */
 .event-detail-popup {
+  --soli-pop-line: var(--color-line, #e6e2da);
+  --soli-pop-maroon: var(--color-maroon, #7a1f2b);
+  --soli-pop-maroon-dark: var(--color-maroon-dark, #5e1821);
+  --soli-pop-ink: var(--color-ink, #1a1a2e);
+  --soli-pop-muted: var(--color-muted, #5a5a5e);
+  --soli-pop-radius: var(--soli-card-radius, 10px 10px 3px 10px);
+  --soli-pop-font-sans: Inter, system-ui, sans-serif;
+  --soli-pop-font-display: "Playfair Display", Georgia, serif;
+
   background-color: #fff;
-  border: 1px solid #d5d5d5;
-  border-radius: 2px;
-  box-shadow: 0 2px 50px -10px rgba(0, 0, 0, 0.5);
-  width:200px;
+  border: 1px solid var(--soli-pop-line);
+  border-radius: var(--soli-pop-radius);
+  box-shadow: 0 12px 40px -12px rgba(26, 26, 46, 0.25);
+  width: 260px;
   position: absolute;
   z-index: 99;
+  font-family: var(--soli-pop-font-sans);
 
+  /* Pointer arrow: a line-colored triangle with a white one 1px inside it,
+     so the arrow carries the card's border. */
+  &::before,
   &::after {
     content: "";
-    border: 10px solid transparent;
-    border-right-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
     position: absolute;
-    right: 100%;
     top: 50%;
     transform: translateY(-50%);
+    border: 10px solid transparent;
   }
 
-  &.left::after {
-    border: 10px solid transparent;
-    border-left-color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
-    position: absolute;
+  &.right::before {
+    border-right-color: var(--soli-pop-line);
+    right: 100%;
+  }
+
+  &.right::after {
+    border-right-color: #fff;
+    right: calc(100% - 1px);
+  }
+
+  &.left::before {
+    border-left-color: var(--soli-pop-line);
     left: 100%;
   }
 
-  h2 {
-    font-size: 15px;
-    font-weight: 700;
-    line-height: 1.6;
-    word-break: break-all;
-    padding: 0 15px;
-  }
-
-  p {
-    font-size: 12px;
-    line-height: 2;
-    padding: 0 15px;
+  &.left::after {
+    border-left-color: #fff;
+    left: calc(100% - 1px);
   }
 
   img {
     width: 100%;
+    display: block;
+    /* The card itself must not clip (the pointer arrow sits outside it), so
+       round the image's top corners to follow the card radius. */
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
   }
 
-  a {
-    display: block;
-    width: 100%;
-    text-align: center;
+  .popup-body {
+    padding: 1rem 1.1rem 1.1rem;
+  }
+
+  .popup-kicker {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--soli-pop-maroon);
+  }
+
+  h2 {
+    margin: 0.45rem 0 0;
+    padding: 0;
+    font-family: var(--soli-pop-font-display);
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--soli-pop-ink);
+    overflow-wrap: break-word;
+  }
+
+  .popup-date {
+    margin: 0.55rem 0 0;
+    padding: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #3a3a3e;
+
+    &::first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  .popup-location {
+    margin: 0.2rem 0 0;
+    padding: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--soli-pop-muted);
+  }
+
+  .popup-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.9rem;
+    padding: 0.5rem 1rem;
+    background: var(--soli-pop-maroon);
+    color: #fff;
+    border-radius: var(--soli-pop-radius);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background: var(--soli-pop-maroon-dark);
+      color: #fff;
+    }
   }
 }
