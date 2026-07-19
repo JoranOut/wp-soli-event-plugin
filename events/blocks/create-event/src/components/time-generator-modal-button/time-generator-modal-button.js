@@ -1,4 +1,5 @@
 import "./time-generator-modal-button.scss"
+import { __ } from '@wordpress/i18n';
 import {SelectControl, Modal, Button} from "@wordpress/components"
 import {useState, useEffect} from '@wordpress/element';
 import repeatSVG from "../../../../../../inc/assets/img/icons/repeat.svg";
@@ -51,7 +52,7 @@ function DateViewToggle(props) {
 
     return (
         <div className="generated-data">
-            <h3>Gegenereerde data:</h3>
+            <h3>{__('Generated dates:', 'soli-event')}</h3>
             <div className={['example-data', isOpen ? 'full' : ''].join(' ')}>
                 {props.data.map(data => {
                     return (<div key={data.startDate.toISOString()}>
@@ -63,7 +64,7 @@ function DateViewToggle(props) {
             </div>
             {props.data.length > 4 && <Button className='expand-button'
                                               onClick={() => toggleOpen()}>
-                {!isOpen ? 'Bekijk alle data' : 'Verberg'}
+                {!isOpen ? __('Show all dates', 'soli-event') : __('Hide', 'soli-event')}
             </Button>}
         </div>)
 }
@@ -87,13 +88,13 @@ function RadioRepeatingMethod(props) {
             <FormControlLabel
                 value={RepeatingMethod.UNTIL_DATE}
                 control={<Radio/>}
-                label="Tot datum"
+                label={__('Until date', 'soli-event')}
                 labelPlacement="end"
             />
             <FormControlLabel
                 value={RepeatingMethod.TIMES}
                 control={<Radio/>}
-                label="Aantal"
+                label={__('Number', 'soli-event')}
                 labelPlacement="end"
             />
         </RadioGroup>
@@ -163,11 +164,11 @@ function TimeGeneratorModalButton(props) {
         setGeneratedData([])
 
         if (!startDate || !frequency || !method || (!endRepeatDate && !repeatAmount)) {
-            setError("Vul een frequency, methode en data in voor resultaat")
+            setError(__('Enter a frequency, method and date to see a result', 'soli-event'))
             return;
         }
         if (!!endRepeatDate && startDate > endRepeatDate) {
-            setError("Einddatum moet na start datum vallen")
+            setError(__('End date must be after the start date', 'soli-event'))
             return;
         }
 
@@ -207,7 +208,7 @@ function TimeGeneratorModalButton(props) {
         }
 
         if (dates.length === 0) {
-            setError("Gebruik een grotere tijdspanne om datums te genereren. ")
+            setError(__('Use a larger time span to generate dates. ', 'soli-event'))
             setGeneratedData([])
             return;
         }
@@ -231,13 +232,13 @@ function TimeGeneratorModalButton(props) {
 
     return (<>
         <ImageButton
-            label={buttonSize === "small" ? undefined : "Repeat"}
+            label={buttonSize === "small" ? undefined : __('Repeat', 'soli-event')}
             className="repeat-button"
             src={repeatSVG}
             onClick={openModal}/>
         {isOpen && (<Modal
             className="generate-dates"
-            title="Genereer datums"
+            title={__('Generate dates', 'soli-event')}
             onRequestClose={closeModal}
             size={"large"}
             focusOnMount={true}
@@ -330,15 +331,15 @@ function TimeGeneratorModalButton(props) {
                                     });
                                 }}
                             />
-                        } label="copy notes"/>
+                        } label={__('copy notes', 'soli-event')}/>
 
                     </div>
                     <div className={"grid-top-right"}>
 
                         <SelectControl
                             className={"frequentie"}
-                            help='Selecteer hoe het evenement zich herhaalt'
-                            label='Kies een herhaal frequentie'
+                            help={__('Select how the event repeats', 'soli-event')}
+                            label={__('Choose a repeat frequency', 'soli-event')}
                             value={frequency ?? ''}
                             onChange={(frequency) => {
                                 setFrequency(frequency);
@@ -356,13 +357,13 @@ function TimeGeneratorModalButton(props) {
                                 });
                             }}
                             options={[{
-                                disabled: true, label: 'Selecteer een optie', value: ''
+                                disabled: true, label: __('Select an option', 'soli-event'), value: ''
                             }, {
-                                label: 'Weekelijks', value: RepeatingOptions.WEEKLY
+                                label: __('Weekly', 'soli-event'), value: RepeatingOptions.WEEKLY
                             }, {
-                                label: 'Om de week', value: RepeatingOptions.BIWEEKLY
+                                label: __('Every other week', 'soli-event'), value: RepeatingOptions.BIWEEKLY
                             }, {
-                                label: 'Maandelijks', value: RepeatingOptions.MONTHLY
+                                label: __('Monthly', 'soli-event'), value: RepeatingOptions.MONTHLY
                             }]}
                         />
 
@@ -406,13 +407,13 @@ function TimeGeneratorModalButton(props) {
                                     });
                                 }}
                                 endAdornment={{
-                                    WEEKLY: 'weken', BIWEEKLY: 'keer om de week', MONTHLY: 'maanden'
+                                    WEEKLY: __('weeks', 'soli-event'), BIWEEKLY: __('times every other week', 'soli-event'), MONTHLY: __('months', 'soli-event')
                                 }[frequency]}
                             />
                         </>}
 
                         {!!frequency && method === RepeatingMethod.UNTIL_DATE && <>
-                            <p>Herhalen tot en met:</p>
+                            <p>{__('Repeat until and including:', 'soli-event')}</p>
                             <DatePicker
                                 className="repeat-end-date"
                                 value={endRepeatDate}
@@ -447,7 +448,7 @@ function TimeGeneratorModalButton(props) {
                     {generatedData.length > 0 && <Button
                         className="submit-button"
                         variant="secondary"
-                        onClick={submit}>Gebruiken</Button>}
+                        onClick={submit}>{__('Use', 'soli-event')}</Button>}
                 </div>
             </LocalizationProvider>
         </Modal>)}

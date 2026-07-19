@@ -1,5 +1,6 @@
 import './event-list.scss';
 
+import {__} from '@wordpress/i18n';
 import {Button} from "@wordpress/components"
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -33,7 +34,7 @@ export default function EventList(){
 
     return (
         <div className="event-list">
-            <h2>Events</h2>
+            <h2>{__('Events', 'soli-event')}</h2>
             {events.map((event) => (
                     <EventListItem
                         key={event.id}
@@ -44,7 +45,7 @@ export default function EventList(){
                 variant="secondary"
                 onClick={newEvent}>
                 <img src={addSVG}/>
-                nieuw
+                {__('new', 'soli-event')}
             </Button>
         </div>
     );

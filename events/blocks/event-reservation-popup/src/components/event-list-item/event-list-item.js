@@ -1,5 +1,6 @@
 import './event-list-item.scss';
 
+import {__} from '@wordpress/i18n';
 import {addEvent, deleteEvent} from "../../redux/events-slice";
 import {changeViewDate} from "../../redux/calendar-slice";
 import {useDispatch} from "react-redux";
@@ -35,7 +36,7 @@ export default function EventListItem({event}) {
                 variant="secondary"
                 onClick={() => handleViewDate(event.beginDate)}>
                 <img src={focusSVG}/>
-                View</Button>
+                {__('View', 'soli-event')}</Button>
             <EventListItemEditor
                 event={event}
             />
@@ -44,13 +45,13 @@ export default function EventListItem({event}) {
                 variant="secondary"
                 onClick={() => handleCopy(event)}>
                 <img src={copySVG}/>
-                Copy
+                {__('Copy', 'soli-event')}
             </Button>
             <Button
                 className="delete-button"
                 variant="secondary"
                 onClick={() => handleDelete(event.id)}>
                 <img src={deleteSVG}/>
-                Delete</Button>
+                {__('Delete', 'soli-event')}</Button>
         </div>);
 }

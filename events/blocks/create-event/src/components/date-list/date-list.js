@@ -1,4 +1,5 @@
 import './date-list.scss';
+import { __ } from '@wordpress/i18n';
 import DateListItem from "./date-list-item";
 import dayjs from "dayjs";
 import {Button} from "@wordpress/components";
@@ -41,19 +42,19 @@ export default function DateList() {
     return (
         <div>
             <div className="state-buttons">
-                <Button className='undo-button' title='undo' onClick={undo} disabled={!canUndo}>
-                    <img src={undoSVG} alt="undo"/>
+                <Button className='undo-button' title={__('undo', 'soli-event')} onClick={undo} disabled={!canUndo}>
+                    <img src={undoSVG} alt={__('undo', 'soli-event')}/>
                 </Button>
-                <Button className='redo-button' title='redo' onClick={redo} disabled={!canRedo}>
-                    <img src={redoSVG} alt="redo"/>
+                <Button className='redo-button' title={__('redo', 'soli-event')} onClick={redo} disabled={!canRedo}>
+                    <img src={redoSVG} alt={__('redo', 'soli-event')}/>
                 </Button>
-                <Button className='reset-button' title='reset' onClick={reset} disabled={!canReset}>
-                    <img src={resetSVG} alt="reset"/>
+                <Button className='reset-button' title={__('reset', 'soli-event')} onClick={reset} disabled={!canReset}>
+                    <img src={resetSVG} alt={__('reset', 'soli-event')}/>
                 </Button>
             </div>
 
             <div className="date-list">
-                <h3>Alle datums</h3>
+                <h3>{__('All dates', 'soli-event')}</h3>
                 {orderedEvents.map(({date, index}) => (
                     <DateListItem
                         key={date.id || index}

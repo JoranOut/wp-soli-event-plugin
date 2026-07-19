@@ -1,3 +1,4 @@
+import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect} from '@wordpress/element';
 import {fromEventDto} from "./event-mapper";
@@ -28,10 +29,10 @@ export default function FrontendEventsProvider({post_id, children}) {
     }, [post_id, error, isLoading, initialEvents]);
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <div>{sprintf(__('Error: %s', 'soli-event'), error.message)}</div>;
     }
     if (isLoading || !initialEvents) {
-        return <div>Loading...</div>;
+        return <div>{__('Loading…', 'soli-event')}</div>;
     }
 
     return (

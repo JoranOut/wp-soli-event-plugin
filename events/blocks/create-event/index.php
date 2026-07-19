@@ -33,6 +33,7 @@ class SoliBlockCreateEvent {
   function theHTML($attributes) {
     wp_enqueue_script('block-event-view-frontend', plugin_dir_url(__FILE__) . 'build/frontend.js', array('wp-components', 'wp-element', 'wp-api-fetch'), $this->assetVersion('build/frontend.js'), true);
     wp_enqueue_style('block-event-view-frontend-styles', plugin_dir_url(__FILE__) . 'build/frontend.css', array(), $this->assetVersion('build/frontend.css'));
+    wp_set_script_translations('block-event-view-frontend', 'soli-event', SOLI_EVENT__PLUGIN_DIR_PATH . 'languages');
 
     ob_start(); ?>
       <div class="block-event-view" data-id="<?php echo get_the_ID() ?>"></div>

@@ -4,8 +4,8 @@ namespace Soli\Events;
 add_action('admin_menu', '\Soli\Events\soli_events_add_settings_page');
 function soli_events_add_settings_page() {
     add_options_page( // or add_menu_page / add_submenu_page depending on placement
-        'Soli Event Settings',    // Page title
-        'Soli Event Settings',    // Menu title
+        __('Soli Event Settings', 'soli-event'),    // Page title
+        __('Soli Event Settings', 'soli-event'),    // Menu title
         'manage_options',        // Capability required
         'soli_event_settings',     // Menu slug
         'Soli\Events\soli_event_render_settings_page' // Callback to output page content
@@ -14,8 +14,8 @@ function soli_events_add_settings_page() {
 
 function soli_event_render_settings_page() {
     echo '<div class="wrap">';
-    echo '<h1>Soli Event Plugin Settings</h1>';
-    echo '<h2>Import from TheEventCalendarTool</h2>';
+    echo '<h1>' . esc_html__('Soli Event Plugin Settings', 'soli-event') . '</h1>';
+    echo '<h2>' . esc_html__('Import from TheEventCalendarTool', 'soli-event') . '</h2>';
 
     echo '<form method="post" action="options.php">';
     settings_fields('soli_event-options_group');
@@ -25,9 +25,9 @@ function soli_event_render_settings_page() {
 
     // Migration section
     echo '<hr>';
-    echo '<h2>Migration from The Events Calendar</h2>';
+    echo '<h2>' . esc_html__('Migration from The Events Calendar', 'soli-event') . '</h2>';
     echo '<form method="post">';
-    submit_button('Start Migration', '', 'soli_event_start_migration');
+    submit_button(__('Start Migration', 'soli-event'), '', 'soli_event_start_migration');
     echo '</form>';
 
     // Migration feedback
@@ -43,7 +43,7 @@ function soli_event_render_settings_page() {
 
 add_filter('plugin_action_links_' . \SOLI_EVENT__PLUGIN_BASENAME, '\Soli\Events\soli_event_plugin_add_settings_link');
 function soli_event_plugin_add_settings_link($links) {
-    $settings_link = '<a href="options-general.php?page=soli_event_settings">Settings</a>';
+    $settings_link = '<a href="options-general.php?page=soli_event_settings">' . esc_html__('Settings', 'soli-event') . '</a>';
     array_unshift($links, $settings_link); // Add to the front of existing links
     return $links;
 }
@@ -52,9 +52,13 @@ function soli_event_handle_migration_step_1() {
     global $wpdb;
     $events = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'tribe_events' AND post_status = 'publish'");
     $venues = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'tribe_venue' AND post_status = 'publish'");
-    echo "<p>Found <b>$events events</b> and <b>$venues venues</b> to migrate.</p>";
+    echo '<p>' . sprintf(
+        esc_html__('Found %1$s events and %2$s venues to migrate.', 'soli-event'),
+        '<b>' . esc_html($events) . '</b>',
+        '<b>' . esc_html($venues) . '</b>'
+    ) . '</p>';
     echo '<form method="post">';
-    submit_button('Continue Migration', '', 'soli_event_continue_migration');
+    submit_button(__('Continue Migration', 'soli-event'), '', 'soli_event_continue_migration');
     echo '</form>';
     if ( isset($_POST['soli_event_continue_migration']) ) {
         soli_event_handle_migration();
@@ -69,10 +73,16 @@ function soli_event_handle_migration() {
     foreach ($events as $event) {
         $i++;
         $new_post_id = soli_event_handle_single_migration($event);
-        echo "<p>Migrated event ID {$event->ID}, {$event->post_title} to new post ID {$new_post_id} ({$i}/{$total})</p>";
+        echo '<p>' . sprintf(
+            esc_html__('Migrated event ID %1$s, %2$s to new post ID %3$s (%4$s)', 'soli-event'),
+            esc_html($event->ID),
+            esc_html($event->post_title),
+            esc_html($new_post_id),
+            esc_html("{$i}/{$total}")
+        ) . '</p>';
         flush();
     }
-    echo "<p>Migration complete.</p>";
+    echo '<p>' . esc_html__('Migration complete.', 'soli-event') . '</p>';
 }
 
 /**

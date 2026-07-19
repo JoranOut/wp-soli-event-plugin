@@ -5,6 +5,7 @@ import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 
+import {__} from '@wordpress/i18n';
 import {useState} from '@wordpress/element';
 import {ROOM_NAMES, ROOM_SLUGS} from "../../../../../inc/values";
 
@@ -29,10 +30,10 @@ export default function RoomsDropdown({rooms, onChange, disabled}) {
 
     const renderRooms = (selected) => {
         if (selected.length === 0) {
-            return "Selecteer ruimtes";
+            return __('Select rooms', 'soli-event');
         }
         if (selected.length === ROOM_SLUGS.length) {
-            return "Hele gebouw";
+            return __('Whole building', 'soli-event');
         }
         return ROOM_NAMES.filter((_, index) => selected.includes(ROOM_SLUGS[index])).join(', ');
     }
@@ -52,7 +53,7 @@ export default function RoomsDropdown({rooms, onChange, disabled}) {
                     disabled={disabled}
                     MenuProps={MenuProps}>
                     <MenuItem disabled value="">
-                        <ListItemText><em>Selecteer ruimtes</em></ListItemText>
+                        <ListItemText><em>{__('Select rooms', 'soli-event')}</em></ListItemText>
                     </MenuItem>
                     {
                         ROOM_SLUGS.map((name, index) => (

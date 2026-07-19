@@ -1,3 +1,4 @@
+import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {useSelect, useDispatch, select as dataSelect} from '@wordpress/data';
 import {useState, useEffect, useCallback, useRef} from '@wordpress/element';
@@ -24,7 +25,7 @@ function AdminSaveBridge({postId, persistedHash, onPersisted}) {
 
     // Mirror the pending event data into the transport meta whenever the
     // editor state differs from what the event_dates table holds (the
-    // persisted hash — not the context's dirty flag, which is false for the
+    // persisted hash - not the context's dirty flag, which is false for the
     // fabricated default date of a brand-new event). The meta travels inside
     // the regular post save request; the server moves it into the table and
     // clears it again. While it holds a payload, Gutenberg's own dirty
@@ -87,7 +88,7 @@ function AdminSaveBridge({postId, persistedHash, onPersisted}) {
         if (saving || !wasSaving || !hadPendingRef.current) return;
         hadPendingRef.current = false;
         // On a failed save the meta edit is still pending, so the next
-        // successful save picks the payload up again — nothing to redo here.
+        // successful save picks the payload up again - nothing to redo here.
         if (!dataSelect('core/editor').didPostSaveRequestSucceed()) return;
 
         apiFetch({path: 'soli_event/v1/events/' + postId}).then(
@@ -98,7 +99,7 @@ function AdminSaveBridge({postId, persistedHash, onPersisted}) {
             },
             (error) => {
                 createErrorNotice(
-                    'Evenement-data is opgeslagen, maar kon niet opnieuw worden geladen. Herlaad de pagina.',
+                    __('Event data was saved, but could not be reloaded. Reload the page.', 'soli-event'),
                     {type: 'snackbar'}
                 );
                 console.error('Failed to reload events after save:', error);
@@ -178,10 +179,10 @@ export default function AdminEventsProvider({post_id, children}) {
     }, [editPost, isNewPost]);
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <div>{sprintf(__('Error: %s', 'soli-event'), error.message)}</div>;
     }
     if (isLoading || !initialEvents) {
-        return <div>Loading...</div>;
+        return <div>{__('Loading…', 'soli-event')}</div>;
     }
 
     return (

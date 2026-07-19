@@ -1,4 +1,5 @@
 import "./admin-notes-editor.scss"
+import { __ } from '@wordpress/i18n';
 import {useState, useEffect} from '@wordpress/element';
 import {Modal, Button} from "@wordpress/components"
 import lockSVG from "../../../../../../inc/assets/img/icons/lock.svg";
@@ -45,7 +46,7 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
 
     const ModalContent = (
         <Modal
-            title="Admin Notes"
+            title={__("Admin Notes", "soli-event")}
             onRequestClose={closeModal}
             focusOnMount={true}
             isDismissible={true}
@@ -54,7 +55,7 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
             shouldCloseOnClickOutside={true}
             __experimentalHideHeader={false}
         >
-            <p className="notes-hint">These notes will only be visible in the admin area and only to people with high access level.</p>
+            <p className="notes-hint">{__("These notes will only be visible in the admin area and only to people with high access level.", "soli-event")}</p>
             <TextField
                 type="text"
                 name="name"
@@ -64,12 +65,12 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
                 multiline
                 onChange={(n) => handleChange(n)}
             />
-            {_adminNotes?.length > 65535 && <span className={"error"}>Too many characters</span>}
+            {_adminNotes?.length > 65535 && <span className={"error"}>{__("Too many characters", "soli-event")}</span>}
             <Button
                 type="submit"
                 className="submit-button"
                 variant="secondary"
-                onClick={() => submit()}>Close</Button>
+                onClick={() => submit()}>{__("Close", "soli-event")}</Button>
         </Modal>
     );
 
@@ -95,7 +96,7 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
                 {_adminNotes}
             </div>}
             <ImageButton
-                label={buttonSize == 'small' ? undefined : "Admin notes"}
+                label={buttonSize == 'small' ? undefined : __("Admin notes", "soli-event")}
                 className={"notes-button"}
                 src={lockSVG}
                 onClick={openModal}>

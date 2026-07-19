@@ -4,7 +4,7 @@ import { TextField, InputAdornment } from "@mui/material";
 // A small numeric input built on @mui/material (which is already a dependency).
 // It keeps the (event, value) onChange contract the callers rely on, where
 // `value` is the parsed number. The previous implementation used
-// `useNumberInput` from @mui/base, a package that was never installed — opening
+// `useNumberInput` from @mui/base, a package that was never installed - opening
 // the count-based generator therefore crashed with a ReferenceError.
 export default function NumberedInput(props) {
     const { value, min, max, onChange, endAdornment, className } = props;

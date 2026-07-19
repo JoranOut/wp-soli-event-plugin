@@ -1,4 +1,5 @@
 import "./rooms-picker.scss"
+import { __ } from '@wordpress/i18n';
 import {FormGroup, FormControlLabel, Checkbox} from '@mui/material';
 import {Button} from "@wordpress/components";
 
@@ -31,7 +32,7 @@ function RoomsPicker({rooms, onSave}) {
     return (
         <>
             <FormGroup>
-                <FormControlLabel key={-1} label="Hele gebouw" className="room-checkbox" control={
+                <FormControlLabel key={-1} label={__("Whole building", "soli-event")} className="room-checkbox" control={
                     <Checkbox
                         checked={_rooms.every(v => v === true)}
                         indeterminate={_rooms.includes(true) && !_rooms.every(v => v === true)}
@@ -58,7 +59,7 @@ function RoomsPicker({rooms, onSave}) {
                 type="submit"
                 className="submit-button"
                 variant="secondary"
-                onClick={submit}>Opslaan</Button>
+                onClick={submit}>{__("Save", "soli-event")}</Button>
         </>
     );
 }

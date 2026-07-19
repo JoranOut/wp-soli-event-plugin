@@ -3,15 +3,15 @@ namespace Soli\Events;
 
 function soli_events_register_post_type() {
   $labels = array(
-    'name' => 'Events', // Plural name
-    'singular_name' => 'Event',   // Singular name
-    'add_new' => 'Add Event',
-    'add_new_item' => 'Add New Event',
-    'view_item' => 'View Event',
-    'edit_item' => 'Edit Event',
-    'insert_into_item' => 'Insert into Event',
-    'search_items' => 'Search Events',
-    'not_found' =>  'No Events Found',
+    'name' => __('Events', 'soli-event'), // Plural name
+    'singular_name' => __('Event', 'soli-event'),   // Singular name
+    'add_new' => __('Add Event', 'soli-event'),
+    'add_new_item' => __('Add New Event', 'soli-event'),
+    'view_item' => __('View Event', 'soli-event'),
+    'edit_item' => __('Edit Event', 'soli-event'),
+    'insert_into_item' => __('Insert into Event', 'soli-event'),
+    'search_items' => __('Search Events', 'soli-event'),
+    'not_found' =>  __('No Events Found', 'soli-event'),
   );
 
   $supports = array(
@@ -32,7 +32,7 @@ function soli_events_register_post_type() {
    */
   $args = array(
     'labels' => $labels,
-    'description' => 'Events', // Description
+    'description' => __('Events', 'soli-event'), // Description
     'supports' => $supports,
     'taxonomies' => array('category', 'post_tag'), // Allowed taxonomies
     'hierarchical' => false, // Allows hierarchical categorization, if set to false, the Custom Post Type will behave like Post, else it will behave like Page

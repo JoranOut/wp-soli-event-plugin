@@ -1,4 +1,5 @@
 import "./daterange-picker.scss"
+import {__} from '@wordpress/i18n';
 import {useState, useEffect, useRef} from '@wordpress/element';
 import {DateTimePicker} from '@mui/x-date-pickers/DateTimePicker';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
@@ -118,7 +119,7 @@ function DateRangePicker(props) {
                             minutes: renderTimeViewClock
                         }}
                     />
-                    <div className="tot">tot</div>
+                    <div className="tot">{__('to', 'soli-event')}</div>
                     {isSingleDay() && <DateTimePicker
                         className="end-time time"
                         value={endDate}

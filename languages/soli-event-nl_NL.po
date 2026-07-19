@@ -1,18 +1,19 @@
-# Copyright (C) 2026 Joran Out
-# This file is distributed under the same license as the Soli Event Plugin plugin.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Soli Event Plugin 1.1.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-soli-event-plugin\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2026-07-19T10:14:56+00:00\n"
+"PO-Revision-Date: 2026-07-19T07:56:01+00:00\n"
+"Last-Translator: Soli <info@soli.nl>\n"
+"Language-Team: Dutch <nl@li.org>\n"
+"Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-19T10:14:56+00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.12.0\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: soli-event\n"
+"X-Generator: WP-CLI 2.12.0\n"
 
 #. Plugin Name of the plugin
 #: soli-event-plugin.php
@@ -28,85 +29,97 @@ msgstr ""
 #: events/blocks/concert-hero/index.php:44
 #: events/blocks/concert-hero/src/index.js:23
 msgid "Next concert"
-msgstr ""
+msgstr "Volgende concert"
 
 #: events/blocks/concert-hero/index.php:29
 #: events/blocks/concert-hero/index.php:45
 #: events/blocks/concert-hero/src/index.js:24
 msgid "Tickets & agenda →"
-msgstr ""
+msgstr "Kaarten & agenda →"
 
 #: events/blocks/concert-hero/index.php:31
 #: events/blocks/concert-hero/index.php:47
 #: events/blocks/concert-hero/src/index.js:26
 msgid "Become a member of Soli"
-msgstr ""
+msgstr "Word lid van Soli"
 
 #: events/blocks/concert-hero/index.php:58
-msgid "No upcoming concert found. Flag an event date as a concert to populate this hero."
+msgid ""
+"No upcoming concert found. Flag an event date as a concert to populate this "
+"hero."
 msgstr ""
+"Geen aankomend concert gevonden. Markeer een evenementdatum als concert om "
+"deze hero te vullen."
 
 #: events/blocks/concert-hero/index.php:129
 msgid "Concert programme"
-msgstr ""
+msgstr "Concertprogramma"
 
 #: events/blocks/concert-hero/index.php:133
 #: events/blocks/event-view-calendar/src/index.js:33
 msgid "Day"
-msgstr ""
+msgstr "Dag"
 
 #: events/blocks/concert-hero/index.php:135
 msgid "Start"
-msgstr ""
+msgstr "Aanvang"
 
 #: events/blocks/concert-hero/index.php:136
 msgid "hrs"
-msgstr ""
+msgstr "uur"
 
 #: events/blocks/concert-hero/index.php:138
 #: events/lib/events_admin_table.php:7
 msgid "Location"
-msgstr ""
+msgstr "Locatie"
 
 #: events/blocks/concert-hero/index.php:145
 msgid "Full agenda →"
-msgstr ""
+msgstr "Volledige agenda →"
 
 #: events/blocks/event-dates/index.php:27
 #: events/blocks/event-dates/index.php:40
 #: events/blocks/event-dates/src/index.js:17
 msgid "This event is recurring"
-msgstr ""
+msgstr "Dit evenement is terugkerend"
 
 #: events/blocks/event-dates/index.php:61
-msgid "This event has fewer than two upcoming dates, so the list stays hidden on the front end."
+msgid ""
+"This event has fewer than two upcoming dates, so the list stays hidden on "
+"the front end."
 msgstr ""
+"Dit evenement heeft minder dan twee aankomende data, dus de lijst blijft "
+"verborgen op de voorkant."
 
 #: events/blocks/event-dates/index.php:87
 msgid "next up"
-msgstr ""
+msgstr "eerstvolgende"
 
 #: events/blocks/next-concert/index.php:27
 #: events/blocks/next-concert/index.php:40
 #: events/blocks/next-concert/src/index.js:20
 msgid "Concert agenda"
-msgstr ""
+msgstr "Concertagenda"
 
 #: events/blocks/next-concert/index.php:28
 #: events/blocks/next-concert/index.php:41
 #: events/blocks/next-concert/src/index.js:21
 msgid "The next concert on Soli’s programme."
-msgstr ""
+msgstr "Het eerstvolgende concert op het programma van Soli."
 
 #: events/blocks/next-concert/index.php:29
 #: events/blocks/next-concert/index.php:42
 #: events/blocks/next-concert/src/index.js:22
 msgid "Agenda →"
-msgstr ""
+msgstr "Agenda →"
 
 #: events/blocks/next-concert/index.php:53
-msgid "No upcoming concert found. Flag an event date as a concert to populate this card."
+msgid ""
+"No upcoming concert found. Flag an event date as a concert to populate this "
+"card."
 msgstr ""
+"Geen aankomend concert gevonden. Markeer een evenementdatum als concert om "
+"deze kaart te vullen."
 
 #: events/inc/values.php:35
 #: events/blocks/create-event/src/components/rooms-picker/rooms-picker.js:35
@@ -115,657 +128,673 @@ msgstr ""
 #: events/blocks/event-reservation-popup/src/components/text-copy-button/text-copy-button.js:16
 #: events/blocks/event-view-calendar/src/components/rooms-dropdown/rooms-dropdown.js:32
 msgid "Whole building"
-msgstr ""
+msgstr "Hele gebouw"
 
 #: events/inc/values.php:50
 msgid "public"
-msgstr ""
+msgstr "openbaar"
 
 #: events/inc/values.php:52
 msgid "private"
-msgstr ""
+msgstr "besloten"
 
 #: events/inc/values.php:54
 msgid "planned"
-msgstr ""
+msgstr "gepland"
 
 #: events/inc/values.php:57
 msgid "pending approval"
-msgstr ""
+msgstr "wacht op goedkeuring"
 
 #: events/lib/events_admin_log_page.php:9
 #: events/lib/events_admin_log_page.php:10
 #: events/lib/events_admin_log_page.php:25
 msgid "Log View"
-msgstr ""
+msgstr "Logweergave"
 
 #: events/lib/events_admin_log_page.php:21
 msgid "You do not have sufficient permissions to access this page."
-msgstr ""
+msgstr "Je hebt onvoldoende rechten om deze pagina te bekijken."
 
 #: events/lib/events_admin_log_page.php:26
-msgid "Changes to event dates, aggregated per editing session: consecutive saves by the same user on the same event are combined into one entry until an hour of inactivity passes."
+msgid ""
+"Changes to event dates, aggregated per editing session: consecutive saves by"
+" the same user on the same event are combined into one entry until an hour "
+"of inactivity passes."
 msgstr ""
+"Wijzigingen aan evenementdata, samengevoegd per bewerkingssessie: "
+"opeenvolgende opslagacties door dezelfde gebruiker op hetzelfde evenement "
+"worden gecombineerd tot één vermelding totdat er een uur van inactiviteit is"
+" verstreken."
 
-#: events/lib/events_admin_log_page.php:38
-#: events/lib/post_type.php:7
+#: events/lib/events_admin_log_page.php:38 events/lib/post_type.php:7
 msgid "Event"
-msgstr ""
+msgstr "Evenement"
 
 #: events/lib/events_admin_log_page.php:39
 msgid "User"
-msgstr ""
+msgstr "Gebruiker"
 
 #: events/lib/events_admin_log_page.php:40
 msgid "Changes"
-msgstr ""
+msgstr "Wijzigingen"
 
 #: events/lib/events_admin_log_page.php:41
 msgid "First change"
-msgstr ""
+msgstr "Eerste wijziging"
 
 #: events/lib/events_admin_log_page.php:42
 msgid "Last change"
-msgstr ""
+msgstr "Laatste wijziging"
 
 #: events/lib/events_admin_log_page.php:47
 msgid "No changes have been logged yet."
-msgstr ""
+msgstr "Er zijn nog geen wijzigingen vastgelegd."
 
 #: events/lib/events_admin_log_page.php:53
 msgid "(deleted event)"
-msgstr ""
+msgstr "(verwijderd evenement)"
 
 #: events/lib/events_admin_log_page.php:56
 msgid "(unknown user)"
-msgstr ""
+msgstr "(onbekende gebruiker)"
 
 #. translators: %s: date range of the added event date
 #: events/lib/events_admin_log_page.php:91
 #, php-format
 msgid "Added: %s"
-msgstr ""
+msgstr "Toegevoegd: %s"
 
 #. translators: %s: date range of the removed event date
 #: events/lib/events_admin_log_page.php:101
 #, php-format
 msgid "Removed: %s"
-msgstr ""
+msgstr "Verwijderd: %s"
 
-#. translators: 1: date range of the changed event date, 2: list of field changes
+#. translators: 1: date range of the changed event date, 2: list of field
+#. changes
 #: events/lib/events_admin_log_page.php:115
 #, php-format
 msgid "Changed %1$s: %2$s"
-msgstr ""
+msgstr "Gewijzigd %1$s: %2$s"
 
 #: events/lib/events_admin_log_page.php:123
 msgid "No effective changes."
-msgstr ""
+msgstr "Geen effectieve wijzigingen."
 
 #: events/lib/events_admin_log_page.php:146
 msgid "start"
-msgstr ""
+msgstr "start"
 
 #: events/lib/events_admin_log_page.php:147
 msgid "end"
-msgstr ""
+msgstr "einde"
 
 #: events/lib/events_admin_log_page.php:148
 msgid "location"
-msgstr ""
+msgstr "locatie"
 
 #: events/lib/events_admin_log_page.php:149
 msgid "rooms"
-msgstr ""
+msgstr "ruimtes"
 
 #: events/lib/events_admin_log_page.php:150
 msgid "status"
-msgstr ""
+msgstr "status"
 
 #: events/lib/events_admin_log_page.php:151
 msgid "notes"
-msgstr ""
+msgstr "notities"
 
 #: events/lib/events_admin_log_page.php:152
 msgid "admin notes"
-msgstr ""
+msgstr "beheerdersnotities"
 
 #: events/lib/events_admin_log_page.php:153
 msgid "concert"
-msgstr ""
+msgstr "concert"
 
 #. translators: %s: field name
 #: events/lib/events_admin_log_page.php:167
 #, php-format
 msgid "%s changed"
-msgstr ""
+msgstr "%s gewijzigd"
 
 #. translators: 1: field name, 2: old value, 3: new value
 #: events/lib/events_admin_log_page.php:172
 #, php-format
 msgid "%1$s: %2$s → %3$s"
-msgstr ""
+msgstr "%1$s: %2$s → %3$s"
 
 #: events/lib/events_admin_log_page.php:184
 msgid "(empty)"
-msgstr ""
+msgstr "(leeg)"
 
 #: events/lib/events_admin_log_page.php:187
 #: events/lib/events_admin_log_page.php:196
 msgid "yes"
-msgstr ""
+msgstr "ja"
 
 #: events/lib/events_admin_log_page.php:187
 #: events/lib/events_admin_log_page.php:196
 msgid "no"
-msgstr ""
+msgstr "nee"
 
 #: events/lib/events_admin_table.php:5
 msgid "Start Date"
-msgstr ""
+msgstr "Startdatum"
 
 #: events/lib/events_admin_table.php:6
 msgid "End Date"
-msgstr ""
+msgstr "Einddatum"
 
 #: events/lib/events_admin_table.php:8
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: events/lib/events_admin_table.php:9
 msgid "Notes"
-msgstr ""
+msgstr "Notities"
 
-#: events/lib/events_admin_table.php:37
-#: events/lib/events_admin_table.php:46
-#: events/lib/events_admin_table.php:54
-#: events/lib/events_admin_table.php:79
+#: events/lib/events_admin_table.php:37 events/lib/events_admin_table.php:46
+#: events/lib/events_admin_table.php:54 events/lib/events_admin_table.php:79
 #: events/lib/events_admin_table.php:100
 msgid "-"
 msgstr ""
 
 #: events/lib/events_admin_table.php:69
 msgid " (admin notes)"
-msgstr ""
+msgstr " (beheerdersnotities)"
 
 #: events/lib/events_admin_table.php:179
 #: events/blocks/event-reservation-popup/src/components/event-list-item/event-list-item.js:39
 msgid "View"
-msgstr ""
+msgstr "Bekijken"
 
 #: events/lib/events_admin_view_page.php:9
 #: events/lib/events_admin_view_page.php:10
 #: events/lib/events_admin_view_page.php:22
 msgid "Calendar View"
-msgstr ""
+msgstr "Kalenderweergave"
 
 #: events/lib/events_admin_view_page.php:23
 msgid "This page displays various calendar views for managing your events."
 msgstr ""
+"Deze pagina toont verschillende kalenderweergaven om je evenementen te "
+"beheren."
 
-#: events/lib/events_endpoints.php:22
-#: events/lib/location_endpoints.php:57
+#: events/lib/events_endpoints.php:22 events/lib/location_endpoints.php:57
 msgid "Invalid request arguments."
-msgstr ""
+msgstr "Ongeldige aanvraagparameters."
 
-#: events/lib/plugin_settings_page.php:7
-#: events/lib/plugin_settings_page.php:8
+#: events/lib/plugin_settings_page.php:7 events/lib/plugin_settings_page.php:8
 msgid "Soli Event Settings"
-msgstr ""
+msgstr "Soli Evenement-instellingen"
 
 #: events/lib/plugin_settings_page.php:17
 msgid "Soli Event Plugin Settings"
-msgstr ""
+msgstr "Soli Evenement Plugin-instellingen"
 
 #: events/lib/plugin_settings_page.php:18
 msgid "Import from TheEventCalendarTool"
-msgstr ""
+msgstr "Importeren uit TheEventCalendarTool"
 
 #: events/lib/plugin_settings_page.php:28
 msgid "Migration from The Events Calendar"
-msgstr ""
+msgstr "Migratie vanuit The Events Calendar"
 
 #: events/lib/plugin_settings_page.php:30
 msgid "Start Migration"
-msgstr ""
+msgstr "Migratie starten"
 
 #: events/lib/plugin_settings_page.php:46
 #: events/blocks/event-view-calendar/src/index.js:26
 #: events/blocks/event-view-list/src/index.js:30
 msgid "Settings"
-msgstr ""
+msgstr "Instellingen"
 
 #: events/lib/plugin_settings_page.php:56
 #, php-format
 msgid "Found %1$s events and %2$s venues to migrate."
-msgstr ""
+msgstr "%1$s evenementen en %2$s locaties gevonden om te migreren."
 
 #: events/lib/plugin_settings_page.php:61
 msgid "Continue Migration"
-msgstr ""
+msgstr "Migratie voortzetten"
 
 #: events/lib/plugin_settings_page.php:77
 #, php-format
 msgid "Migrated event ID %1$s, %2$s to new post ID %3$s (%4$s)"
-msgstr ""
+msgstr "Evenement-ID %1$s, %2$s gemigreerd naar nieuw bericht-ID %3$s (%4$s)"
 
 #: events/lib/plugin_settings_page.php:85
 msgid "Migration complete."
-msgstr ""
+msgstr "Migratie voltooid."
 
-#: events/lib/post_type.php:6
-#: events/lib/post_type.php:35
+#: events/lib/post_type.php:6 events/lib/post_type.php:35
 #: events/blocks/event-reservation-popup/src/components/event-list/event-list.js:37
 msgid "Events"
-msgstr ""
+msgstr "Evenementen"
 
 #: events/lib/post_type.php:8
 msgid "Add Event"
-msgstr ""
+msgstr "Evenement toevoegen"
 
 #: events/lib/post_type.php:9
 msgid "Add New Event"
-msgstr ""
+msgstr "Nieuw evenement toevoegen"
 
 #: events/lib/post_type.php:10
 msgid "View Event"
-msgstr ""
+msgstr "Evenement bekijken"
 
 #: events/lib/post_type.php:11
 msgid "Edit Event"
-msgstr ""
+msgstr "Evenement bewerken"
 
 #: events/lib/post_type.php:12
 msgid "Insert into Event"
-msgstr ""
+msgstr "Invoegen in evenement"
 
 #: events/lib/post_type.php:13
 msgid "Search Events"
-msgstr ""
+msgstr "Evenementen zoeken"
 
 #: events/lib/post_type.php:14
 msgid "No Events Found"
-msgstr ""
+msgstr "Geen evenementen gevonden"
 
 #: events/lib/post_type_query.php:92
 msgid "Future Events"
-msgstr ""
+msgstr "Toekomstige evenementen"
 
 #: events/lib/post_type_query.php:93
 msgid "All Events"
-msgstr ""
+msgstr "Alle evenementen"
 
 #: events/lib/single_event_template.php:17
 msgid "Single Event"
-msgstr ""
+msgstr "Enkel evenement"
 
 #: events/lib/single_event_template.php:18
-msgid "Event detail page: title, content, and the upcoming dates and next concert cards."
+msgid ""
+"Event detail page: title, content, and the upcoming dates and next concert "
+"cards."
 msgstr ""
+"Evenementdetailpagina: titel, inhoud en de kaarten met aankomende data en "
+"het volgende concert."
 
 #: events/blocks/concert-hero/src/index.js:14
 msgid "Concert Hero"
-msgstr ""
+msgstr "Concert Hero"
 
 #: events/blocks/concert-hero/src/index.js:15
 msgid "Hero banner for the next upcoming concert."
-msgstr ""
+msgstr "Hero-banner voor het eerstvolgende concert."
 
 #: events/blocks/concert-hero/src/index.js:45
 #: events/blocks/event-dates/src/index.js:37
 #: events/blocks/next-concert/src/index.js:36
 msgid "Content"
-msgstr ""
+msgstr "Inhoud"
 
 #: events/blocks/concert-hero/src/index.js:47
 #: events/blocks/next-concert/src/index.js:38
 msgid "Eyebrow label"
-msgstr ""
+msgstr "Introlabel"
 
 #: events/blocks/concert-hero/src/index.js:52
 msgid "Fallback background"
-msgstr ""
+msgstr "Terugvalachtergrond"
 
 #: events/blocks/concert-hero/src/index.js:54
 msgid "Shown when the concert has no featured image."
-msgstr ""
+msgstr "Wordt getoond als het concert geen uitgelichte afbeelding heeft."
 
 #: events/blocks/concert-hero/src/index.js:61
 msgid "Primary button"
-msgstr ""
+msgstr "Primaire knop"
 
 #: events/blocks/concert-hero/src/index.js:63
 #: events/blocks/concert-hero/src/index.js:76
 #: events/blocks/next-concert/src/index.js:50
 msgid "Label"
-msgstr ""
+msgstr "Label"
 
 #: events/blocks/concert-hero/src/index.js:68
 msgid "Agenda link"
-msgstr ""
+msgstr "Agenda-link"
 
 #: events/blocks/concert-hero/src/index.js:69
 msgid "Used by the primary button and the card link."
-msgstr ""
+msgstr "Gebruikt door de primaire knop en de kaartlink."
 
 #: events/blocks/concert-hero/src/index.js:74
 msgid "Secondary button"
-msgstr ""
+msgstr "Secundaire knop"
 
 #: events/blocks/concert-hero/src/index.js:81
 #: events/blocks/next-concert/src/index.js:54
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: events/blocks/concert-hero/src/index.js:119
 msgid "Replace image"
-msgstr ""
+msgstr "Afbeelding vervangen"
 
 #: events/blocks/concert-hero/src/index.js:120
 msgid "Select image"
-msgstr ""
+msgstr "Afbeelding kiezen"
 
 #: events/blocks/concert-hero/src/index.js:124
 msgid "Remove"
-msgstr ""
+msgstr "Verwijderen"
 
 #: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:49
 msgid "Admin Notes"
-msgstr ""
+msgstr "Beheerdersnotities"
 
 #: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:58
-msgid "These notes will only be visible in the admin area and only to people with high access level."
+msgid ""
+"These notes will only be visible in the admin area and only to people with "
+"high access level."
 msgstr ""
+"Deze notities zijn alleen zichtbaar in het beheergedeelte en alleen voor "
+"personen met een hoog toegangsniveau."
 
 #: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:68
 #: events/blocks/create-event/src/components/notes-editor/notes-editor.js:69
 msgid "Too many characters"
-msgstr ""
+msgstr "Te veel tekens"
 
 #: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:73
 #: events/blocks/create-event/src/components/notes-editor/notes-editor.js:74
 #: events/blocks/event-reservation-popup/src/components/reservation-tool/reservation-tool.js:33
 msgid "Close"
-msgstr ""
+msgstr "Sluiten"
 
 #: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:99
 msgid "Admin notes"
-msgstr ""
+msgstr "Beheerdersnotities"
 
 #: events/blocks/create-event/src/components/concert-status-switch/concert-status-switch.js:27
 msgid "Toggle concert status"
-msgstr ""
+msgstr "Concertstatus wisselen"
 
 #: events/blocks/create-event/src/components/concert-status-switch/concert-status-switch.js:29
 #: events/blocks/event-view-calendar/src/components/event-detail-pop-up/event-detail-pop-up.js:80
 msgid "Concert"
-msgstr ""
+msgstr "Concert"
 
 #: events/blocks/create-event/src/components/date-list/date-list.js:45
 #: events/blocks/create-event/src/components/date-list/date-list.js:46
 msgid "undo"
-msgstr ""
+msgstr "ongedaan maken"
 
 #: events/blocks/create-event/src/components/date-list/date-list.js:48
 #: events/blocks/create-event/src/components/date-list/date-list.js:49
 msgid "redo"
-msgstr ""
+msgstr "opnieuw"
 
 #: events/blocks/create-event/src/components/date-list/date-list.js:51
 #: events/blocks/create-event/src/components/date-list/date-list.js:52
 msgid "reset"
-msgstr ""
+msgstr "herstellen"
 
 #: events/blocks/create-event/src/components/date-list/date-list.js:57
 msgid "All dates"
-msgstr ""
+msgstr "Alle data"
 
 #: events/blocks/create-event/src/components/daterange-picker/daterange-picker.js:120
 #: events/blocks/event-reservation-popup/src/components/daterange-picker/daterange-picker.js:122
 msgid "to"
-msgstr ""
+msgstr "tot"
 
 #: events/blocks/create-event/src/components/delete-button/delete-button.js:9
 #: events/blocks/create-event/src/components/location-searcher/location-searcher.js:73
 msgid "delete"
-msgstr ""
+msgstr "verwijderen"
 
 #: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:102
 msgid "Event data was saved, but could not be reloaded. Reload the page."
 msgstr ""
+"Evenementgegevens zijn opgeslagen, maar konden niet opnieuw worden geladen. "
+"Herlaad de pagina."
 
 #: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:182
 #: events/blocks/create-event/src/components/events-provider/events-provider.js:32
 #: events/blocks/event-reservation-popup/src/components/events-provider/internal-events-provider.js:74
 #: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:119
 #: events/blocks/event-view-list/src/components/events-provider/events-provider.js:45
-#, js-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Fout: %s"
 
 #: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:185
 #: events/blocks/create-event/src/components/events-provider/events-provider.js:35
 #: events/blocks/create-event/src/components/location-searcher/location-searcher.js:89
 msgid "Loading…"
-msgstr ""
+msgstr "Laden…"
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:66
 msgid "New location"
-msgstr ""
+msgstr "Nieuwe locatie"
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:71
 msgid "Create a location"
-msgstr ""
+msgstr "Locatie aanmaken"
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:81
 msgid "Location name*"
-msgstr ""
+msgstr "Locatienaam*"
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:88
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:97
 msgid "required"
-msgstr ""
+msgstr "verplicht"
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:90
 msgid "Location address*"
-msgstr ""
+msgstr "Locatieadres*"
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:103
 msgid "Save and select"
-msgstr ""
+msgstr "Opslaan en selecteren"
 
 #: events/blocks/create-event/src/components/location-picker/location-picker.js:46
 #: events/blocks/create-event/src/components/location-picker/location-picker.js:51
 msgid "Choose a location"
-msgstr ""
+msgstr "Kies een locatie"
 
 #: events/blocks/create-event/src/components/location-picker/location-picker.js:63
 msgid "Muziekcentrum"
-msgstr ""
+msgstr "Muziekcentrum"
 
 #: events/blocks/create-event/src/components/location-searcher/location-searcher.js:71
 msgid "(selected)"
-msgstr ""
+msgstr "(geselecteerd)"
 
 #: events/blocks/create-event/src/components/location-searcher/location-searcher.js:84
 msgid "Select"
-msgstr ""
+msgstr "Selecteren"
 
 #: events/blocks/create-event/src/components/location-searcher/location-searcher.js:88
 msgid "Nothing found…"
-msgstr ""
+msgstr "Niets gevonden…"
 
 #: events/blocks/create-event/src/components/notes-editor/notes-editor.js:50
 msgid "Notepad"
-msgstr ""
+msgstr "Kladblok"
 
 #: events/blocks/create-event/src/components/notes-editor/notes-editor.js:59
 msgid "These notes will only be visible in the admin area."
-msgstr ""
+msgstr "Deze notities zijn alleen zichtbaar in het beheergedeelte."
 
 #: events/blocks/create-event/src/components/notes-editor/notes-editor.js:100
 msgid "Edit notes"
-msgstr ""
+msgstr "Notities bewerken"
 
 #: events/blocks/create-event/src/components/notes-editor/notes-editor.js:100
 msgid "Add notes"
-msgstr ""
+msgstr "Notities toevoegen"
 
 #: events/blocks/create-event/src/components/rooms-picker/rooms-picker.js:62
 msgid "Save"
-msgstr ""
+msgstr "Opslaan"
 
 #: events/blocks/create-event/src/components/selected-date/selected-date.js:42
 msgid "( ! ) This event has already taken place"
-msgstr ""
+msgstr "( ! ) Dit evenement heeft al plaatsgevonden"
 
 #: events/blocks/create-event/src/components/selected-date/selected-date.js:70
 msgid "No location known"
-msgstr ""
+msgstr "Geen locatie bekend"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:55
 msgid "Generated dates:"
-msgstr ""
+msgstr "Gegenereerde data:"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:67
 msgid "Show all dates"
-msgstr ""
+msgstr "Alle data tonen"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:67
 msgid "Hide"
-msgstr ""
+msgstr "Verbergen"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:91
 msgid "Until date"
-msgstr ""
+msgstr "Tot datum"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:97
 msgid "Number"
-msgstr ""
+msgstr "Aantal"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:167
 msgid "Enter a frequency, method and date to see a result"
-msgstr ""
+msgstr "Vul een frequentie, methode en datum in om een resultaat te zien"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:171
 msgid "End date must be after the start date"
-msgstr ""
+msgstr "Einddatum moet na de startdatum liggen"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:211
 msgid "Use a larger time span to generate dates. "
-msgstr ""
+msgstr "Gebruik een grotere tijdspanne om data te genereren. "
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:235
 msgid "Repeat"
-msgstr ""
+msgstr "Herhalen"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:241
 msgid "Generate dates"
-msgstr ""
+msgstr "Data genereren"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:334
 msgid "copy notes"
-msgstr ""
+msgstr "notities kopiëren"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:341
 msgid "Select how the event repeats"
-msgstr ""
+msgstr "Selecteer hoe het evenement zich herhaalt"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:342
 msgid "Choose a repeat frequency"
-msgstr ""
+msgstr "Kies een herhaalfrequentie"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:360
 msgid "Select an option"
-msgstr ""
+msgstr "Selecteer een optie"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:362
 msgid "Weekly"
-msgstr ""
+msgstr "Wekelijks"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:364
 msgid "Every other week"
-msgstr ""
+msgstr "Om de week"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:366
 msgid "Monthly"
-msgstr ""
+msgstr "Maandelijks"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
 msgid "weeks"
-msgstr ""
+msgstr "weken"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
 msgid "times every other week"
-msgstr ""
+msgstr "keer om de week"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
 msgid "months"
-msgstr ""
+msgstr "maanden"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:416
 msgid "Repeat until and including:"
-msgstr ""
+msgstr "Herhalen tot en met:"
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:451
 msgid "Use"
-msgstr ""
+msgstr "Gebruiken"
 
 #: events/blocks/create-event/src/index.js:16
 msgid "Create Event"
-msgstr ""
+msgstr "Evenement aanmaken"
 
 #: events/blocks/event-dates/src/index.js:9
 msgid "Event Upcoming Dates"
-msgstr ""
+msgstr "Aankomende evenementdata"
 
 #: events/blocks/event-dates/src/index.js:10
 msgid "Lists the next upcoming dates of the current event."
-msgstr ""
+msgstr "Toont de eerstvolgende data van het huidige evenement."
 
 #: events/blocks/event-dates/src/index.js:39
 msgid "Card heading"
-msgstr ""
+msgstr "Kaarttitel"
 
 #: events/blocks/event-dates/src/index.js:44
 msgid "Number of dates"
-msgstr ""
+msgstr "Aantal data"
 
 #: events/blocks/event-dates/src/index.js:51
 msgid "Note"
-msgstr ""
+msgstr "Notitie"
 
 #: events/blocks/event-dates/src/index.js:52
 msgid "Optional line shown under the list."
-msgstr ""
+msgstr "Optionele regel die onder de lijst wordt getoond."
 
 #: events/blocks/event-reservation-popup/src/components/calendar-preview/calendar-preview.js:37
 msgid "Reservation"
-msgstr ""
+msgstr "Reservering"
 
 #: events/blocks/event-reservation-popup/src/components/email-button/email-button.js:34
 #: events/blocks/event-reservation-popup/src/components/text-copy-button/text-copy-button.js:33
 msgid ""
 "Dear Muziekvereniging Soli,\n"
 "\n"
-""
 msgstr ""
+"Beste Muziekvereniging Soli,\n"
+"\n"
 
 #: events/blocks/event-reservation-popup/src/components/email-button/email-button.js:35
 #: events/blocks/event-reservation-popup/src/components/text-copy-button/text-copy-button.js:34
 msgid ""
 "I would like to reserve the following rooms:\n"
 "\n"
-""
 msgstr ""
+"Ik zou graag de volgende ruimtes willen reserveren:\n"
+"\n"
 
 #: events/blocks/event-reservation-popup/src/components/email-button/email-button.js:37
 #: events/blocks/event-reservation-popup/src/components/text-copy-button/text-copy-button.js:36
-#, js-format
 msgid ""
 "♫ %1$s:\n"
 "     from: %2$s   to: %3$s"
 msgstr ""
+"♫ %1$s:\n"
+"     van: %2$s   tot: %3$s"
 
 #: events/blocks/event-reservation-popup/src/components/email-button/email-button.js:39
 #: events/blocks/event-reservation-popup/src/components/text-copy-button/text-copy-button.js:38
@@ -775,151 +804,153 @@ msgid ""
 "Kind regards,\n"
 "[Your name]"
 msgstr ""
+"\n"
+"\n"
+"Met vriendelijke groet,\n"
+"[Uw naam]"
 
 #: events/blocks/event-reservation-popup/src/components/email-button/email-button.js:45
 msgid "Room reservation Soli Muziekcentrum"
-msgstr ""
+msgstr "Reservering ruimte Soli Muziekcentrum"
 
 #: events/blocks/event-reservation-popup/src/components/email-button/email-button.js:59
 msgid "Generate email"
-msgstr ""
+msgstr "E-mail genereren"
 
 #: events/blocks/event-reservation-popup/src/components/event-list-item/event-list-item.js:48
 msgid "Copy"
-msgstr ""
+msgstr "Kopiëren"
 
 #: events/blocks/event-reservation-popup/src/components/event-list-item/event-list-item.js:55
 msgid "Delete"
-msgstr ""
+msgstr "Verwijderen"
 
 #: events/blocks/event-reservation-popup/src/components/event-list/event-list.js:48
 msgid "new"
-msgstr ""
+msgstr "nieuw"
 
 #: events/blocks/event-reservation-popup/src/components/events-provider/internal-events-provider.js:86
 #: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:131
 msgid "Loading events…"
-msgstr ""
+msgstr "Evenementen laden…"
 
 #: events/blocks/event-reservation-popup/src/components/reservation-popup/reservation-popup.js:27
 msgid "Reserve"
-msgstr ""
+msgstr "Reserveren"
 
 #: events/blocks/event-reservation-popup/src/components/reservation-tool/reservation-tool.js:15
 msgid "Reserve time slot(s)"
-msgstr ""
+msgstr "Tijdslot(en) reserveren"
 
 #: events/blocks/event-reservation-popup/src/components/rooms-dropdown/rooms-dropdown.js:33
 #: events/blocks/event-reservation-popup/src/components/rooms-dropdown/rooms-dropdown.js:56
 msgid "Select rooms"
-msgstr ""
+msgstr "Selecteer ruimtes"
 
 #: events/blocks/event-reservation-popup/src/components/text-copy-button/text-copy-button.js:52
 msgid "Copy text"
-msgstr ""
+msgstr "Tekst kopiëren"
 
 #: events/blocks/event-reservation-popup/src/index.js:6
 msgid "Event Reservation Popup"
-msgstr ""
+msgstr "Evenementreservering-popup"
 
 #: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:45
 msgid "Concerts only"
-msgstr ""
+msgstr "Alleen concerten"
 
 #: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:51
 msgid "Music centre only"
-msgstr ""
+msgstr "Alleen muziekcentrum"
 
 #: events/blocks/event-view-calendar/src/components/event-detail-pop-up/event-detail-pop-up.js:80
 msgid "Activity"
-msgstr ""
+msgstr "Activiteit"
 
 #: events/blocks/event-view-calendar/src/components/event-detail-pop-up/event-detail-pop-up.js:94
 msgid "View event →"
-msgstr ""
+msgstr "Bekijk evenement →"
 
 #: events/blocks/event-view-calendar/src/index.js:8
 msgid "Event View Calendar"
-msgstr ""
+msgstr "Evenementenkalender"
 
 #: events/blocks/event-view-calendar/src/index.js:28
 msgid "Default view"
-msgstr ""
+msgstr "Standaardweergave"
 
 #: events/blocks/event-view-calendar/src/index.js:31
 msgid "Month"
-msgstr ""
+msgstr "Maand"
 
 #: events/blocks/event-view-calendar/src/index.js:32
 msgid "Week"
-msgstr ""
+msgstr "Week"
 
 #: events/blocks/event-view-calendar/src/index.js:38
 msgid "Allow switching views"
-msgstr ""
+msgstr "Wisselen van weergave toestaan"
 
 #: events/blocks/event-view-calendar/src/index.js:43
 msgid "Only concerts"
-msgstr ""
+msgstr "Alleen concerten"
 
 #: events/blocks/event-view-calendar/src/index.js:48
 msgid "Show rooms filter"
-msgstr ""
+msgstr "Ruimtefilter tonen"
 
 #: events/blocks/event-view-list/src/components/event-list-item/event-list-item.js:29
-#, js-format
 msgid "%s hrs"
-msgstr ""
+msgstr "%s uur"
 
 #: events/blocks/event-view-list/src/components/events-provider/events-provider.js:53
-#, js-format
 msgid "Loading page %s…"
-msgstr ""
+msgstr "Pagina %s laden…"
 
 #: events/blocks/event-view-list/src/components/nav/pagination-nav.js:42
 msgid "Pagination"
-msgstr ""
+msgstr "Paginering"
 
 #: events/blocks/event-view-list/src/components/nav/pagination-nav.js:46
 msgid "Previous page"
-msgstr ""
+msgstr "Vorige pagina"
 
 #: events/blocks/event-view-list/src/components/nav/pagination-nav.js:47
 msgid "prev"
-msgstr ""
+msgstr "vorige"
 
 #: events/blocks/event-view-list/src/components/nav/pagination-nav.js:74
 msgid "Next page"
-msgstr ""
+msgstr "Volgende pagina"
 
 #: events/blocks/event-view-list/src/components/nav/pagination-nav.js:75
 msgid "next"
-msgstr ""
+msgstr "volgende"
 
 #: events/blocks/event-view-list/src/index.js:8
 msgid "Event View List"
-msgstr ""
+msgstr "Evenementenlijst"
 
 #: events/blocks/event-view-list/src/index.js:32
 msgid "Events Per Page"
-msgstr ""
+msgstr "Evenementen per pagina"
 
 #: events/blocks/event-view-list/src/index.js:39
 msgid "Show Navigation"
-msgstr ""
+msgstr "Navigatie tonen"
 
 #: events/blocks/next-concert/src/index.js:12
 msgid "Next Concert"
-msgstr ""
+msgstr "Volgend concert"
 
 #: events/blocks/next-concert/src/index.js:13
 msgid "Compact card linking the next upcoming concert."
-msgstr ""
+msgstr "Compacte kaart die naar het eerstvolgende concert linkt."
 
 #: events/blocks/next-concert/src/index.js:43
 msgid "Lead text"
-msgstr ""
+msgstr "Inleidende tekst"
 
 #: events/blocks/next-concert/src/index.js:48
 msgid "Button"
-msgstr ""
+msgstr "Knop"

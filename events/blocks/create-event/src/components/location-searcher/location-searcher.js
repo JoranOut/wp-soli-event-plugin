@@ -1,4 +1,5 @@
 import "./location-searcher.scss";
+import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect, useRef} from '@wordpress/element';
 import {Button, SearchControl} from "@wordpress/components"
@@ -67,9 +68,9 @@ function LocationSearcher({location, onSelected}) {
         <div className="location-searcher">
             <div className="location-search-result">
                 {location && <div className="location selected" key={0}>
-                    <p className="name">{location.name} <span>(selected)</span></p>
+                    <p className="name">{location.name} <span>{__('(selected)', 'soli-event')}</span></p>
                     <p className="address">{location.address}</p>
-                    <Button className="delete-button" title='delete' onClick={loc => clearLocation()}><img src={trashcan}/></Button>
+                    <Button className="delete-button" title={__('delete', 'soli-event')} onClick={loc => clearLocation()}><img src={trashcan}/></Button>
                 </div>}
                 <SearchControl value={searchInput} onChange={(value) => searchLocations(value)}/>
                 {!isLoading && locations && locations.filter(l => l.name !== location?.name).map((l, index) => {
@@ -80,12 +81,12 @@ function LocationSearcher({location, onSelected}) {
                             <Button
                                 className="submit-button"
                                 variant="secondary"
-                                onClick={() => onSelected(l)}>Selecteren</Button>
+                                onClick={() => onSelected(l)}>{__('Select', 'soli-event')}</Button>
                         </div>
                     );
                 })}
-                {!isLoading && !locations && <div>Nothing found...</div>}
-                {isLoading && <div>Loading...</div>}
+                {!isLoading && !locations && <div>{__('Nothing found…', 'soli-event')}</div>}
+                {isLoading && <div>{__('Loading…', 'soli-event')}</div>}
             </div>
 
         </div>);

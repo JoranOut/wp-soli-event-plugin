@@ -6,8 +6,8 @@ function soli_events_add_admin_view_page() {
   // Add submenu under the 'soli_event' post type menu
   add_submenu_page(
     'edit.php?post_type=soli_event', // Parent slug (links to Events menu)
-    'Calendar View',                   // Page title
-    'Calendar View',                   // Menu title
+    __('Calendar View', 'soli-event'),                   // Page title
+    __('Calendar View', 'soli-event'),                   // Menu title
     'manage_options',               // Capability required to access
     'soli_event_admin_view',        // Menu slug
     'Soli\Events\soli_events_render_admin_view_page', // Callback function to render the page
@@ -20,7 +20,7 @@ add_action('admin_menu', 'Soli\Events\soli_events_add_admin_view_page');
 function soli_events_render_admin_view_page() {?>
     <div class="wrap">
         <h1><?php echo esc_html__('Calendar View', 'soli-event'); ?></h1>
-        <p><?php echo esc_html__('This page displays various calendar views for managing your events.'); ?></p>
+        <p><?php echo esc_html__('This page displays various calendar views for managing your events.', 'soli-event'); ?></p>
 
         <!-- Block Container -->
         <div class="block-event-view-calendar alignwide type-week adjustable show-rooms-filter"></div>

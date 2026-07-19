@@ -3,6 +3,7 @@ import {FormGroup, FormControlLabel} from '@mui/material';
 import Switch from '@mui/material/Switch';
 
 import {useState} from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import RoomsDropdown from "../rooms-dropdown/rooms-dropdown";
 
 export default function CalendarFilter({filters, onChange, showRoomFilters}) {
@@ -28,7 +29,7 @@ export default function CalendarFilter({filters, onChange, showRoomFilters}) {
     }
 
     const updateRoomFilters = (roomFilters) => {
-        // Only append the toggle tokens that are actually on — pushing
+        // Only append the toggle tokens that are actually on - pushing
         // `false` into the array pollutes the wrapper className and the
         // rooms-dropdown value.
         const toggles = [];
@@ -41,13 +42,13 @@ export default function CalendarFilter({filters, onChange, showRoomFilters}) {
         <FormGroup className={"calendar-filter"}>
             <FormControlLabel
                 control={<Switch checked={_concertOnly} onChange={(e) => updateConcertOnly(e.target.checked)} />}
-                label="alleen concerten"
+                label={__("Concerts only", "soli-event")}
             />
             {showRoomFilters && (
                 <>
                     <FormControlLabel
                         control={<Switch checked={_internalEventsOnly} onChange={(e) => updateInternalEventsOnly(e.target.checked)} />}
-                        label="alleen muziekcentrum"
+                        label={__("Music centre only", "soli-event")}
                     />
                     <RoomsDropdown
                         rooms={filters.filter(f => f !== "only-concerts" && f !== "only-internal")}

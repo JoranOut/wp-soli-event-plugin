@@ -1,4 +1,5 @@
 import "./internal-events-provider.scss";
+import {__, sprintf} from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect, useRef} from '@wordpress/element';
 import {fromEventDto, splitEventsOnRooms} from "./event-mapper";
@@ -70,7 +71,7 @@ export default function InternalEventsProvider({setEvents, range, children}) {
     if (error) {
         return (
             <>
-                <div>Error: {error.message}</div>
+                <div>{sprintf(__('Error: %s', 'soli-event'), error.message)}</div>
             </>
         );
         // If the data is still being loaded, show a loading message/icon/etc.
@@ -82,7 +83,7 @@ export default function InternalEventsProvider({setEvents, range, children}) {
 
                     {children}
                 </div>
-                {isLoading && <p className="loadingtext" style={{...loadingBox}}>Loading events...</p>}
+                {isLoading && <p className="loadingtext" style={{...loadingBox}}>{__('Loading events…', 'soli-event')}</p>}
             </>
         );
     }

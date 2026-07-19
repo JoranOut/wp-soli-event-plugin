@@ -1,6 +1,7 @@
 import "./events-provider.scss";
 import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect, useRef} from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import {fromEventDto} from "./event-mapper";
 import {ROOM_COLORS, ROOM_NAMES, ROOM_SLUGS} from "../../../../../inc/values";
 
@@ -66,7 +67,7 @@ export default function EventsProvider({setEvents, range, filters, children}) {
 
     // Derive the visible events from the cached fetch result plus the active
     // filters. Depending on [cache, filters] keeps the calendar in sync when
-    // either the data or the filter set changes — no stale-filter race.
+    // either the data or the filter set changes - no stale-filter race.
     useEffect(() => {
         const events = splitEvents(filters) ? splitEventsOnRooms(cache) : cache;
         const filteredEvents = !events ? [] : events.filter(event => filterEvent(event, filters));
@@ -115,7 +116,7 @@ export default function EventsProvider({setEvents, range, filters, children}) {
     if (error) {
         return (
             <>
-                <div>Error: {error.message}</div>
+                <div>{sprintf(__('Error: %s', 'soli-event'), error.message)}</div>
             </>
         );
         // If the data is still being loaded, show a loading message/icon/etc.
@@ -127,7 +128,7 @@ export default function EventsProvider({setEvents, range, filters, children}) {
 
                     {children}
                 </div>
-                {isLoading && <p className="loadingtext" style={{...loadingBox}}>Loading events...</p>}
+                {isLoading && <p className="loadingtext" style={{...loadingBox}}>{__('Loading events…', 'soli-event')}</p>}
             </>
         );
     }

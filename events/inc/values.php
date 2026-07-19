@@ -32,7 +32,7 @@ function translateLocation($ROOMS): ?string {
 
   $ROOM_NAMES = SOLI_ROOM_NAMES;
   if (sizeof($ROOM_NAMES) === sizeof($arr)){
-    return "Hele Gebouw";
+    return __('Whole building', 'soli-event');
   }
 
   return implode(' + ', array_map(function ($index) use ($ROOM_NAMES): string {

@@ -1,4 +1,5 @@
 import './selected-date.scss';
+import { __ } from '@wordpress/i18n';
 import calendarIcon from "../../../../../../inc/assets/img/icons/calendar.svg";
 import locationIcon from "../../../../../../inc/assets/img/icons/pin-1.svg";
 import dayjs from "dayjs";
@@ -38,7 +39,7 @@ function SelectedDate(props) {
                 dateAdapter={AdapterDayjs}
                 adapterLocale={'nl'}
             >
-                {endDate.isBefore(today) && <p className="warning">( ! ) Dit evenement heeft al plaatsgevonden</p>}
+                {endDate.isBefore(today) && <p className="warning">{__('( ! ) This event has already taken place', 'soli-event')}</p>}
                 <div className="date">
                     <img src={calendarIcon}/>
                     <span id="start-date">{startDate.format("DD MMMM YYYY (dddd)")}</span>
@@ -52,20 +53,21 @@ function SelectedDate(props) {
                 <img src={locationIcon}/>
                 <div>
                     {location &&
-                        <>
-                            <span id="location-name">{location.name}</span>
-                            <br/>
-                            <span id="location-address" style={{fontStyle: 'italic'}}>{location.address}</span>
-                        </>
+                        <a id="location-name" href="/muziekcentrum" target="_blank">{location.name}</a>
                     }
                     {rooms &&
                         <>
-                            <a href="/muziekcentrum" target="_blank">Muziekcentrum Soli</a>
-                            <br/>
+                            {/* Only label the venue here when no explicit location
+                                record is set; otherwise the location block above
+                                already shows the venue name and it would double up. */}
+                            {!location
+                                ? <><a href="/muziekcentrum" target="_blank">Muziekcentrum Soli</a><br/></>
+                                : <br/>
+                            }
                             <span>{displayRooms(rooms)}</span>
                         </>
                     }
-                    {!location && !rooms && <span>Geen locatie bekend</span>}
+                    {!location && !rooms && <span>{__('No location known', 'soli-event')}</span>}
                 </div>
             </div>
         </div>);

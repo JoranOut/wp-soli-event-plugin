@@ -1,6 +1,7 @@
 import "./events-provider.scss";
 import apiFetch from '@wordpress/api-fetch';
 import {useState, useEffect} from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import {fromEventDto} from './event_mapper';
 
 export default function EventsProvider({children, setEvents, eventsPerPage, currentPage, setTotalPages}) {
@@ -41,7 +42,7 @@ export default function EventsProvider({children, setEvents, eventsPerPage, curr
     if (error) {
         return (
             <>
-                <div>Error: {error.message}</div>
+                <div>{sprintf(__('Error: %s', 'soli-event'), error.message)}</div>
             </>
         );
         // If the data is still being loaded, show a loading message/icon/etc.
@@ -49,7 +50,7 @@ export default function EventsProvider({children, setEvents, eventsPerPage, curr
         return (
             <>
                 {!isLoading && !error && children}
-                {isLoading && <p className="loadingtext" style={{...loadingBox}}>Loading page {currentPage}...</p>}
+                {isLoading && <p className="loadingtext" style={{...loadingBox}}>{sprintf(__('Loading page %s…', 'soli-event'), currentPage)}</p>}
             </>
         );
     }

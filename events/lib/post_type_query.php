@@ -89,8 +89,8 @@ function soli_events_add_filter_dropdown() {
     $selected = isset($_GET['event_filter']) ? $_GET['event_filter'] : 'future';
 
     echo '<select name="event_filter" id="event_filter">';
-    echo '<option value="future"' . selected($selected, 'future', false) . '>Future Events</option>';
-    echo '<option value="all"' . selected($selected, 'all', false) . '>All Events</option>';
+    echo '<option value="future"' . selected($selected, 'future', false) . '>' . esc_html__('Future Events', 'soli-event') . '</option>';
+    echo '<option value="all"' . selected($selected, 'all', false) . '>' . esc_html__('All Events', 'soli-event') . '</option>';
     echo '</select>';
   }
 }

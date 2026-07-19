@@ -1,10 +1,11 @@
 import "./index.scss"
+import { __ } from '@wordpress/i18n';
 import CalendarWrapper from "./components/calendar-wrapper/calendar-wrapper";
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, ToggleControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/event-view-calendar", {
-    title: "Event View Calendar",
+    title: __("Event View Calendar", "soli-event"),
     icon: "calendar-alt",
     category: "soli",
     attributes: {
@@ -22,29 +23,29 @@ function EditComponent({ attributes, setAttributes }) {
     return (
         <>
             <InspectorControls>
-                <PanelBody title="Settings" initialOpen={true}>
+                <PanelBody title={__("Settings", "soli-event")} initialOpen={true}>
                     <SelectControl
-                        label="Default view"
+                        label={__("Default view", "soli-event")}
                         value={calendar_type}
                         options={[
-                            { label: 'Month', value: 'month' },
-                            { label: 'Week', value: 'week' },
-                            { label: 'Day', value: 'day' },
+                            { label: __('Month', 'soli-event'), value: 'month' },
+                            { label: __('Week', 'soli-event'), value: 'week' },
+                            { label: __('Day', 'soli-event'), value: 'day' },
                         ]}
                         onChange={(value) => setAttributes({ calendar_type: value })}
                     />
                     <ToggleControl
-                        label="Allow switching views"
+                        label={__("Allow switching views", "soli-event")}
                         checked={!!adjustable}
                         onChange={(value) => setAttributes({ adjustable: value })}
                     />
                     <ToggleControl
-                        label="Only concerts"
+                        label={__("Only concerts", "soli-event")}
                         checked={!!only_concerts}
                         onChange={(value) => setAttributes({ only_concerts: value })}
                     />
                     <ToggleControl
-                        label="Show rooms filter"
+                        label={__("Show rooms filter", "soli-event")}
                         checked={!!show_rooms_filter}
                         onChange={(value) => setAttributes({ show_rooms_filter: value })}
                     />

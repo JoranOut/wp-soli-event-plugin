@@ -1,4 +1,5 @@
 import "./index.scss"
+import { __ } from '@wordpress/i18n';
 import EditableDateTable from "./components/editable-date-table/editable-date-table";
 import AdminEventsProvider from "./components/events-provider/admin-events-provider";
 import DateRangePicker from "./components/daterange-picker/daterange-picker";
@@ -12,7 +13,7 @@ import AdminNotesEditor from "./components/admin-notes-editor/admin-notes-editor
 import {useEventState, useEventActions} from "./components/events-context";
 
 wp.blocks.registerBlockType("soli/create-event", {
-    title: "Create Event",
+    title: __("Create Event", "soli-event"),
     icon: "smiley",
     category: "soli",
     supports: {

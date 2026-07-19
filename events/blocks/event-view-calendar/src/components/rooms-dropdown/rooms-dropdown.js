@@ -6,6 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 
 import {useState} from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import {ROOM_NAMES, ROOM_SLUGS} from "../../../../../inc/values";
 
 const ITEM_HEIGHT = 48;
@@ -28,7 +29,7 @@ export default function RoomsDropdown({rooms, onChange, disabled}) {
 
     const renderRooms = () => {
         if (_rooms.length === ROOM_SLUGS.length) {
-            return "Hele gebouw";
+            return __("Whole building", "soli-event");
         }
         return ROOM_NAMES.filter((_, index) => _rooms.includes(ROOM_SLUGS[index])).join(', ');
     }

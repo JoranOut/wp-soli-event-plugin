@@ -1,4 +1,5 @@
 import './pagination-nav.scss';
+import { __ } from '@wordpress/i18n';
 
 function getNavPages(current, total) {
     const set = new Set();
@@ -38,12 +39,12 @@ export default function PaginationNav({ currentPage, totalPages, setCurrentPage 
     };
 
     return (
-        <nav className="nav" aria-label="Pagination">
+        <nav className="nav" aria-label={__("Pagination", "soli-event")}>
             { currentPage !== 1 && (
                 <button type="button" className="page-link"
                         onClick={() => goTo(currentPage - 1)}
-                        aria-label="Previous page">
-                    &#x3C; prev
+                        aria-label={__("Previous page", "soli-event")}>
+                    &#x3C; {__("prev", "soli-event")}
                 </button>
             )}
             {pages.map((page, idx) =>
@@ -70,8 +71,8 @@ export default function PaginationNav({ currentPage, totalPages, setCurrentPage 
             { currentPage !== totalPages &&
                 <button type="button" className="page-link"
                         onClick={() => goTo(currentPage + 1)}
-                        aria-label="Next page">
-                    next &#x3E;
+                        aria-label={__("Next page", "soli-event")}>
+                    {__("next", "soli-event")} &#x3E;
                 </button>
             }
         </nav>

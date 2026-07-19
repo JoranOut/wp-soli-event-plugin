@@ -1,10 +1,11 @@
 import "./index.scss"
+import { __ } from '@wordpress/i18n';
 import ListView from "./components/list-view/list-view"
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, RangeControl, ToggleControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/event-view-list", {
-    title: "Event View List",
+    title: __("Event View List", "soli-event"),
     icon: "list-view",
     category: "soli",
     edit: EditComponent,
@@ -26,16 +27,16 @@ function EditComponent({ attributes, setAttributes }) {
     return (
         <>
             <InspectorControls>
-                <PanelBody title="Settings" initialOpen={true}>
+                <PanelBody title={__("Settings", "soli-event")} initialOpen={true}>
                     <RangeControl
-                        label="Events Per Page"
+                        label={__("Events Per Page", "soli-event")}
                         value={events_per_page}
                         onChange={(value) => setAttributes({ events_per_page: value })}
                         min={1}
                         max={20}
                     />
                     <ToggleControl
-                        label="Show Navigation"
+                        label={__("Show Navigation", "soli-event")}
                         checked={!!show_navigation}
                         onChange={(value) => setAttributes({ show_navigation: value })}
                     />

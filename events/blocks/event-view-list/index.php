@@ -24,6 +24,7 @@ class SoliBlockEventViewList {
   function theHTML($attributes){
     wp_enqueue_script('block-event-view-list-frontend',  plugin_dir_url(__FILE__) . 'build/frontend.js', array('wp-components', 'wp-element', 'wp-api-fetch'), SOLI_EVENT__PLUGIN_VERSION, true);
     wp_enqueue_style('block-event-view-list-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css', array(), SOLI_EVENT__PLUGIN_VERSION);
+    wp_set_script_translations('block-event-view-list-frontend', 'soli-event', SOLI_EVENT__PLUGIN_DIR_PATH . 'languages');
 
     $events_per_page = isset( $attributes['events_per_page'] ) ? (int) $attributes['events_per_page'] : 3;
     $show_navigation = !empty( $attributes['show_navigation'] ) ? 'true' : 'false';

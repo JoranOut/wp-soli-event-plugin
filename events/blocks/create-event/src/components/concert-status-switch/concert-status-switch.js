@@ -1,5 +1,6 @@
 import "./concert-status-switch.scss"
 
+import { __ } from '@wordpress/i18n';
 import {useState, useEffect} from '@wordpress/element';
 import Switch from '@mui/material/Switch';
 import FormControl from '@mui/material/FormControl';
@@ -23,9 +24,9 @@ export default function ConcertStatusSwitch({concertStatus, onChange}) {
                 <Switch
                     checked={_concertStatus}
                     onChange={handleChange}
-                    inputProps={{ 'aria-label': 'controlled' }}
+                    inputProps={{ 'aria-label': __('Toggle concert status', 'soli-event') }}
                 />}
-              label="Concert"
+              label={__("Concert", "soli-event")}
             />
         </FormControl>
     );

@@ -54,7 +54,7 @@ function buildPOSTCreateLocation() {
       if (!isset($body->name) || !isset($body->address)) {
         return new WP_REST_Response(array(
           'code' => WP_REST_Server::INVALID_ARGUMENT,
-          'message' => 'Invalid request arguments.',
+          'message' => __('Invalid request arguments.', 'soli-event'),
         ), 400);
       }
 
