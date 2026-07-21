@@ -16,6 +16,7 @@ add_filter( 'block_categories_all' , function( $categories, $post ) {
 }, 10, 2);
 
 require_once 'lib/event_capability.php';
+require_once 'lib/event_visibility.php';
 require_once 'lib/location_table.php';
 require_once 'lib/migrations.php';
 require_once 'lib/location_endpoints.php';

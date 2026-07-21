@@ -9,7 +9,11 @@ function soli_location_rest_api() {
 function buildGETSearchLocation() {
   register_rest_route('soli_event/v1', '/location/search', array(
     'methods' => 'GET',
-    'permission_callback' => '__return_true', // *always set a permission callback
+    // Only the editor-only create-event block consumes this; location data is
+    // not public, so gate it behind edit_posts (F9).
+    'permission_callback' => function () {
+      return current_user_can('edit_posts');
+    },
     'callback' => function ($request) {
       $query = $request->get_param('query');
       $limit = (int) $request->get_param('limit');

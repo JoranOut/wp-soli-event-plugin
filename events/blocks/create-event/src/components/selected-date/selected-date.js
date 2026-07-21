@@ -53,7 +53,12 @@ function SelectedDate(props) {
                 <img src={locationIcon}/>
                 <div>
                     {location &&
-                        <a id="location-name" href="/muziekcentrum" target="_blank">{location.name}</a>
+                        <>
+                            <a id="location-name" href="/muziekcentrum" target="_blank">{location.name}</a>
+                            {location.address &&
+                                <><br/><span id="location-address" className="location-address">{location.address}</span></>
+                            }
+                        </>
                     }
                     {rooms &&
                         <>

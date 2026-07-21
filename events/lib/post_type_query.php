@@ -47,6 +47,37 @@ function soli_events_modify_query_clauses($clauses, $wp_query) {
 }
 add_filter('posts_clauses', 'Soli\Events\soli_events_modify_query_clauses', 10, 2);
 
+// F3: on the public front end, a soli_event only appears in listings (archive)
+// and site search if it has at least one PUBLIC date that has not yet passed.
+// Editors (and the admin screens) are unaffected. The clause is post_type-
+// conditional so it never filters out other post types in a mixed search.
+function soli_events_require_public_date($clauses, $wp_query) {
+  if (is_admin() || current_user_can('edit_posts')) {
+    return $clauses;
+  }
+
+  $vars = $wp_query->query_vars;
+  $is_event_archive = isset($vars['post_type']) && 'soli_event' === $vars['post_type'] && !$wp_query->is_singular;
+  if (!$is_event_archive && !$wp_query->is_search()) {
+    return $clauses;
+  }
+
+  global $wpdb;
+  $event_dates_table = $wpdb->prefix . 'event_dates';
+  $current_day_start = current_time('Y-m-d') . ' 00:00:00';
+
+  $clauses['where'] .= $wpdb->prepare(
+    " AND ($wpdb->posts.post_type <> 'soli_event' OR EXISTS (
+        SELECT 1 FROM $event_dates_table ed
+        WHERE ed.post_id = $wpdb->posts.ID AND ed.status = 'PUBLIC' AND ed.end_date >= %s
+      ))",
+    $current_day_start
+  );
+
+  return $clauses;
+}
+add_filter('posts_clauses', 'Soli\Events\soli_events_require_public_date', 20, 2);
+
 function custom_event_post_count($counts, $post_type, $perm) {
   global $wpdb;
 

@@ -26,9 +26,12 @@ class SoliBlockEventReservationPopup {
     wp_enqueue_style('block-event-reservation-popup-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css', array('wp-components'), SOLI_EVENT__PLUGIN_VERSION);
     wp_set_script_translations('block-event-reservation-popup-frontend', 'soli-event', SOLI_EVENT__PLUGIN_DIR_PATH . 'languages');
 
-    // The address reservation e-mails are sent to. Defaults to the site admin
-    // e-mail; override with the 'soli_event_reservation_recipient' filter.
-    $recipient = apply_filters('soli_event_reservation_recipient', get_option('admin_email'));
+    // The address the reservation mailto is pre-filled with. Deliberately does
+    // NOT default to the site admin e-mail (F5: that leaked a technical address
+    // into public HTML). Configure a public reservation address via the
+    // 'soli_event_reservation_email' option or the filter below; empty means the
+    // visitor fills in the recipient in their own mail client.
+    $recipient = apply_filters('soli_event_reservation_recipient', get_option('soli_event_reservation_email', ''));
 
     ob_start();?>
     <div class="block-event-reservation-popup" data-recipient="<?php echo esc_attr($recipient); ?>"></div>

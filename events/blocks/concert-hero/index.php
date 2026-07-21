@@ -66,7 +66,7 @@ class SoliBlockConcertHero {
     $day        = ucfirst(date_i18n('l', $start_ts));
     $start_time = date_i18n('H:i', $start_ts);
 
-    $title    = $concert['post_title'];
+    $title    = \Soli\Events\EventVisibility::maskTitle($concert['status'] ?? null, $concert['post_title']);
     // Two-tone display: leading words in paper, the last word italic + gold.
     $title_words = preg_split('/\s+/', trim($title), -1, PREG_SPLIT_NO_EMPTY);
     $title_last  = $title_words ? array_pop($title_words) : '';

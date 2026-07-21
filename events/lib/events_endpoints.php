@@ -43,6 +43,11 @@ function buildGETEventDatesFromEvent() {
     'callback' => function ($request) {
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
       $dates = $eventHandler->getDatesFromEvent($request['id']);
+      // Filter workflow-state dates for non-editors (F2): anonymous/subscriber
+      // only see PUBLIC/PRIVATE; editors see everything.
+      if (is_array($dates)) {
+        $dates = \Soli\Events\EventVisibility::filterVisibleRows($dates);
+      }
       $response = new WP_REST_Response($dates);
       filterAdminNotesFromDatesIfNoPermission($response);
       if (!$dates) {

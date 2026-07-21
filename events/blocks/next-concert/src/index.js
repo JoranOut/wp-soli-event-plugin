@@ -6,7 +6,9 @@ import {
     useBlockProps,
     __experimentalLinkControl as LinkControl,
 } from '@wordpress/block-editor';
-import { PanelBody, TextControl, TextareaControl, BaseControl } from '@wordpress/components';
+import { PanelBody, TextControl, TextareaControl, BaseControl, ToggleControl, SelectControl } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
+import { store as coreStore } from '@wordpress/core-data';
 
 wp.blocks.registerBlockType("soli/next-concert", {
     title: __("Next Concert", "soli-event"),
@@ -21,6 +23,8 @@ wp.blocks.registerBlockType("soli/next-concert", {
         lead: { type: 'string', default: __('The next concert on Soli’s programme.', 'soli-event') },
         buttonLabel: { type: 'string', default: __('Agenda →', 'soli-event') },
         agendaUrl: { type: 'string', default: '/agenda/' },
+        onlyConcerts: { type: 'boolean', default: true },
+        categoryId: { type: 'number', default: 0 },
     },
     edit: EditComponent,
     save: () => null,
@@ -28,12 +32,38 @@ wp.blocks.registerBlockType("soli/next-concert", {
 
 function EditComponent({ attributes, setAttributes }) {
     const blockProps = useBlockProps();
-    const { eyebrow, lead, buttonLabel, agendaUrl } = attributes;
+    const { eyebrow, lead, buttonLabel, agendaUrl, onlyConcerts, categoryId } = attributes;
+
+    const categories = useSelect(
+        (select) => select(coreStore).getEntityRecords('taxonomy', 'category', { per_page: -1, orderby: 'name', order: 'asc' }),
+        []
+    );
+
+    const categoryOptions = [
+        { label: __("All categories (no filter)", "soli-event"), value: 0 },
+        ...(categories || []).map((cat) => ({ label: cat.name, value: cat.id })),
+    ];
 
     return (
         <div {...blockProps}>
             <InspectorControls>
-                <PanelBody title={__("Content", "soli-event")} initialOpen={true}>
+                <PanelBody title={__("Selection", "soli-event")} initialOpen={true}>
+                    <ToggleControl
+                        label={__("Only concerts", "soli-event")}
+                        help={onlyConcerts
+                            ? __("Only event dates flagged as concerts are shown.", "soli-event")
+                            : __("Any upcoming event date can be shown.", "soli-event")}
+                        checked={onlyConcerts}
+                        onChange={(value) => setAttributes({ onlyConcerts: value })}
+                    />
+                    <SelectControl
+                        label={__("Category", "soli-event")}
+                        value={categoryId}
+                        options={categoryOptions}
+                        onChange={(value) => setAttributes({ categoryId: parseInt(value, 10) || 0 })}
+                    />
+                </PanelBody>
+                <PanelBody title={__("Content", "soli-event")} initialOpen={false}>
                     <TextControl
                         label={__("Eyebrow label", "soli-event")}
                         value={eyebrow}

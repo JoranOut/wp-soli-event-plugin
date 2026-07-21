@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Use a block theme so the plugin's registered FSE single-event template
+# (soli-event//single-soli_event -> event-dates + next-concert) actually renders,
+# matching the production site. Classic themes ignore block templates.
+wp theme activate twentytwentyfive
+
 # Site options
 wp option update timezone_string Europe/Amsterdam
 wp option delete gmt_offset
@@ -16,3 +21,7 @@ wp user meta update 1 wp_persistent_preferences \
 # Disable the periodic "administration email verification" interstitial, which
 # otherwise interrupts the post-login redirect and has no admin bar.
 wp option update admin_email_lifespan 99999999999
+
+# Keep archive/search listings on a single page so visibility specs can assert
+# the full seeded catalogue without paginating.
+wp option update posts_per_page 100

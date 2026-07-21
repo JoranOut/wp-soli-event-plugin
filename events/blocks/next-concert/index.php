@@ -24,10 +24,12 @@ class SoliBlockNextConcert {
         'html' => false,
       ),
       'attributes'      => array(
-        'eyebrow'     => array('type' => 'string', 'default' => __('Concert agenda', 'soli-event')),
-        'lead'        => array('type' => 'string', 'default' => __('The next concert on Soli’s programme.', 'soli-event')),
-        'buttonLabel' => array('type' => 'string', 'default' => __('Agenda →', 'soli-event')),
-        'agendaUrl'   => array('type' => 'string', 'default' => '/agenda/'),
+        'eyebrow'      => array('type' => 'string', 'default' => __('Concert agenda', 'soli-event')),
+        'lead'         => array('type' => 'string', 'default' => __('The next concert on Soli’s programme.', 'soli-event')),
+        'buttonLabel'  => array('type' => 'string', 'default' => __('Agenda →', 'soli-event')),
+        'agendaUrl'    => array('type' => 'string', 'default' => '/agenda/'),
+        'onlyConcerts' => array('type' => 'boolean', 'default' => true),
+        'categoryId'   => array('type' => 'number', 'default' => 0),
       ),
     ));
 
@@ -41,9 +43,14 @@ class SoliBlockNextConcert {
     $lead         = isset($attributes['lead']) ? $attributes['lead'] : __('The next concert on Soli’s programme.', 'soli-event');
     $button_label = isset($attributes['buttonLabel']) ? $attributes['buttonLabel'] : __('Agenda →', 'soli-event');
     $agenda_url   = isset($attributes['agendaUrl']) ? $attributes['agendaUrl'] : '/agenda/';
+    $only_concerts = isset($attributes['onlyConcerts']) ? (bool) $attributes['onlyConcerts'] : true;
+    $category_id   = isset($attributes['categoryId']) ? absint($attributes['categoryId']) : 0;
 
     $handler = new \Soli\Events\EventsDatesTableHandler();
-    $concert = $handler->getNextConcert();
+    $concert = $handler->getNextConcert(array(
+      'only_concerts' => $only_concerts,
+      'category_id'   => $category_id,
+    ));
 
     if (empty($concert)) {
       // Only surface the empty state to editors; the front end stays clean.
@@ -59,7 +66,8 @@ class SoliBlockNextConcert {
     $start_ts = strtotime($concert['start_date']);
     // Weekday + day + month, no year - matches the aside card in the design.
     $date_label = date_i18n('l j F', $start_ts);
-    $title      = sprintf('%s - %s', $concert['post_title'], $date_label);
+    $post_title = \Soli\Events\EventVisibility::maskTitle($concert['status'] ?? null, $concert['post_title']);
+    $title      = sprintf('%s - %s', $post_title, $date_label);
     $permalink  = get_permalink($concert['post_id']);
 
     $wrapper = get_block_wrapper_attributes(array('class' => 'soli-next-concert'));

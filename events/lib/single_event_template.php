@@ -21,6 +21,36 @@ function soli_events_register_single_template() {
 }
 add_action('init', 'Soli\Events\soli_events_register_single_template');
 
+// Block the single page of a "private" event (one with no PUBLIC date) for
+// not-logged-in visitors with a 403 (S6). Logged-in users may view it.
+function soli_events_guard_private_single() {
+  if (is_admin() || !is_singular('soli_event') || is_user_logged_in()) {
+    return;
+  }
+
+  global $wpdb;
+  $post_id = get_queried_object_id();
+  if (!$post_id) {
+    return;
+  }
+
+  $dates_table = $wpdb->prefix . 'event_dates';
+  $public_dates = (int) $wpdb->get_var($wpdb->prepare(
+    "SELECT COUNT(*) FROM $dates_table WHERE post_id = %d AND status = %s",
+    $post_id,
+    EventVisibility::STATUS_PUBLIC
+  ));
+
+  if ($public_dates === 0) {
+    wp_die(
+      esc_html__('This event is private.', 'soli-event'),
+      esc_html__('Forbidden', 'soli-event'),
+      array('response' => 403)
+    );
+  }
+}
+add_action('template_redirect', 'Soli\Events\soli_events_guard_private_single');
+
 // Block markup for the single event template. Kept intentionally small: a
 // header, then a two-column body with the post content beside an aside that
 // stacks the three event blocks.

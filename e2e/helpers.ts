@@ -93,13 +93,13 @@ export async function createSingleEvent(
     await page.getByRole('textbox', { name: 'hh:mm' }).first().fill(startTime);
     await page.getByRole('textbox', { name: 'hh:mm' }).nth(1).fill(endTime);
 
-    await page.getByRole('button', { name: 'Kies een locatie' }).click();
+    await page.getByRole('button', { name: 'Choose a location' }).click();
     if (namedLocation) {
         // External location path: create and select a named venue.
-        await page.getByRole('button', { name: 'Nieuwe locatie' }).click();
+        await page.getByRole('button', { name: 'New location' }).click();
         await page.locator('input[name="name"]').fill(namedLocation.name);
         await page.locator('textarea[name="address"]').fill(namedLocation.address);
-        await page.getByRole('button', { name: 'Opslaan en selecteren' }).click();
+        await page.getByRole('button', { name: 'Save and select' }).click();
     } else {
         await page.getByRole('checkbox', { name: locationLabel }).check();
         await page
@@ -107,7 +107,7 @@ export async function createSingleEvent(
             .filter({ hasText: roomLabel })
             .getByTestId('CheckBoxOutlineBlankIcon')
             .click();
-        await page.getByRole('button', { name: 'Opslaan' }).click();
+        await page.getByRole('button', { name: 'Save', exact: true }).click();
     }
 
     // Flag as a concert & publish

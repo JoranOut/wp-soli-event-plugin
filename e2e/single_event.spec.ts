@@ -186,7 +186,7 @@ test.describe('Event Tests',  () => {
 
         // Open reservation popup. The tool lists every event, so scope to the
         // link for our unique event rather than assuming a single result.
-        await page.getByRole('button', { name: 'Reserveer' }).click();
+        await page.getByRole('button', { name: 'Reserve' }).click();
         const detail = page.getByRole('link').filter({ hasText: eventCtx.title });
         await expect(detail).toContainText(
             `${eventCtx.title} - Grote zaal`,

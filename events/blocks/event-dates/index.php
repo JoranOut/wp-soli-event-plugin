@@ -53,7 +53,7 @@ class SoliBlockEventDates {
     $dates = $post_id ? $handler->getUpcomingDatesForEvent($post_id, $count) : array();
 
     // This block is only meaningful for events with more than one upcoming
-    // date; a single-date event is covered by soli/event-date on its own.
+    // date; a single-date event needs no recurrence list of its own.
     if (empty($dates) || count($dates) < 2) {
       if (current_user_can('edit_posts')) {
         return sprintf(

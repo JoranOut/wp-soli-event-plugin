@@ -52,10 +52,38 @@ class EventsDatesTableHandler {
     return $dates;
   }
 
-  function getNextConcert() {
+  // Returns the next upcoming event date. By default it only considers dates
+  // flagged as concerts, matching the original behaviour. Pass $args to relax
+  // or narrow the selection:
+  //   - only_concerts (bool, default true): when false, any event date qualifies
+  //   - category_id   (int, default 0):     when set, restrict to events in that category
+  function getNextConcert($args = array()) {
+    $only_concerts = array_key_exists('only_concerts', $args) ? (bool) $args['only_concerts'] : true;
+    $category_id   = isset($args['category_id']) ? absint($args['category_id']) : 0;
     $current_daytime = current_time('Y-m-d H:i:s');
 
-    $query = $this->wpdb->prepare("
+    $term_relationships_table = $this->wpdb->prefix . 'term_relationships';
+    $term_taxonomy_table      = $this->wpdb->prefix . 'term_taxonomy';
+
+    $joins  = '';
+    $where  = 'WHERE w.post_status = %s and d.end_date >= %s';
+    $params = array('publish', $current_daytime);
+    // Date-status visibility is viewer-dependent (F4/F7): public viewers see
+    // PUBLIC + PRIVATE (PRIVATE title masked by the block), editors see all.
+    $where .= ' and ' . EventVisibility::statusInClause('d', $params);
+
+    if ($only_concerts) {
+      $where .= ' and d.is_concert = 1';
+    }
+
+    if ($category_id) {
+      $joins .= " INNER JOIN $term_relationships_table tr ON tr.object_id = w.ID
+        INNER JOIN $term_taxonomy_table tt ON tt.term_taxonomy_id = tr.term_taxonomy_id AND tt.taxonomy = 'category'";
+      $where  .= ' and tt.term_id = %d';
+      $params[] = $category_id;
+    }
+
+    $sql = "
         SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
                m.meta_value as featured_image_id,
            w.ID as post_id, w.post_title, w.post_status, w.post_name,
@@ -67,8 +95,11 @@ class EventsDatesTableHandler {
             ON m.post_id = w.id and m.meta_key = '_thumbnail_id'
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
-        WHERE w.post_status = %s and d.status = %s and d.end_date >= %s and d.is_concert = 1
-        ORDER BY d.start_date asc LIMIT 1", 'publish', 'public', $current_daytime);
+        $joins
+        $where
+        ORDER BY d.start_date asc LIMIT 1";
+
+    $query = $this->wpdb->prepare($sql, $params);
     $concert = $this->wpdb->get_row($query, ARRAY_A);
     if (empty($concert)) {
       return null;
@@ -96,20 +127,25 @@ class EventsDatesTableHandler {
     }
 
     $current_daytime = current_time('Y-m-d H:i:s');
+    // Filter dates by the viewer's allowed statuses (F1): public viewers see
+    // PUBLIC + PRIVATE, editors see workflow states too.
+    $params = array($event_id);
+    $status_clause = EventVisibility::statusInClause('d', $params);
+    $params[] = $current_daytime;
     $sql = "
         SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
                l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
-        WHERE d.post_id = %d and d.end_date >= %s
+        WHERE d.post_id = %d and $status_clause and d.end_date >= %s
         ORDER BY d.start_date asc";
 
     if ($limit !== null) {
-      $query = $this->wpdb->prepare($sql . " LIMIT %d", $event_id, $current_daytime, absint($limit));
-    } else {
-      $query = $this->wpdb->prepare($sql, $event_id, $current_daytime);
+      $sql .= " LIMIT %d";
+      $params[] = absint($limit);
     }
+    $query = $this->wpdb->prepare($sql, $params);
 
     $results = $this->wpdb->get_results($query, ARRAY_A);
     return $this->castIsConcertToBoolean($results);
@@ -140,10 +176,17 @@ class EventsDatesTableHandler {
     $limit = $itemsPerPage;
     $current_daytime = current_time('Y-m-d H:m:s');
 
+    // Viewer-aware date-status filter + PRIVATE title masking (F4/F7).
+    $title_expr = EventVisibility::titleSelectExpr('d', 'w.post_title');
+    $params = array('publish');
+    $status_clause = EventVisibility::statusInClause('d', $params);
+    $params[] = $current_daytime;
+    $params[] = $limit;
+    $params[] = $offset;
     $query = $this->wpdb->prepare("
         SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
                m.meta_value as featured_image_id,
-           w.ID as post_id, w.post_author, CASE d.status WHEN 'PRIVATE' THEN 'private' ELSE w.post_title END AS post_title,
+           w.ID as post_id, w.post_author, $title_expr AS post_title,
            w.post_status, w.post_name, w.post_modified, w.post_parent, w.guid, w.post_type,
            l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
@@ -153,8 +196,8 @@ class EventsDatesTableHandler {
             ON m.post_id = w.id and m.meta_key = '_thumbnail_id'
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
-        WHERE w.post_status = %s and d.status = %s and d.end_date >= %s
-        ORDER BY d.start_date asc LIMIT %d OFFSET %d", 'publish', 'public', $current_daytime, $limit, $offset);
+        WHERE w.post_status = %s and $status_clause and d.end_date >= %s
+        ORDER BY d.start_date asc LIMIT %d OFFSET %d", $params);
     $results = $this->wpdb->get_results($query, ARRAY_A);
     $results = $this->appendGUID($results);
     return $this->castIsConcertToBoolean($results);
@@ -163,12 +206,17 @@ class EventsDatesTableHandler {
   function getTotalFutureEvents() {
       $current_daytime = current_time('Y-m-d H:m:s');
 
+      // Must mirror loadFutureEventDatesPerPageFromDb's filter so pagination
+      // totals match the rows actually returned.
+      $params = array('publish');
+      $status_clause = EventVisibility::statusInClause('d', $params);
+      $params[] = $current_daytime;
       $query = $this->wpdb->prepare("
-        SELECT COUNT(*) 
+        SELECT COUNT(*)
         FROM $this->event_dates_table d
         LEFT JOIN $this->post_table w ON d.post_id = w.id
-        WHERE w.post_status = %s AND d.status = %s AND d.end_date >= %s
-    ", 'publish', 'public', $current_daytime);
+        WHERE w.post_status = %s AND $status_clause AND d.end_date >= %s
+    ", $params);
 
       return (int) $this->wpdb->get_var($query);
   }
@@ -184,9 +232,14 @@ class EventsDatesTableHandler {
   function loadAllBetweenDatesEventDatesFromDb($from, $to) {
     $startDate = $from->format('Y-m-d');
     $endDate = $to->format('Y-m-d');
+    // Viewer-aware masking + date-status filter (F4/F7). Any date in range shows
+    // (past included); PRIVATE title masked only for not-logged-in visitors.
+    $title_expr = EventVisibility::titleSelectExpr('d', 'w.post_title');
+    $params = array($startDate, $endDate, $startDate, $endDate, 'publish');
+    $status_clause = EventVisibility::statusInClause('d', $params);
     $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
        w.ID , w.post_author ,
-       CASE d.status WHEN 'PRIVATE' THEN 'private' ELSE w.post_title END AS post_title,
+       $title_expr AS post_title,
        w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type,
        l.id as location_id, l.name as location_name, l.address as location_address
         FROM $this->event_dates_table d
@@ -196,7 +249,7 @@ class EventsDatesTableHandler {
             on d.location = l.id
         WHERE ((d.start_date between %s and %s) or (d.end_date between %s and %s))
               and w.post_status = %s
-              and d.status in ('PUBLIC', 'PRIVATE');", $startDate, $endDate, $startDate, $endDate, 'publish');
+              and $status_clause;", $params);
     $results = $this->wpdb->get_results($query, ARRAY_A);
     $results = $this->appendGUID($results);
     return $this->castIsConcertToBoolean($results);

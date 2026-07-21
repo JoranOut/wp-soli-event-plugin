@@ -4,6 +4,9 @@ const baseConfig = require( '@wordpress/scripts/config/playwright.config' );
 const config = defineConfig({
     ...baseConfig,
     testDir: 'e2e',
+    // Our setup seeds the visibility catalogue + role users and mints per-role
+    // storageStates, in addition to the base admin storageState.
+    globalSetup: require.resolve('./e2e/global-setup.ts'),
     // Tests share one WordPress instance, so each test isolates itself by using
     // a unique event title and scoping all assertions to it (no global post
     // deletion). That keeps them safe to run fully in parallel.
