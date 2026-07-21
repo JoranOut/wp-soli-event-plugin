@@ -1,19 +1,23 @@
 /**
- * Public iCal feed at /ical (S-ical). Exports PUBLIC upcoming dates only —
- * PRIVATE, workflow-state, past, and non-published events must never leak into
- * the exported calendar. ?categorie=<slug|id> filters by category.
+ * Public iCal feed at /ical (RFC 5545 VCALENDAR). Exports PUBLIC upcoming dates
+ * only — PRIVATE, workflow-state (PENDING_APPROVAL/PLANNED/OPTION), past, and
+ * non-published events must never leak into the exported calendar.
+ * ?categorie=<slug|id> (alias ?category=) filters by category.
+ *
+ * An event appears iff it has >=1 PUBLIC upcoming date — i.e. exactly the
+ * `archiveListable` condition, reused here as the source of truth.
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import { apiFor } from './fixtures/roles';
-import { title } from './fixtures/catalogue';
+import { archiveListable, title, type CatalogueKey } from './fixtures/catalogue';
 
-async function feed(query = ''): Promise<{ status: number; contentType: string; body: string }> {
+async function feed(query = ''): Promise<{ status: number; headers: Record<string, string>; body: string }> {
     const api = await apiFor('anonymous');
-    const res = await api.get(`/ical${query}`); // request context follows the /ical -> /ical/ redirect
+    const res = await api.get(`/ical${query}`); // request context follows /ical -> /ical/
     const body = await res.text();
-    const contentType = res.headers()['content-type'] || '';
+    const headers = res.headers();
     await api.dispose();
-    return { status: res.status(), contentType, body };
+    return { status: res.status(), headers, body };
 }
 
 const summaries = (body: string) =>
@@ -22,41 +26,114 @@ const summaries = (body: string) =>
         .filter((l) => l.startsWith('SUMMARY:'))
         .map((l) => l.slice('SUMMARY:'.length));
 
-test.describe('iCal feed /ical', () => {
-    test('serves a valid VCALENDAR as text/calendar', async () => {
-        const { status, contentType, body } = await feed();
+const countExact = (body: string, t: string) => summaries(body).filter((s) => s === t).length;
+
+// nc-* are category-isolated fixtures, not part of the standard matrix.
+const t = (key: string) => title(key as CatalogueKey);
+
+let catNcId = 0;
+let catPrivId = 0;
+
+test.beforeAll(async () => {
+    const api = await apiFor('anonymous');
+    catNcId = (await (await api.get('/wp-json/wp/v2/categories?slug=viz-nc')).json())[0]?.id;
+    catPrivId = (await (await api.get('/wp-json/wp/v2/categories?slug=viz-nc-priv')).json())[0]?.id;
+    await api.dispose();
+    expect(catNcId, 'viz-nc id').toBeTruthy();
+    expect(catPrivId, 'viz-nc-priv id').toBeTruthy();
+});
+
+test.describe('iCal feed — envelope & headers', () => {
+    test('serves a valid VCALENDAR as text/calendar with a filename', async () => {
+        const { status, headers, body } = await feed();
         expect(status).toBe(200);
-        expect(contentType).toContain('text/calendar');
+        expect(headers['content-type']).toContain('text/calendar');
+        expect(headers['content-disposition'] || '').toContain('.ics');
         expect(body).toContain('BEGIN:VCALENDAR');
-        expect(body).toContain('END:VCALENDAR');
+        expect(body).toContain('VERSION:2.0');
+        expect(body).toContain('PRODID:');
+        expect(body.trimEnd().endsWith('END:VCALENDAR')).toBeTruthy();
     });
+});
 
-    test('includes PUBLIC upcoming events only', async () => {
+test.describe('iCal feed — status / post-status / time matrix', () => {
+    // Covers PUBLIC vs PRIVATE/PENDING_APPROVAL/PLANNED/OPTION, publish vs
+    // draft/pending/private/future, and future vs past — one assertion per cell.
+    test('an event is exported iff it has a PUBLIC upcoming date', async () => {
         const { body } = await feed();
-        const s = summaries(body);
-
-        // Present: published events with a PUBLIC upcoming date.
-        expect(s).toContain(title('date-public'));
-        expect(s).toContain(title('time-future'));
-        expect(s).toContain(title('public-and-private')); // its PUBLIC date
-
-        // Absent: PRIVATE, workflow states, past, and non-published events.
-        for (const key of [
-            'date-private', 'private-only', 'date-planned', 'date-pending', 'date-option',
-            'time-past', 'no-public-date', 'post-draft', 'post-pending', 'post-private', 'post-future',
-        ] as const) {
-            expect(s, `${title(key)} must not be exported`).not.toContain(title(key));
+        const present = summaries(body);
+        for (const key of Object.keys(archiveListable) as CatalogueKey[]) {
+            const shouldExport = archiveListable[key];
+            expect(
+                present.includes(title(key)),
+                `${title(key)} should ${shouldExport ? 'be' : 'NOT be'} in the feed`
+            ).toBe(shouldExport);
         }
-        // PRIVATE masking must not leak in either: no "private" placeholder rows.
-        expect(s).not.toContain('private');
     });
 
-    test('?categorie filters to a category', async () => {
-        const { body } = await feed('?categorie=viz-nc');
-        const s = summaries(body);
-        expect(s).toContain(title('nc-early' as any));
-        expect(s).toContain(title('nc-concert' as any));
-        expect(s).not.toContain(title('date-public')); // uncategorised, excluded
+    test('PRIVATE dates never leak — not even masked as "private"', async () => {
+        const { body } = await feed();
+        const present = summaries(body);
+        expect(present).not.toContain(t('date-private'));
+        expect(present).not.toContain(t('private-only'));
+        expect(present).not.toContain('private'); // no masked placeholder
+    });
+
+    test('recurring events emit one VEVENT per PUBLIC date', async () => {
+        const { body } = await feed();
+        // recurring = 3 PUBLIC dates; recurring-mixed = 2 PUBLIC (+1 PRIVATE, +1 PLANNED excluded).
+        expect(countExact(body, t('recurring'))).toBe(3);
+        expect(countExact(body, t('recurring-mixed'))).toBe(2);
+        // public-and-private has exactly one PUBLIC date -> one VEVENT.
+        expect(countExact(body, t('public-and-private'))).toBe(1);
+    });
+});
+
+test.describe('iCal feed — VEVENT structure', () => {
+    test('each VEVENT has UID, UTC timestamps, SUMMARY, LOCATION and URL', async () => {
+        const { body } = await feed('?categorie=viz-nc'); // small, deterministic set
+        const blocks = body.split('BEGIN:VEVENT').slice(1).map((b) => b.split('END:VEVENT')[0]);
+        expect(blocks.length).toBeGreaterThan(0);
+        for (const b of blocks) {
+            expect(b).toMatch(/UID:.+@soli\.nl/);
+            expect(b).toMatch(/DTSTAMP:\d{8}T\d{6}Z/);
+            expect(b).toMatch(/DTSTART:\d{8}T\d{6}Z/);
+            expect(b).toMatch(/DTEND:\d{8}T\d{6}Z/);
+            expect(b).toMatch(/SUMMARY:.+/);
+            expect(b).toMatch(/LOCATION:.+/);
+            expect(b).toMatch(/URL:http.+\/evenement\//);
+        }
+    });
+});
+
+test.describe('iCal feed — category filtering', () => {
+    test('?categorie=<slug> returns only that category', async () => {
+        const s = summaries((await feed('?categorie=viz-nc')).body);
+        expect(s).toContain(t('nc-early'));
+        expect(s).toContain(t('nc-concert'));
+        expect(s).not.toContain(title('date-public')); // uncategorised
+        expect(s).not.toContain(title('concert'));
+    });
+
+    test('?categorie=<numeric id> matches the slug result', async () => {
+        const bySlug = summaries((await feed('?categorie=viz-nc')).body).sort();
+        const byId = summaries((await feed(`?categorie=${catNcId}`)).body).sort();
+        expect(byId).toEqual(bySlug);
+    });
+
+    test('?category= alias works', async () => {
+        const s = summaries((await feed('?category=viz-nc')).body);
+        expect(s).toContain(t('nc-early'));
+        expect(s).toContain(t('nc-concert'));
+    });
+
+    test('category filtering still excludes non-PUBLIC (private-only category -> empty)', async () => {
+        // viz-nc-priv contains a single PRIVATE concert; the feed must stay empty.
+        const { status, body } = await feed('?categorie=viz-nc-priv');
+        expect(status).toBe(200);
+        expect(body).toContain('BEGIN:VCALENDAR');
+        expect(body).not.toContain('BEGIN:VEVENT');
+        expect(summaries(body)).not.toContain(t('nc-private'));
     });
 
     test('unknown category yields an empty calendar', async () => {
