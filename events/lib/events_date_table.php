@@ -151,6 +151,41 @@ class EventsDatesTableHandler {
     return $this->castIsConcertToBoolean($results);
   }
 
+  // All upcoming PUBLIC dates for the iCal feed (/ical). Strictly PUBLIC only
+  // (PRIVATE and workflow states are excluded from the exported feed) on
+  // published events. Pass a category term id to filter; 0 = all categories.
+  function getPublicFutureDatesForFeed($category_id = 0) {
+    $now = current_time('Y-m-d H:i:s');
+
+    $joins  = '';
+    $where  = 'WHERE w.post_status = %s AND d.status = %s AND d.end_date >= %s';
+    $params = array('publish', EventVisibility::STATUS_PUBLIC, $now);
+
+    if ($category_id) {
+      $term_relationships_table = $this->wpdb->prefix . 'term_relationships';
+      $term_taxonomy_table      = $this->wpdb->prefix . 'term_taxonomy';
+      $joins .= " INNER JOIN $term_relationships_table tr ON tr.object_id = w.ID
+        INNER JOIN $term_taxonomy_table tt ON tt.term_taxonomy_id = tr.term_taxonomy_id AND tt.taxonomy = 'category'";
+      $where  .= ' AND tt.term_id = %d';
+      $params[] = absint($category_id);
+    }
+
+    $sql = "
+        SELECT d.id, d.start_date, d.end_date, d.rooms, d.notes,
+           w.ID as post_id, w.post_title, w.post_content, w.post_excerpt, w.post_modified_gmt,
+           l.name as location_name, l.address as location_address
+        FROM $this->event_dates_table d
+        LEFT JOIN $this->post_table w
+            ON d.post_id = w.id
+        LEFT JOIN $this->event_location_table l
+            on d.location = l.id
+        $joins
+        $where
+        ORDER BY d.start_date asc";
+
+    return $this->wpdb->get_results($this->wpdb->prepare($sql, $params), ARRAY_A);
+  }
+
   function getFutureDatesPerPageFromEvent($page, $itemsPerPage) {
     $dates = $this->loadFutureEventDatesPerPageFromDb($page, $itemsPerPage);
     if (empty($dates)) {

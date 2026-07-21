@@ -28,6 +28,7 @@ require_once 'lib/events_admin_table.php';
 require_once 'lib/post_type.php';
 require_once 'lib/post_type_query.php';
 require_once 'lib/single_event_template.php';
+require_once 'lib/ical_feed.php';
 require_once 'lib/events_admin_view_page.php';
 require_once 'lib/events_admin_log_page.php';
 require_once 'lib/plugin_settings_page.php';

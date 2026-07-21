@@ -42,6 +42,15 @@ source of truth. Do not re-implement status filtering or title masking inline; e
 A not-logged-in visitor opening an event with **no PUBLIC date** gets **HTTP 403**
 (`template_redirect` guard in `single_event_template.php`). Logged-in users may view it.
 
+### iCal feed — `/ical`
+
+Public calendar export (`events/lib/ical_feed.php`, RFC 5545 VCALENDAR, `text/calendar`). Exports **PUBLIC
+upcoming dates only** — PRIVATE and workflow-state dates are never included (stricter than on-site feeds: an
+export must not leak private events even masked). Filter with `?categorie=<slug|id>` (alias `?category=`);
+an unknown category returns an empty calendar. No authenticated/per-user variant. Registered via a rewrite
+rule (`^ical/?$`), flushed on activation and once per `ICAL_REWRITE_VERSION` bump. `/ical` 301-redirects to
+`/ical/` (WP trailing-slash canonical). Data via `EventsDatesTableHandler::getPublicFutureDatesForFeed()`.
+
 ### Editing / admin surfaces (role-aware exception)
 
 - `GET /events/{id}` (used by the create-event block) returns rows filtered by viewer via
