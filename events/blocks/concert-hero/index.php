@@ -67,6 +67,13 @@ class SoliBlockConcertHero {
     $start_time = date_i18n('H:i', $start_ts);
 
     $title    = \Soli\Events\EventVisibility::maskTitle($concert['status'] ?? null, $concert['post_title']);
+    // Link the card to the event page, but never for a masked PRIVATE title:
+    // the permalink slug would leak the event name, and anonymous visitors get
+    // a 403 on events without a PUBLIC date.
+    $event_url = '';
+    if (!empty($concert['post_id']) && $title === $concert['post_title']) {
+      $event_url = get_permalink((int) $concert['post_id']);
+    }
     // Two-tone display: leading words in paper, the last word italic + gold.
     $title_words = preg_split('/\s+/', trim($title), -1, PREG_SPLIT_NO_EMPTY);
     $title_last  = $title_words ? array_pop($title_words) : '';
@@ -142,7 +149,11 @@ class SoliBlockConcertHero {
                 </dd>
               <?php endif; ?>
             </dl>
-            <a class="soli-concert-hero__card-link" href="<?php echo esc_url($agenda_url); ?>"><?php esc_html_e('Full agenda →', 'soli-event'); ?></a>
+            <?php if ($event_url) : ?>
+              <a class="soli-concert-hero__card-link" href="<?php echo esc_url($event_url); ?>"><?php esc_html_e('About this concert →', 'soli-event'); ?></a>
+            <?php else : ?>
+              <a class="soli-concert-hero__card-link" href="<?php echo esc_url($agenda_url); ?>"><?php esc_html_e('Full agenda →', 'soli-event'); ?></a>
+            <?php endif; ?>
           </div>
         </aside>
         </div>

@@ -437,7 +437,12 @@ class EventsDatesTableHandler {
 
   private function appendGUID($results) {
     return array_map(function($date) {
-      $date['guid'] = html_entity_decode($date['guid'].'&event='.$date['id']);
+      // The stored guid is not a reliable URL (it may be a ?p= form or a pretty
+      // permalink); always build the link from the current permalink instead.
+      $post_id = $date['post_id'] ?? $date['ID'] ?? null;
+      $permalink = $post_id ? get_permalink((int) $post_id) : false;
+      $base = $permalink ?: html_entity_decode($date['guid']);
+      $date['guid'] = add_query_arg('event', (int) $date['id'], $base);
       return $date;
     }, $results);
   }

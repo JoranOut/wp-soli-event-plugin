@@ -66,7 +66,7 @@ function EditComponent({ attributes, setAttributes }) {
                     />
                     <LinkPicker
                         label={__("Agenda link", "soli-event")}
-                        help={__("Used by the primary button and the card link.", "soli-event")}
+                        help={__("Used by the primary button; the card link points to the concert itself and only falls back to this.", "soli-event")}
                         url={agendaUrl}
                         onChange={(url) => setAttributes({ agendaUrl: url })}
                     />
