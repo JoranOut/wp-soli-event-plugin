@@ -1,0 +1,80 @@
+// Fallback position inside the block, used only when the editor header slot
+// cannot be claimed.
+.event-invoice-row {
+    margin-top: 8px;
+}
+
+// In the editor header the trigger sits between Preview and Publish.
+.soli-invoice-header-slot {
+    display: flex;
+    align-items: center;
+}
+
+.invoice-button img {
+    display: block;
+}
+
+.invoice-event-modal {
+    max-width: 560px;
+
+    // The modal overlay stretches its frame, so the dialog keeps its max height
+    // however little content it holds. Centring the frame is the only override
+    // that is safe here: the frame lays its children out in a row, so touching
+    // its height or their flex-grow collapses the content to a narrow column.
+    &.components-modal__frame {
+        align-self: center;
+    }
+
+    .invoice-help {
+        margin-top: 0;
+        color: #555;
+    }
+
+    .invoice-range {
+        display: flex;
+        gap: 16px;
+        margin: 12px 0 16px;
+    }
+
+    .invoice-date-list {
+        max-height: 280px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 4px 8px;
+        margin-bottom: 16px;
+
+        .invoice-date-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 2px 0;
+
+            .invoice-date-label {
+                flex: 1;
+            }
+
+            .invoice-date-duration {
+                color: #555;
+                font-variant-numeric: tabular-nums;
+            }
+        }
+
+        .invoice-empty {
+            margin: 8px 4px;
+            color: #555;
+        }
+    }
+
+    .invoice-footer {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .invoice-selected-count {
+            flex: 1;
+            text-align: right;
+            color: #555;
+        }
+    }
+}

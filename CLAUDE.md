@@ -106,6 +106,49 @@ with the *editing* user's assignments). Markup reuses the theme's `.soli-flat-pa
 class names so the theme restyles it; the block ships equivalent scoped fallback styles (calendar glyph
 inlined; the theme's `--soli-ic` wins when set).
 
+### Invoice dialog ("Invoice this event")
+
+Editor-only surface belonging to the create-event block
+(`events/blocks/create-event/src/components/invoice-button/`), reachable from two places once the event has
+at least one date: an icon button in the **editor header** (left of Publish/Save) and a button in the
+**"Invoice" document sidebar panel**. The header has no public slot for a plain button - `PinnedItems` is
+only reachable through `PluginSidebar`, which would replace the dialog with a sidebar - so
+`useEditorHeaderSlot()` parks an own container in `.editor-header__settings` and portals the trigger into
+it; if that markup ever disappears the button falls back into the block, so the feature is never lost. The
+sidebar entry is the official `PluginDocumentSettingPanel` fill, rendered straight from the block tree (no
+`registerPlugin`), which keeps both triggers inside the events context and therefore on **live, unsaved**
+editor state.
+
+The dialog lists the dates with a from/until range filter; the range defaults to the event's own first/last
+date, so **every date starts selected** and the editor unticks what should not be invoiced. Durations are
+measured **between whole minutes** (`durationInHours()`) because stored dates carry stray seconds - a
+12:00-14:30 date must read 2,50 hours, not 2,48.
+
+### Invoice document (`invoice-docx.js`)
+
+Generating produces a `.docx` **client-side** (the `docx` npm package in the create-event workspace; no
+server round-trip, no PHP dependency, so nothing is stored or exposed): sender block, invoice number /
+date / due date, recipient and subject lines, one table, and payment terms with IBAN/KvK/VAT fill-in
+blanks. Values the repo does not know are left blank on purpose rather than invented.
+
+Everything numeric lives in **one table** - date lines plus the total-hours, hourly-rate, subtotal,
+VAT-percentage, VAT and total rows - wired together with **same-table cell reference fields**
+(`=D2*E7`, `=SUM(D2:D4)*E7`), so changing the hourly rate or VAT percentage in Word and pressing F9
+recalculates every amount. Three rules keep that working, all learned by rendering the output:
+
+- **Cell references only.** `SUM(ABOVE)` and bookmark references silently evaluate to **0** outside Word,
+  so the totals must reference cells, and never a cell that itself holds a field (subtotal/VAT/total each
+  recompute from the hours and rate cells instead).
+- **No merged cells in the table.** A merged label renumbers the row for formula purposes, so the value
+  cell stops being addressable as column E ("Expression is faulty"). Summary rows keep all five cells.
+- **Bare numbers in referenced cells.** A "€" in the cell makes it unparseable, so the currency sits in the
+  column header (`Amount (€)`).
+
+Widths are explicit **twips** (`WidthType.DXA`, A4 minus 2 cm margins): a percentage width serialises as
+`w:w="100%"`, which Word falls back to a near-zero auto width. The document also pins its language to
+**nl-NL** (`docDefaults`) because the comma decimals in those fields are parsed by run language - with an
+English default `50,00` recalculates as 5000.
+
 ### Editing / admin surfaces (role-aware exception)
 
 - `GET /events/{id}` (used by the create-event block) returns rows filtered by viewer via
@@ -136,5 +179,9 @@ Gotchas:
 - The run env activates a **block theme** (`twentytwentyfive`) so the FSE single-event template renders, and
   sets `posts_per_page=100` for deterministic archive/search. Env locale is `en_US`, so specs assert English
   msgids for UI strings (room/location names are data and stay Dutch).
+- The block bundle is **not** rebuilt by the test run. After editing anything under a block's `src/`, run
+  `npm run build --workspace=<block>` first or the spec drives the previous bundle.
+- `e2e/invoice.spec.ts` asserts the generated `.docx` by unzipping `word/document.xml` with the dependency-
+  free reader in `e2e/docx-utils.ts`.
 
 Run: `npm run test:playwright`.

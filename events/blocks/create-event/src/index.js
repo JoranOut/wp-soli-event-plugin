@@ -10,6 +10,7 @@ import EventStatusSelector from "./components/event-status-selector/event-status
 import NotesEditor from "./components/notes-editor/notes-editor";
 import ConcertStatusSwitch from "./components/concert-status-switch/concert-status-switch";
 import AdminNotesEditor from "./components/admin-notes-editor/admin-notes-editor";
+import InvoiceButton from "./components/invoice-button/invoice-button";
 import {useEventState, useEventActions} from "./components/events-context";
 
 wp.blocks.registerBlockType("soli/create-event", {
@@ -109,6 +110,7 @@ function InnerEdit({userCanAdminNote}) {
         <>
             {!hasMultiple && <SingleEventEditor userCanAdminNote={userCanAdminNote}/>}
             {hasMultiple && <MultiEventEditor/>}
+            {events.length > 0 && <InvoiceButton/>}
         </>
     );
 }
