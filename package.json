@@ -26,7 +26,8 @@
     "events/blocks/next-concert",
     "events/blocks/event-dates",
     "events/blocks/event-location-map",
-    "events/blocks/calendar-subscribe"
+    "events/blocks/calendar-subscribe",
+    "events/blocks/my-groups"
   ],
   "keywords": [],
   "author": "",

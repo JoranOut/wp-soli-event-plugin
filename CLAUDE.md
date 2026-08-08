@@ -88,6 +88,24 @@ to the block's **home venue** (`homeName` / `homeAddress` attributes, default "M
 Santpoort-Noord"); row-less venues cache their geocode in a `soli_event_geocode_<md5>` option instead of a
 location row. A date with neither location nor rooms stays hidden.
 
+### my-groups block (`soli/my-groups`)
+
+"Mijn orkesten" panel for the members page (`events/blocks/my-groups/`, ported from the theme's
+`page-mijn-pagina` pattern): the logged-in member's groups, each with its next upcoming event. Group
+membership comes from the **SSO assignments** the passport plugin syncs at login (user meta
+`soli_passport_assignments`, written by laravel-soli-administration's `assignments` claim); each entry only
+carries a numeric `onderdeel_id`, so editors link a category to its administration group once via a
+term-meta field on the category add/edit screens (`soli_event_onderdeel_id`,
+`events/lib/category_onderdeel.php` — also exposes the `soli_event_user_onderdeel_ids` filter). Per matched
+category the row shows the next visible date via `getNextConcert(only_concerts=false, category_id)`, so
+workflow-state dates never surface (F1); rows sort soonest-first, groups without an upcoming date last with
+a "no upcoming events" label. A row links to its next event's single page; a group without an upcoming
+event stays unlinked. Anonymous visitors, members without assignments, and
+unmapped groups render nothing on the front end; editors see an explanatory note (ServerSideRender previews
+with the *editing* user's assignments). Markup reuses the theme's `.soli-flat-panel` / `.soli-orkesten-list`
+class names so the theme restyles it; the block ships equivalent scoped fallback styles (calendar glyph
+inlined; the theme's `--soli-ic` wins when set).
+
 ### Editing / admin surfaces (role-aware exception)
 
 - `GET /events/{id}` (used by the create-event block) returns rows filtered by viewer via

@@ -164,6 +164,21 @@ $catalogue['nc-private'] = $make_cat_event('nc-private', $cat_priv, 'PRIVATE', 2
 $catalogue['nc2-public'] = $make_cat_event('nc2-public', $cat_nc2, 'PUBLIC', 3, true);  // public concert in a 2nd category (OR filter)
 $catalogue['_categories'] = array('viz-nc' => $cat_nc, 'viz-nc-priv' => $cat_priv, 'viz-nc2' => $cat_nc2);
 
+/* ---- 3c. my-groups fixtures ------------------------------------------ */
+// Two categories mapped to administration onderdeel-ids (term meta). Group A
+// has a PLANNED date BEFORE its PUBLIC one, so the panel showing the +3d date
+// proves workflow states are skipped; group B only has a PLANNED date, so it
+// renders the "no upcoming events" label. viz_subscriber (section 4) carries
+// the matching soli_passport_assignments meta.
+$cat_mg_a = $ensure_cat('viz-mg-a', 'VIZ Mijn Groep A');
+$cat_mg_b = $ensure_cat('viz-mg-b', 'VIZ Mijn Groep B');
+update_term_meta($cat_mg_a, 'soli_event_onderdeel_id', 9001);
+update_term_meta($cat_mg_b, 'soli_event_onderdeel_id', 9002);
+
+$catalogue['mg-a-planned'] = $make_cat_event('mg-a-planned', $cat_mg_a, 'PLANNED', 1, false);
+$catalogue['mg-a-public']  = $make_cat_event('mg-a-public', $cat_mg_a, 'PUBLIC', 3, false);
+$catalogue['mg-b-planned'] = $make_cat_event('mg-b-planned', $cat_mg_b, 'PLANNED', 2, false);
+
 /* ---- 3d. Location-map fixtures --------------------------------------- */
 // Two seeded venues with pre-cached coordinates (geocoded_address matches the
 // address, so rendering never calls the remote geocoder in tests) and one
@@ -276,6 +291,20 @@ foreach ( array( 'viz_subscriber' => 'subscriber', 'viz_editor' => 'editor' ) as
 			)
 		);
 	}
+}
+
+// viz_subscriber is a member of groups 9001/9002, exactly as the passport
+// plugin would sync it at SSO login (my-groups block reads this meta).
+$mg_user = get_user_by( 'login', 'viz_subscriber' );
+if ( $mg_user ) {
+	update_user_meta(
+		$mg_user->ID,
+		'soli_passport_assignments',
+		array(
+			array( 'onderdeel_id' => 9001, 'instrument_soort_id' => 1, 'instrument_soort' => 'Bugel', 'instrument_familie' => 'Koper' ),
+			array( 'onderdeel_id' => 9002, 'instrument_soort_id' => 2, 'instrument_soort' => 'Kleine trom', 'instrument_familie' => 'Slagwerk' ),
+		)
+	);
 }
 
 echo "\n" . wp_json_encode( $catalogue ) . "\n";

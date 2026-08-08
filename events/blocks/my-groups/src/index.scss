@@ -1,0 +1,101 @@
+// "My orchestras" panel - ported from the Soli theme's .soli-flat-panel /
+// .soli-orkesten-list pattern (Mijn Soli page). The markup reuses the theme's
+// class names so the theme can restyle it; these scoped rules mirror the same
+// look with fallbacks, so the block also renders correctly on any other theme.
+.soli-my-groups {
+  --smg-white: var(--wp--preset--color--white, #fff);
+  --smg-ink: var(--wp--preset--color--ink, #1a1a2e);
+  --smg-line: var(--wp--preset--color--line, #e6e2da);
+  --smg-maroon: var(--wp--preset--color--maroon, #7a1f2b);
+  --smg-muted: var(--wp--preset--color--muted, #5a5a5e);
+  --smg-radius: var(--wp--custom--card-radius, 12px);
+  --smg-font-display: var(--wp--preset--font-family--display, 'Playfair Display', Georgia, 'Times New Roman', serif);
+  --smg-font-sans: var(--wp--preset--font-family--sans, 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif);
+
+  box-sizing: border-box;
+  padding: 1.4rem 1.5rem;
+  background: var(--smg-white);
+  border: 1px solid var(--smg-line);
+  border-radius: var(--smg-radius);
+  font-family: var(--smg-font-sans);
+
+  * {
+    box-sizing: border-box;
+  }
+
+  &__title {
+    margin: 0 0 0.4rem;
+    font-family: var(--smg-font-display);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--smg-maroon);
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      margin: 0;
+    }
+
+    li + li {
+      border-top: 1px solid var(--smg-line);
+    }
+
+    a,
+    .soli-my-groups__row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.8rem;
+      padding: 0.6rem 0;
+      text-decoration: none;
+    }
+  }
+
+  .soli-ork-name {
+    font-family: var(--smg-font-sans);
+    font-weight: 600;
+    color: var(--smg-ink);
+  }
+
+  &__list a:hover .soli-ork-name {
+    color: var(--smg-maroon);
+  }
+
+  .soli-ork-meet {
+    flex: 0 0 auto;
+    font-size: 12.5px;
+    color: var(--smg-muted);
+    white-space: nowrap;
+  }
+
+  // Calendar glyph before the meeting time, as a mask so it takes currentColor.
+  // The theme sets --soli-ic on .soli-ic-cal; without a theme the bundled icon
+  // (inlined by the build) is the fallback.
+  .soli-ic::before {
+    content: "";
+    display: inline-block;
+    width: 1.05em;
+    height: 1.05em;
+    margin-right: 0.45em;
+    vertical-align: -0.15em;
+    background-color: currentColor;
+    -webkit-mask: var(--soli-ic, url("./calendar.svg")) center / contain no-repeat;
+    mask: var(--soli-ic, url("./calendar.svg")) center / contain no-repeat;
+  }
+
+  // Editor empty-state notice.
+  &--empty {
+    text-align: center;
+    color: var(--smg-muted);
+    border-style: dashed;
+
+    p {
+      margin: 0.4rem 0 0;
+      font-size: 14px;
+    }
+  }
+}
