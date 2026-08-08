@@ -164,6 +164,106 @@ $catalogue['nc-private'] = $make_cat_event('nc-private', $cat_priv, 'PRIVATE', 2
 $catalogue['nc2-public'] = $make_cat_event('nc2-public', $cat_nc2, 'PUBLIC', 3, true);  // public concert in a 2nd category (OR filter)
 $catalogue['_categories'] = array('viz-nc' => $cat_nc, 'viz-nc-priv' => $cat_priv, 'viz-nc2' => $cat_nc2);
 
+/* ---- 3d. Location-map fixtures --------------------------------------- */
+// Two seeded venues with pre-cached coordinates (geocoded_address matches the
+// address, so rendering never calls the remote geocoder in tests) and one
+// event with two future dates at different venues: the map defaults to the
+// next date's venue and follows ?event=<date id> to the later one.
+$loc_table = $wpdb->prefix . 'event_location';
+// The coordinate columns ship with this branch; migrations only run on a
+// version bump, so make sure the schema is current before seeding into it.
+( new \Soli\Events\LocationTableHandler() )->createLocationTable();
+$wpdb->query( "DELETE FROM $loc_table WHERE name LIKE 'VIZ %'" );
+
+$make_location = function ( $name, $address, $lat, $lng ) use ( $wpdb, $loc_table ) {
+	$wpdb->insert(
+		$loc_table,
+		array(
+			'name'             => $name,
+			'address'          => $address,
+			'latitude'         => $lat,
+			'longitude'        => $lng,
+			'geocoded_address' => $address,
+		)
+	);
+	return (int) $wpdb->insert_id;
+};
+$loc_hall   = $make_location( 'VIZ Concertzaal', 'Frans Netscherlaan 12, 1985 RB Driehuis', 52.4568000, 4.6404000 );
+$loc_church = $make_location( 'VIZ Dorpskerk', 'Driehuizerkerkweg 113, 1985 EL Driehuis', 52.4530000, 4.6360000 );
+
+$map_post_id = wp_insert_post(
+	array(
+		'post_type'    => 'soli_event',
+		'post_title'   => $prefix . 'map-located',
+		'post_status'  => 'publish',
+		'post_content' => 'Seeded visibility fixture: map-located',
+		'post_name'    => 'viz-map-located',
+	),
+	true
+);
+if ( ! is_wp_error( $map_post_id ) ) {
+	// Distinct start offsets keep the "next upcoming" ordering deterministic.
+	foreach ( array(
+		array( 10, $loc_hall ),
+		array( 12, $loc_church ),
+	) as $d ) {
+		list( $days, $loc_id ) = $d;
+		$wpdb->insert(
+			$dates_table,
+			array(
+				'post_id'    => $map_post_id,
+				'start_date' => $nc_start( $days ),
+				'end_date'   => $nc_end( $days ),
+				'location'   => $loc_id,
+				'status'     => 'PUBLIC',
+				'is_concert' => 0,
+				'notes'      => '',
+			)
+		);
+	}
+	$catalogue['map-located'] = array(
+		'id'    => (int) $map_post_id,
+		'title' => $prefix . 'map-located',
+		'slug'  => 'viz-map-located',
+	);
+}
+
+// Internal date (rooms, no external location): the block falls back to its
+// home venue (default "Muziekcentrum, Kerkpad 83, Santpoort-Noord"). Pre-cache
+// that address's geocode in the option the geocoder uses for row-less venues,
+// so rendering never calls Nominatim in tests.
+update_option( 'soli_event_geocode_' . md5( 'Kerkpad 83, Santpoort-Noord' ), array( 'lat' => 52.44, 'lng' => 4.63 ), false );
+
+$internal_post_id = wp_insert_post(
+	array(
+		'post_type'    => 'soli_event',
+		'post_title'   => $prefix . 'map-internal',
+		'post_status'  => 'publish',
+		'post_content' => 'Seeded visibility fixture: map-internal',
+		'post_name'    => 'viz-map-internal',
+	),
+	true
+);
+if ( ! is_wp_error( $internal_post_id ) ) {
+	$wpdb->insert(
+		$dates_table,
+		array(
+			'post_id'    => $internal_post_id,
+			'start_date' => $nc_start( 11 ),
+			'end_date'   => $nc_end( 11 ),
+			'rooms'      => '["grote-zaal"]',
+			'status'     => 'PUBLIC',
+			'is_concert' => 0,
+			'notes'      => '',
+		)
+	);
+	$catalogue['map-internal'] = array(
+		'id'    => (int) $internal_post_id,
+		'title' => $prefix . 'map-internal',
+		'slug'  => 'viz-map-internal',
+	);
+}
+
 /* ---- 4. Role users -------------------------------------------------- */
 foreach ( array( 'viz_subscriber' => 'subscriber', 'viz_editor' => 'editor' ) as $login => $role ) {
 	if ( ! username_exists( $login ) ) {

@@ -68,6 +68,26 @@ pre-ticked via `defaultConcerts` / `defaultCategories` attributes (categories vi
 inspector); the front-end (`src/frontend.js`, plain DOM) keeps the URL in sync as the selection changes.
 Nothing ticked → the bare feed (whole public agenda).
 
+### event-location-map block (`soli/event-location-map`)
+
+Map card on the single event page (`events/blocks/event-location-map/`, shipped in the FSE template's
+aside) showing the venue of the current event date: the `?event=<date id>` date when the visitor followed
+the upcoming-dates list, otherwise the next upcoming date. Dates come from
+`EventsDatesTableHandler::getUpcomingDatesForEvent()`, so viewer visibility (F1) applies — a workflow-state
+date id in the URL never resolves for public viewers. The front end renders Leaflet + OpenStreetMap tiles
+(`src/frontend.js`, Leaflet bundled, marker = `inc/assets/img/icons/pin-1.svg` — no API key); the editor
+previews via an OSM embed iframe (hidden `isPreview` attribute) because ServerSideRender HTML cannot run
+scripts. Coordinates come from `LocationGeocoder` (`events/lib/location_geocoder.php`): the free-text
+`wp_event_location.address` (fallback: name) is geocoded once via Nominatim and cached on the row
+(`latitude` / `longitude` / `geocoded_address` — an address edit invalidates the cache and re-geocodes);
+failures back off via a 6h transient, and the `soli_event_pre_geocode` filter can stub or replace the
+provider (tests seed coordinates directly instead). No upcoming date, no location on the shown date, a
+failed geocode, or no `soli_event` context at all (site editor / non-event page) → the front end renders
+nothing and editors see an explanatory note. Internal dates (rooms booked, no external location) fall back
+to the block's **home venue** (`homeName` / `homeAddress` attributes, default "Muziekcentrum, Kerkpad 83,
+Santpoort-Noord"); row-less venues cache their geocode in a `soli_event_geocode_<md5>` option instead of a
+location row. A date with neither location nor rooms stays hidden.
+
 ### Editing / admin surfaces (role-aware exception)
 
 - `GET /events/{id}` (used by the create-event block) returns rows filtered by viewer via

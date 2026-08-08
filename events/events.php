@@ -41,4 +41,5 @@ require_once 'blocks/event-reservation-popup/index.php';
 require_once 'blocks/concert-hero/index.php';
 require_once 'blocks/next-concert/index.php';
 require_once 'blocks/event-dates/index.php';
+require_once 'blocks/event-location-map/index.php';
 require_once 'blocks/calendar-subscribe/index.php';

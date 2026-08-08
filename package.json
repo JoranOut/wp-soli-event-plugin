@@ -25,6 +25,7 @@
     "events/blocks/concert-hero",
     "events/blocks/next-concert",
     "events/blocks/event-dates",
+    "events/blocks/event-location-map",
     "events/blocks/calendar-subscribe"
   ],
   "keywords": [],

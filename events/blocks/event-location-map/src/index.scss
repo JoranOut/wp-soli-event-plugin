@@ -1,0 +1,101 @@
+// Location map card - mirrors the "Komende data" card chrome from the
+// event-dates block. Tokens fall back to the theme presets.
+.soli-event-location-map {
+  --selm-cream: var(--wp--preset--color--paper, #faf6ee);
+  --selm-gold: var(--wp--preset--color--gold, #c9a24a);
+  --selm-ink: var(--wp--preset--color--ink, #1a1a2e);
+  --selm-line: var(--wp--preset--color--line, #e6e2da);
+  --selm-maroon: var(--wp--preset--color--maroon, #7a1f2b);
+  --selm-muted: var(--wp--preset--color--muted, #5a5a5e);
+  --selm-font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --selm-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  box-sizing: border-box;
+  max-width: 340px;
+  border: 1px solid var(--selm-line);
+  border-radius: 12px;
+  background: var(--selm-cream);
+  color: var(--selm-ink);
+  font-family: var(--selm-font-sans);
+  overflow: hidden;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  &__head {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--selm-line);
+
+    h3 {
+      margin: 0;
+      font-family: var(--selm-font-display);
+      font-size: 18px;
+      line-height: 1.2;
+      color: var(--selm-ink);
+    }
+  }
+
+  &__map {
+    display: block;
+    width: 100%;
+    height: 220px;
+    border: 0;
+    // Leaflet panes carry high z-indexes; contain them so the map never
+    // stacks above the site header or dropdown menus.
+    position: relative;
+    z-index: 0;
+  }
+
+  &__body {
+    padding: 14px 22px 18px;
+  }
+
+  &__venue {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.5;
+
+    strong {
+      font-weight: 600;
+    }
+
+    span {
+      color: var(--selm-muted);
+      font-size: 13px;
+    }
+  }
+
+  &__directions {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--selm-maroon);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__pin {
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+  }
+
+  &__popup {
+    margin: 0;
+    font-family: var(--selm-font-sans);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  &--empty {
+    max-width: none;
+    padding: 24px;
+    text-align: center;
+    color: var(--selm-muted, #5a5a5e);
+    border-style: dashed;
+    border-color: var(--selm-gold, #c9a24a);
+  }
+}

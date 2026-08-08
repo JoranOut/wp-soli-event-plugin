@@ -15,7 +15,7 @@ function soli_events_register_single_template() {
 
   register_block_template('soli-event//single-soli_event', array(
     'title'       => __('Single Event', 'soli-event'),
-    'description' => __('Event detail page: title, content, and the upcoming dates and next concert cards.', 'soli-event'),
+    'description' => __('Event detail page: title, content, and the upcoming dates, location map and next concert cards.', 'soli-event'),
     'content'     => soli_events_single_template_content(),
   ));
 }
@@ -78,6 +78,7 @@ function soli_events_single_template_content() {
 		<!-- wp:column {"width":"33.34%","style":{"spacing":{"blockGap":"var:preset|spacing|40"}}} -->
 		<div class="wp-block-column" style="flex-basis:33.34%">
 			<!-- wp:soli/event-dates /-->
+			<!-- wp:soli/event-location-map /-->
 			<!-- wp:soli/next-concert /-->
 		</div>
 		<!-- /wp:column -->

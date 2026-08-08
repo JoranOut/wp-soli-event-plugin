@@ -1,0 +1,21 @@
+{
+  "name": "event-location-map",
+  "version": "1.0.0",
+  "description": "Map card showing the location of the current event date (Leaflet + OpenStreetMap).",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "wp-scripts build src/index.js src/frontend.js",
+    "start": "wp-scripts start src/index.js src/frontend.js",
+    "start-event-location-map": "npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^24.2.0"
+  }
+}
