@@ -73,6 +73,14 @@ export async function createSingleEvent(
         await eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
     }
 
+    // A brand-new event opens the first-event wizard on top of the block (it
+    // appears once the block's events fetch resolves). This helper drives the
+    // inline editor directly, so dismiss it.
+    const wizard = page.locator('.first-event-wizard');
+    await wizard.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
+    await wizard.getByRole('button', { name: 'Skip' }).click();
+    await expect(wizard).toBeHidden();
+
     // Fill in event details
     await page.getByRole('textbox', { name: 'Add title' }).fill(title);
 

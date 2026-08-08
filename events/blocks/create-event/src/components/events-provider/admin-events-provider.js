@@ -5,6 +5,7 @@ import {useState, useEffect, useCallback, useRef} from '@wordpress/element';
 import {fromEventDto, toEventDto} from "./event-mapper";
 import {EventsProvider, useEventState, useEventActions} from "../events-context";
 import {toHash} from "../events-context/events-hash";
+import FirstEventWizard from "../first-event-wizard/first-event-wizard";
 import {EVENT_STATUS} from "../../../../../inc/values";
 
 const DATES_META_KEY = 'soli_event_dates';
@@ -136,6 +137,9 @@ export default function AdminEventsProvider({post_id, children}) {
     // this is the hash of an empty set, so the fabricated default date counts
     // as a pending change and is persisted on the first save.
     const [persistedHash, setPersistedHash] = useState(null);
+    // Latched open once when a brand-new post has no dates yet; closing it
+    // (skip/esc/finish) is final for this editing session.
+    const [showWizard, setShowWizard] = useState(false);
     const {editPost} = useDispatch('core/editor');
     const {isNewPost} = useSelect((select) => ({
         isNewPost: !select('core/editor').getCurrentPostId(),
@@ -149,6 +153,12 @@ export default function AdminEventsProvider({post_id, children}) {
                     let eventData = fromEventDto(event);
                     setPersistedHash(toHash(eventData || []));
                     if (!eventData || eventData.length === 0) {
+                        // Guide first-time setup on a brand-new post (an
+                        // auto-draft). An existing event whose dates were all
+                        // deleted keeps the plain inline editor.
+                        if (dataSelect('core/editor').isEditedPostNew()) {
+                            setShowWizard(true);
+                        }
                         eventData = [{
                             startDate: getDefaultDate(),
                             endDate: getDefaultDate(1),
@@ -197,6 +207,7 @@ export default function AdminEventsProvider({post_id, children}) {
                 persistedHash={persistedHash}
                 onPersisted={setPersistedHash}
             />
+            {showWizard && <FirstEventWizard onClose={() => setShowWizard(false)}/>}
             {children}
         </EventsProvider>
     );
