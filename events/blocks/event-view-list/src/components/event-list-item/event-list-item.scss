@@ -1,59 +1,60 @@
 .soli-block-event-list-item {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  background: #fff;
-  box-shadow: 0 0 10px -5px #000;
-  border-radius: 5px;
-  overflow: hidden;
-  width: 300px;
-  padding: 10px;
+  gap: 24px;
+  padding: 20px;
+  transition: background-color .15s ease;
 
-  .event-list-date-box {
-    position: absolute;
-    background: #fff;
-    border-radius: 4px;
-    padding: 5px;
-    width: 70px;
-    justify-items: center;
-    box-shadow: 0 0 8px -5px;
+  &:hover {
+    background: var(--color-paper, #f5efe6);
   }
 
-  .image-box {
-    border-radius: 5px;
-    overflow: hidden;
-    height: 160px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  @container (min-width: 1024px) {
+    padding: 24px;
+  }
 
-    img {
-      background: linear-gradient(-135deg, rgba(170, 42, 42, .7) 0, rgba(75, 33, 191, .7) 100%);
-      aspect-ratio: 1;
-    }
+  .event-list-date {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .16em;
+    color: var(--color-maroon, #7a1f2b);
+    white-space: nowrap;
+    min-width: 88px;
+    padding-top: 4px;
   }
 
   .event-list-content {
-    padding: 10px;
     flex: 1;
-    display: flex;
-    flex-direction: column;
+    border-left: 1px solid var(--color-line, #e6e2da);
+    padding-left: 24px;
 
-    h2 {
-      font-size: 15px;
-      font-weight: 700;
+    .event-list-title {
+      font-family: var(--font-display, "Playfair Display", Georgia, serif);
+      font-size: 19px;
+      line-height: 1.15;
+      color: var(--color-ink, #1a1a2e);
+      margin: 0;
+
+      .soli-rowlink {
+        color: inherit;
+        text-decoration: none;
+
+        // Stretch the link over the whole row.
+        &::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+        }
+      }
+    }
+
+    .event-list-description {
+      margin: 6px 0 0;
+      font-size: 14px;
       line-height: 1.6;
-      word-break: break-all;
-    }
-
-    p {
-      font-size: 12px;
-      line-height: 2;
-    }
-
-    a.button {
-      margin: 1em 1em 1em 0;
-      width: fit-content;
+      color: #3a3a3e;
     }
   }
 }

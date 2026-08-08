@@ -27,6 +27,9 @@ class LocationTableHandler {
         id BIGINT(20) unsigned NOT NULL AUTO_INCREMENT,
         name TEXT NOT NULL,
         address TEXT,
+        latitude DECIMAL(10,7),
+        longitude DECIMAL(10,7),
+        geocoded_address TEXT,
         PRIMARY KEY  (id)
     ) $this->charset;");
   }
@@ -41,7 +44,7 @@ class LocationTableHandler {
     if (empty($event_id)) {
       return null;
     }
-    $this->loadLocationByEvent($event_id);
+    return $this->loadLocationByEvent($event_id);
   }
 
   function loadLocationByEvent($event_id) {
@@ -52,6 +55,33 @@ class LocationTableHandler {
                 ON l.id = d.location
                 WHERE d.id=%d", $event_id);
     return $this->wpdb->get_results($query, ARRAY_A);
+  }
+
+  function getLocationById($location_id) {
+    $location_id = absint($location_id);
+    if (!$location_id) {
+      return null;
+    }
+    $query = $this->wpdb->prepare("
+                SELECT id, name, address, latitude, longitude, geocoded_address
+                FROM $this->event_location_table
+                WHERE id = %d", $location_id);
+    return $this->wpdb->get_row($query, ARRAY_A);
+  }
+
+  // Cache a geocoding result on the location row. geocoded_address records
+  // which address the coordinates belong to, so an address edit invalidates
+  // the cache (LocationGeocoder re-geocodes on mismatch).
+  function updateCoordinates($location_id, $latitude, $longitude, $geocoded_address) {
+    $this->wpdb->update(
+      $this->event_location_table,
+      array(
+        'latitude'         => $latitude,
+        'longitude'        => $longitude,
+        'geocoded_address' => $geocoded_address,
+      ),
+      array('id' => absint($location_id))
+    );
   }
 
   function searchLocation($search_query, $limit) {
@@ -69,8 +99,8 @@ class LocationTableHandler {
                 LEFT JOIN $this->event_dates_table e
                 ON l.id = e.location
                 GROUP BY l.id
-                ORDER BY e.start_date DESC 
-                LIMIT $limit");
+                ORDER BY e.start_date DESC
+                LIMIT %d", $limit);
     return $this->wpdb->get_results($query, ARRAY_A);
   }
 
@@ -95,35 +125,30 @@ class LocationTableHandler {
   }
 
   function saveLocation($location) {
-    if (empty($location->id)) {
-      $query = $this->wpdb->prepare("
-                        INSERT INTO $this->event_location_table 
-                            (name, address) VALUES 
-                            (%s, %s)",
-        $location->name,
-        $location->address ?: 'NULL',
-      );
+    // Let $wpdb emit a real NULL for an empty address; passing null through the
+    // data array is what makes dbDelta-created nullable columns store NULL.
+    $address = !empty($location->address) ? $location->address : null;
 
-      $this->wpdb->get_results($this->replaceNullWithNull($query), ARRAY_A);
+    if (empty($location->id)) {
+      $this->wpdb->insert(
+        $this->event_location_table,
+        array(
+          'name'    => $location->name,
+          'address' => $address,
+        )
+      );
       $location->id = $this->wpdb->insert_id;
     } else {
-      $query = $this->wpdb->prepare("
-                        UPDATE $this->event_location_table 
-                        SET name = %s,
-                            address = %s,
-                        WHERE id=%d;",
-        $location->name,
-        $location->address ?: 'NULL',
-        $location->id
+      $this->wpdb->update(
+        $this->event_location_table,
+        array(
+          'name'    => $location->name,
+          'address' => $address,
+        ),
+        array('id' => $location->id)
       );
-
-      $this->wpdb->get_results($this->replaceNullWithNull($query), ARRAY_A);
     }
     return $location;
-  }
-
-  function replaceNullWithNull($query) {
-    return str_replace("'NULL'", "NULL", $query);
   }
 
 }

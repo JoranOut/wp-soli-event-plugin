@@ -1,0 +1,82 @@
+.first-event-wizard {
+  min-width: min(480px, 90vw);
+
+  .wizard-progress {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 4px 0 12px;
+
+    .wizard-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #deeff7;
+
+      &.done {
+        background: #7cc4e8;
+      }
+
+      &.active {
+        background: #007cba;
+      }
+    }
+  }
+
+  .wizard-step-title {
+    color: #007cba;
+    margin: 0 0 16px;
+  }
+
+  // Every step body gets the same box so the modal doesn't jump between sizes
+  // as the amount of content per step differs.
+  .wizard-step {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    min-height: 180px;
+  }
+
+  .wizard-hint {
+    color: #757575;
+    font-size: 12px;
+    margin: 0;
+  }
+
+  .wizard-details .wizard-notes {
+    align-self: stretch;
+  }
+
+  .wizard-repeat {
+    .wizard-frequency {
+      min-width: 220px;
+    }
+
+    .wizard-generated {
+      font-size: 13px;
+
+      p {
+        margin: 0 0 4px;
+        font-weight: 600;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+    }
+  }
+
+  .wizard-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+
+    .wizard-nav {
+      display: flex;
+      gap: 8px;
+    }
+  }
+}

@@ -1,4 +1,25 @@
+/* Skin FullCalendar to match the soli agenda design (soli_mockup .soli-cal):
+   cream/maroon/gold palette, serif month title, sand event pills with maroon
+   concert pills, and a soft gold "today" highlight. Every token falls back to
+   the mockup's value so the block looks right even when the theme does not
+   define the --color-* custom properties. */
 .soli-block-view-calendar {
+  --soli-cal-line: var(--color-line, #e6e2da);
+  --soli-cal-maroon: var(--color-maroon, #7a1f2b);
+  --soli-cal-ink: var(--color-ink, #1a1a2e);
+  --soli-cal-paper: var(--color-paper, #f5efe6);
+  --soli-cal-sand: var(--color-sand, #e8dcc6);
+  --soli-cal-muted: var(--color-muted, #5a5a5e);
+  --soli-cal-out: var(--color-line, #cdc7bd);
+  --soli-cal-radius: var(--soli-card-radius, 10px 10px 3px 10px);
+  --soli-cal-font-sans: Inter, system-ui, sans-serif;
+  --soli-cal-font-display: "Playfair Display", Georgia, serif;
+
+  /* FullCalendar exposes these as its own theming hooks. */
+  --fc-border-color: var(--soli-cal-line);
+  --fc-today-bg-color: rgba(201, 162, 74, 0.16);
+  --fc-page-bg-color: #fff;
+
   .soli-event.private-event .fc-event-title {
     padding-left: 17px;
     position: relative;
@@ -9,14 +30,251 @@
       left: 0;
     }
   }
-  .fc-header-toolbar {
-      display: grid;
-      justify-content: center;
-      grid-template-columns: 1fr auto 1fr;
 
-      & .fc-toolbar-chunk:last-child {
-        justify-self: right;
+  /* --- toolbar: nav left, serif title centered, view switcher right ------ */
+  .fc-header-toolbar {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 1fr auto 1fr;
+    margin-bottom: 1.2rem;
+
+    & .fc-toolbar-chunk:last-child {
+      justify-self: right;
+    }
+  }
+
+  .fc .fc-toolbar-title {
+    font-family: var(--soli-cal-font-display);
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 600;
+    color: var(--soli-cal-ink);
+  }
+
+  .fc .fc-button {
+    border: 1px solid var(--soli-cal-line);
+    background: #fff;
+    color: var(--soli-cal-maroon);
+    border-radius: var(--soli-cal-radius);
+    font-family: var(--soli-cal-font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    height: 38px;
+    padding: 0 1rem;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover,
+    &:not(:disabled):active,
+    &:not(:disabled).fc-button-active {
+      background: var(--soli-cal-maroon);
+      border-color: var(--soli-cal-maroon);
+      color: #fff;
+    }
+
+    &:focus,
+    &:not(:disabled):active:focus,
+    &:not(:disabled).fc-button-active:focus {
+      box-shadow: none;
+    }
+
+    &:disabled {
+      background: #fff;
+      color: var(--soli-cal-muted);
+    }
+  }
+
+  .fc .fc-prev-button,
+  .fc .fc-next-button {
+    width: 38px;
+    padding: 0;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  /* Detached buttons with the card radius instead of a joined group. */
+  .fc .fc-button-group {
+    gap: 0.5rem;
+
+    > .fc-button {
+      border-radius: var(--soli-cal-radius);
+    }
+  }
+
+  .fc .fc-toolbar-chunk .fc-button-group + .fc-button {
+    margin-left: 0.5rem;
+  }
+
+  /* --- month grid frame ---------------------------------------------------
+     The radius lives on the harness: the scrollgrid table collapses its
+     borders, which makes a radius on the table itself invisible. */
+  .fc .fc-view-harness {
+    border-radius: var(--soli-cal-radius);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .fc .fc-scrollgrid {
+    border: 1px solid var(--soli-cal-line);
+  }
+
+  .fc .fc-scrollgrid-section > td,
+  .fc .fc-scrollgrid-section > th {
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  .fc .fc-col-header-cell {
+    background: var(--soli-cal-paper);
+    padding: 0.7rem 0.8rem;
+    font-family: var(--soli-cal-font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--soli-cal-ink);
+    text-align: left;
+  }
+
+  .fc .fc-col-header-cell-cushion {
+    padding: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* --- day cells ---------------------------------------------------------- */
+  .fc .fc-daygrid-day-frame {
+    min-height: 104px;
+    padding: 0.5rem 0.6rem;
+  }
+
+  .fc .fc-daygrid-day-top {
+    flex-direction: row-reverse;
+  }
+
+  .fc .fc-daygrid-day-number {
+    font-family: var(--soli-cal-font-sans);
+    font-size: 13px;
+    color: var(--soli-cal-ink);
+    padding: 0 0 0.25rem;
+    text-decoration: none;
+  }
+
+  .fc .fc-day-other .fc-daygrid-day-number {
+    color: var(--soli-cal-out);
+    opacity: 1;
+  }
+
+  .fc .fc-day-today .fc-daygrid-day-number {
+    font-weight: 700;
+    color: var(--soli-cal-maroon);
+  }
+
+  /* --- event pills ---------------------------------------------------------
+     Sand pill with ink text; concerts flip to maroon with white text. */
+  .fc .fc-daygrid-event.soli-event {
+    --fc-event-bg-color: var(--soli-cal-sand);
+    --fc-event-border-color: transparent;
+    --fc-event-text-color: var(--soli-cal-ink);
+    background: var(--soli-cal-sand);
+    border: 0;
+    border-radius: 5px;
+    padding: 0.18rem 0.4rem;
+    margin: 0 0 0.25rem;
+    font-family: var(--soli-cal-font-sans);
+    font-size: 11.5px;
+    line-height: 1.25;
+    color: var(--soli-cal-ink);
+
+    .fc-event-title {
+      font-weight: 400;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &.concert-event {
+      --fc-event-bg-color: var(--soli-cal-maroon);
+      --fc-event-text-color: #fff;
+      background: var(--soli-cal-maroon);
+      color: #fff;
+    }
+  }
+
+  .fc .fc-daygrid-more-link {
+    font-family: var(--soli-cal-font-sans);
+    font-size: 11px;
+    color: var(--soli-cal-muted);
+  }
+
+  .fc .fc-daygrid-event-dot {
+    display: none;
+  }
+
+  /* Replace FullCalendar's dark focus overlay with a subtle maroon ring. */
+  .fc .fc-daygrid-event.soli-event:focus {
+    box-shadow: 0 0 0 2px rgba(122, 31, 43, 0.35);
+
+    &::after {
+      display: none;
+    }
+  }
+
+  /* --- small screens: hide pills, mark days with a maroon dot ------------- */
+  @media (max-width: 640px) {
+    .fc .fc-daygrid-day-frame {
+      min-height: 68px;
+    }
+
+    .fc .fc-daygrid-day-events {
+      display: none;
+    }
+
+    .fc .fc-daygrid-day:not(.fc-day-other):has(.fc-daygrid-event) .fc-daygrid-day-number::after {
+      content: '•';
+      color: var(--soli-cal-maroon);
+      margin-left: 0.2rem;
+    }
+  }
+
+  /* --- filter row: mockup toggle typography and maroon switches ----------- */
+  .calendar-filter.calendar-filter {
+    padding: 0;
+  }
+
+  .calendar-filter {
+    .MuiFormControlLabel-label {
+      font-family: var(--soli-cal-font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--soli-cal-muted);
+    }
+
+    .MuiSwitch-switchBase.Mui-checked {
+      color: var(--soli-cal-maroon);
+
+      + .MuiSwitch-track {
+        background-color: var(--soli-cal-maroon);
+        opacity: 0.5;
       }
+    }
   }
 }
 
+/* With only the concerts toggle (no rooms filter UI), lift it onto the
+   toolbar row, right of the title - where the agenda design puts it. A
+   zero-height row that overflows onto the toolbar below keeps every ancestor
+   unpositioned: the event-detail popup positions itself with document
+   coordinates and must not gain a positioned ancestor. */
+@media (min-width: 768px) {
+  .block-event-view-calendar:not(.show-rooms-filter) {
+    .calendar-filter.calendar-filter {
+      height: 0;
+      overflow: visible;
+      align-items: center;
+      z-index: 1;
+
+      > * {
+        height: 38px;
+        margin: 0;
+      }
+    }
+  }
+}

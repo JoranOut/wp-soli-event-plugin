@@ -1,15 +1,10 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
-import { addDays, format } from 'date-fns';
-import { nl, enUS } from 'date-fns/locale';
-
-// Unique per-test identifier so concurrent tests never collide on shared state.
-function uniqueTitle(base: string) {
-    return `${base} ${Math.random().toString(36).slice(2, 10)}`;
-}
-
-// The MUI-heavy Create Event block can take several seconds to paint on CI's
-// constrained runner (fast locally). Give block-load waits generous headroom.
-const BLOCK_LOAD_TIMEOUT = 30_000;
+import {
+    createSingleEvent,
+    createCalendarPage,
+    uniqueTitle,
+    DEFAULT_EVENT_STATUS,
+} from './helpers';
 
 test.describe('Event Tests',  () => {
     // Tests share one WordPress instance; each isolates itself with a unique
@@ -99,6 +94,56 @@ test.describe('Event Tests',  () => {
         await page2.close();
     });
 
+    test('Named location shows in the events admin table', async ({ admin, page }) => {
+        const name = `Venue ${Math.random().toString(36).slice(2, 8)}`;
+        const address = 'Teststraat 1, Driehuis';
+        const ctx = await createSingleEvent(
+            { admin, page },
+            { title: uniqueTitle('Located Concert'), namedLocation: { name, address } }
+        );
+
+        await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
+
+        const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
+        await expect(eventRow.locator('td.column-location')).toContainText(name);
+        await expect(eventRow.locator('td.column-location')).toContainText(address);
+    });
+
+    test('Named location shows on the frontend single-event page', async ({ admin, page }) => {
+        const name = `Venue ${Math.random().toString(36).slice(2, 8)}`;
+        const address = 'Teststraat 1, Driehuis';
+        const ctx = await createSingleEvent(
+            { admin, page },
+            { title: uniqueTitle('Located Concert'), namedLocation: { name, address } }
+        );
+
+        await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
+        const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
+        await eventRow.locator('td.column-title a.row-title').click();
+
+        const page2Promise = page.waitForEvent('popup');
+        await page.getByRole('link', { name: 'View Event' }).click();
+        const page2 = await page2Promise;
+
+        await expect(page2.locator('h1')).toContainText(ctx.title);
+        await expect(page2.locator('#location-name')).toContainText(name);
+        await expect(page2.locator('#location-address')).toContainText(address);
+
+        await page2.close();
+    });
+
+    test('Default event status is visible in the events admin table', async ({ admin, page }) => {
+        const ctx = await createSingleEvent(
+            { admin, page },
+            { title: uniqueTitle('Default Status Concert'), keepDefaultStatus: true }
+        );
+
+        await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
+
+        const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
+        await expect(eventRow.locator('td.column-status')).toContainText(DEFAULT_EVENT_STATUS);
+    });
+
     test('Calendar page shows event in calendar', async ({ admin, page, editor }) => {
         const eventCtx = await createSingleEvent(
             { admin, page },
@@ -113,10 +158,17 @@ test.describe('Event Tests',  () => {
         await createCalendarPage({ admin, page, editor });
 
         // We are now on the front-end Calendar page. Scope to our unique event;
-        // the calendar renders every event, including concurrent tests'.
+        // the calendar renders every event, including concurrent tests'. The
+        // month grid shows at most 3 title-only pills per day (matching the
+        // agenda design), so with events accumulated by other test runs ours
+        // may sit behind today's "+N meer" link - open it in that case.
         const eventLink = page.getByRole('link', { name: eventCtx.title });
-        await expect(eventLink).toBeVisible({ timeout: 30000 });
-        await expect(eventLink).toContainText(eventCtx.startTime);
+        const moreLink = page.locator('.fc-day-today .fc-daygrid-more-link');
+        await expect(eventLink.or(moreLink).first()).toBeVisible({ timeout: 30000 });
+        if (!(await eventLink.isVisible())) {
+            await moreLink.click();
+        }
+        await expect(eventLink).toBeVisible();
     });
 
     test('Calendar page reservation popup shows correct event details', async ({ admin, page, editor }) => {
@@ -134,15 +186,51 @@ test.describe('Event Tests',  () => {
 
         // Open reservation popup. The tool lists every event, so scope to the
         // link for our unique event rather than assuming a single result.
-        await page.getByRole('button', { name: 'Reserveer' }).click();
+        await page.getByRole('button', { name: 'Reserve' }).click();
         const detail = page.getByRole('link').filter({ hasText: eventCtx.title });
         await expect(detail).toContainText(
-            `${eventCtx.title} - grote-zaal`,
+            `${eventCtx.title} - Grote zaal`,
             { timeout: 30000 }
         );
         await expect(detail).toContainText(
             `${eventCtx.startTime} - ${eventCtx.endTime}`
         );
+    });
+
+    test('Saving clears the unsaved-changes state and logs one aggregated entry', async ({ admin, page }) => {
+        const ctx = await createSingleEvent(
+            { admin, page },
+            { title: uniqueTitle('Dirty State Concert') }
+        );
+
+        const isDirty = () =>
+            page.evaluate(() =>
+                (window as any).wp.data.select('core/editor').isEditedPostDirty()
+            );
+
+        // Publishing saved the event dates inside the post save; once the
+        // post-save rebase settles, the editor must be clean again (no
+        // "leave tab?" warning).
+        await expect.poll(isDirty).toBe(false);
+
+        // Editing an event field alone must mark the post dirty...
+        await page.getByRole('textbox', { name: 'hh:mm' }).first().fill('14:14');
+        await expect.poll(isDirty).toBe(true);
+
+        // ...and updating must clear it again.
+        await page.getByRole('button', { name: 'Save', exact: true }).click();
+        await expect(page.getByTestId('snackbar')).toContainText('updated');
+        await expect.poll(isDirty).toBe(false);
+
+        // Both saves happened within the idle window, so the Log View must
+        // show exactly one aggregated entry for this event.
+        await admin.visitAdminPage(
+            '/edit.php?post_type=soli_event&page=soli_event_admin_log'
+        );
+        const logRows = page.locator('tbody tr').filter({ hasText: ctx.title });
+        await expect(logRows).toHaveCount(1);
+        await expect(logRows.first()).toContainText('Added');
+        await expect(logRows.first()).toContainText('14:14');
     });
 
     test('Admin calendar view shows event with correct time and room', async ({ admin, page }) => {
@@ -168,150 +256,9 @@ test.describe('Event Tests',  () => {
             `${eventCtx.startTime} - ${eventCtx.endTime}`,
             { timeout: 30000 }
         );
-        // still using slug here per your TODO-fix
-        await expect(calendarEventLink).toContainText('grote-zaal');
+        // Room name is now shown as its display label, not the raw slug.
+        await expect(calendarEventLink).toContainText('Grote zaal');
     });
 
 
 });
-
-type CreateEventOptions = {
-    title?: string;
-    date?: Date;
-    startTime?: string;
-    endTime?: string;
-    locationLabel?: string;
-    roomLabel?: string;
-    status?: string;
-};
-
-// Reusable helper to create a single event with default settings
-async function createSingleEvent(
-    { admin, page }: { admin: any; page: any },
-    overrides: CreateEventOptions = {}
-) {
-    const {
-        title = 'Single Event Concert',
-        date = addDays(new Date(), 1),
-        startTime = '12:12',
-        endTime = '13:13',
-        locationLabel = 'Muziekcentrum',
-        roomLabel = 'Grote zaal',
-        status = 'PUBLIC',
-    } = overrides;
-
-    // Go to Events -> Add New Event
-    await admin.visitAdminPage('/edit.php?post_type=soli_event');
-    await page.getByRole('link', { name: 'Events' }).first().click();
-    await page.locator('#wpbody-content').getByRole('link', { name: 'Add New Event' }).click();
-
-    await page.locator('#editor').waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
-    const guide = page.locator('.components-guide');
-    const eventBlock = page.getByLabel('Block: Create Event');
-
-    // The Create Event block renders a stack of heavy MUI components
-    // (date/time pickers, selectors, editors) synchronously. On CI's
-    // constrained runner this paint can take several seconds, so allow a
-    // generous timeout — the welcome guide is disabled, so its waitFor only
-    // rejects at the timeout and must not lose the race before the block paints.
-    const winner = await Promise.race([
-        guide.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'guide'),
-        eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'title'),
-    ]);
-
-    if (winner === 'guide') {
-        await page.keyboard.press('Escape');
-        await expect(guide).toBeHidden();
-        await eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
-    }
-
-    // Fill in event details
-    await page.getByRole('textbox', { name: 'Add title' }).fill(title);
-
-    // Enter the date into the MUI masked field (D MMMM, YYYY). Land on the
-    // leftmost (day) section, then type the digits consecutively and let MUI's
-    // section auto-advance carry across day -> month -> year. A single ddMMyyyy
-    // blast (or manual ArrowRight between sections) misaligns and yields garbage.
-    const dateInput = page.getByRole('textbox', { name: 'DD MMMM, YYYY' }).first();
-    await dateInput.click();
-    await dateInput.press('ArrowLeft');
-    await dateInput.press('ArrowLeft');
-    await dateInput.press('ArrowLeft');
-    await page.keyboard.type(format(date, 'dd', { locale: enUS }), { delay: 100 });
-    await page.keyboard.type(format(date, 'MM', { locale: enUS }), { delay: 100 });
-    await page.keyboard.type(format(date, 'yyyy', { locale: enUS }), { delay: 100 });
-    await dateInput.press('Tab');
-
-    await page.getByRole('textbox', { name: 'hh:mm' }).first().fill(startTime);
-    await page.getByRole('textbox', { name: 'hh:mm' }).nth(1).fill(endTime);
-
-    await page.getByRole('button', { name: 'Kies een locatie' }).click();
-    await page.getByRole('checkbox', { name: locationLabel }).check();
-    await page
-        .locator('label')
-        .filter({ hasText: roomLabel })
-        .getByTestId('CheckBoxOutlineBlankIcon')
-        .click();
-    await page.getByRole('button', { name: 'Opslaan' }).click();
-
-    // Make it public & publish
-    await page.locator('.MuiButtonBase-root.MuiSwitch-switchBase').click();
-    await page.getByRole('combobox', { name: 'OPTION' }).click();
-    await page.getByRole('option', { name: status }).click();
-    await page.getByRole('button', { name: 'Publish', exact: true }).click();
-    await page
-        .getByLabel('Editor publish')
-        .getByRole('button', { name: 'Publish', exact: true })
-        .click();
-
-    await expect(page.getByTestId('snackbar')).toBeVisible();
-    await expect(page.getByTestId('snackbar')).toContainText('Post published.View Event');
-
-    const formattedUS = format(date, 'MMMM d, yyyy', { locale: enUS });
-    const formattedEditor = format(date, 'dd MMMM, yyyy', { locale: nl });
-    const formattedFrontend = format(date, 'dd MMMM yyyy (EEEE)', { locale: enUS });
-
-    return {
-        date,
-        formattedUS,
-        formattedEditor,
-        formattedFrontend,
-        title,
-        startTime,
-        endTime,
-        locationLabel,
-        roomLabel,
-        status,
-    };
-}
-
-type CreateCalendarPageOptions = {
-    title?: string;
-};
-
-async function createCalendarPage(
-    { admin, page, editor }: { admin: any; page: any; editor: any },
-    options: CreateCalendarPageOptions = {}
-) {
-    const { title = 'Calendar' } = options;
-
-    // Use the official editor fixtures instead of hand-driving the iframe
-    // canvas: createNewPost handles editor load + welcome guide + title, and
-    // insertBlock inserts programmatically (no timing-sensitive canvas clicks,
-    // which were flaky on CI's headless runner).
-    await admin.createNewPost({ postType: 'page', title });
-
-    await editor.insertBlock({ name: 'soli/event-view-calendar' });
-    await editor.insertBlock({ name: 'soli/event-reservation-popup' });
-
-    await editor.publishPost();
-
-    // Navigate to the published page on the front end.
-    const permalink = await page.evaluate(() =>
-        window.wp.data.select('core/editor').getPermalink()
-    );
-    await page.goto(permalink);
-
-    // At this point, `page` is the front-end Calendar page.
-    return { title };
-}

@@ -16,7 +16,7 @@ export default function ListView({eventsPerPage, showNavigation}) {
             currentPage={currentPage}
             setTotalPages={setTotalPages}
         >
-            <div className="soli-event-list">
+            <ol className="soli-event-list">
                 {events && events.map((event, i) => {
                     return (
                         <EventListItem
@@ -25,7 +25,7 @@ export default function ListView({eventsPerPage, showNavigation}) {
                         />
                     )
                 })}
-            </div>
+            </ol>
             {showNavigation &&
                 <PaginationNav
                     currentPage={currentPage}

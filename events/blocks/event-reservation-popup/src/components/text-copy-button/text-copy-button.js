@@ -1,5 +1,6 @@
 import './text-copy-button.scss';
 
+import {__, sprintf} from '@wordpress/i18n';
 import {Button} from "@wordpress/components"
 import {useSelector} from "react-redux";
 import {selectEvents} from "../../redux/events-slice";
@@ -12,7 +13,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 
 function renderRooms(selected){
     if (selected.length === ROOM_SLUGS.length) {
-        return "Hele gebouw";
+        return __('Whole building', 'soli-event');
     }
     return ROOM_NAMES.filter((_, index) => selected.includes(ROOM_SLUGS[index])).join(', ');
 }
@@ -29,12 +30,12 @@ const TextCopyButton = ({onCopy}) => {
     dayjs.locale("nl");
     dayjs.extend(customParseFormat);
 
-    const header = "Beste Muziekvereniging Soli,\n\n" +
-        "Ik zou graag de volgende ruimtes willen reserveren:\n\n";
+    const header = __('Dear Muziekvereniging Soli,\n\n', 'soli-event') +
+        __('I would like to reserve the following rooms:\n\n', 'soli-event');
     const reservationList = reservations
-        .map(r => `♫ ${r.rooms}:\n     van: ${r.start}   tot: ${r.end}`)
+        .map(r => sprintf(__('♫ %1$s:\n     from: %2$s   to: %3$s', 'soli-event'), r.rooms, r.start, r.end))
         .join('\n\n');
-    const footer = "\n\nMet vriendelijke groet,\n[Uw Naam]";
+    const footer = __('\n\nKind regards,\n[Your name]', 'soli-event');
     const content = header + reservationList + footer;
 
     const copyText = () => {
@@ -48,7 +49,7 @@ const TextCopyButton = ({onCopy}) => {
             className="text-copy-button"
             onClick={copyText}>
             <img src={textIcon}/>
-            Copy text
+            {__('Copy text', 'soli-event')}
         </Button>
     );
 };

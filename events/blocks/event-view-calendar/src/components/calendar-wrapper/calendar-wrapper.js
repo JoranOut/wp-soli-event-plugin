@@ -4,16 +4,12 @@ import EventsProvider from "../events-provider/events-provider";
 import EventDetailPopUp from "../event-detail-pop-up/event-detail-pop-up";
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/list'
-import listPlugin from '@fullcalendar/timegrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import listPlugin from '@fullcalendar/list'
 import nlLocale from '@fullcalendar/core/locales/nl';
 
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import bootstrap5Plugin from '@fullcalendar/bootstrap5';
 import CalendarFilter from "../calendar-filter/calendar-filter";
 import {ROOM_SLUGS} from "../../../../../inc/values";
-import {logs} from "@wordpress/env/lib/commands";
 
 const setDefaultFilters = (onlyConcerts, onlyInternal) => {
     const concertFilter = onlyConcerts ? ["only-concerts"] : [];
@@ -39,7 +35,6 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
 
     const handleClick = (info) => {
         info.jsEvent.preventDefault()
-        console.log(info);
         setSelectedEvent(info.event);
         const box = info.el.getBoundingClientRect();
         setSelectedEventBox(box);
@@ -59,30 +54,34 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
 
             <FullCalendar
                 ref={calendarRef}
-                plugins={[dayGridPlugin, timeGridPlugin, listPlugin, bootstrap5Plugin]}
+                plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
                 initialView={initialView}
-                themeSystem="bootstrap5"
                 headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
                     right: adjustable ? 'dayGridMonth,timeGridWeek,timeGridDay,listMonth' : ''
                 }}
-                height={'max(calc(100vh - 250px), 500px)'}
+                // The plain month calendar sizes to its content, like the
+                // agenda-page design; the adjustable and week/day variants
+                // keep a viewport-bound height so timeGrid views can scroll.
+                height={calendarType === 'month' && !adjustable
+                    ? 'auto'
+                    : 'max(calc(100vh - 250px), 500px)'}
                 scrollTime="11:00:00"
                 datesSet={handleDates}
                 eventClick={handleClick}
                 weekends={true}
                 events={events}
                 locale={nlLocale}
+                titleRangeSeparator=" - "
+                dayMaxEvents={3}
+                // Block-style pills everywhere (never dot events), matching
+                // the agenda design.
+                eventDisplay="block"
                 views={{
                     dayGrid: {
-                        eventTimeFormat:
-                            {
-                                hour: 'numeric',
-                                minute: '2-digit',
-                                omitZeroMinute: false,
-                                meridiem: 'narrow'
-                            }
+                        // Title-only pills, matching the agenda design.
+                        displayEventTime: false,
                     }
                 }}
             />

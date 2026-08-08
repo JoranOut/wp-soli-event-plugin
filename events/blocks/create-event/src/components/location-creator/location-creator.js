@@ -1,4 +1,5 @@
 import "./location-creator.scss"
+import { __ } from '@wordpress/i18n';
 import {useState, useEffect} from '@wordpress/element';
 import {Modal, Button} from "@wordpress/components"
 import apiFetch from '@wordpress/api-fetch';
@@ -62,12 +63,12 @@ function LocationCreator({onCreated}) {
 
         <div className="location-creator">
             <Button variant="secondary" onClick={openModal}>
-                Nieuwe locatie
+                {__("New location", "soli-event")}
             </Button>
 
             {isOpen && (
                 <Modal
-                    title="Creëer een locatie"
+                    title={__("Create a location", "soli-event")}
                     onRequestClose={closeModal}
                     focusOnMount={true}
                     isDismissible={true}
@@ -77,29 +78,29 @@ function LocationCreator({onCreated}) {
                     __experimentalHideHeader={false}
                 >
                     <form>
-                        <label>Locatie naam*</label>
+                        <label>{__("Location name*", "soli-event")}</label>
                         <input
                             type="text"
                             name="name"
                             value={inputs.name}
                             onChange={handleChange}
                         />
-                        {inputs.name.length > 0 || <span className={"error"}>required</span>}
+                        {inputs.name.length > 0 || <span className={"error"}>{__("required", "soli-event")}</span>}
 
-                        <label>Locatie adres*</label>
+                        <label>{__("Location address*", "soli-event")}</label>
                         <textarea
                             rows="3"
                             name="address"
                             value={inputs.address}
                             onChange={handleChange}
                         />
-                        {inputs.address.length > 0 || <span className={"error"}>required</span>}
+                        {inputs.address.length > 0 || <span className={"error"}>{__("required", "soli-event")}</span>}
                     </form>
                     <Button
                         type="submit"
                         className="submit-button"
                         variant="secondary"
-                        onClick={() => postAPI()}>Opslaan en selecteren</Button>
+                        onClick={() => postAPI()}>{__("Save and select", "soli-event")}</Button>
                 </Modal>)}
         </div>);
 }

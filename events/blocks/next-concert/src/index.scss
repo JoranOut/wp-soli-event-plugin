@@ -1,0 +1,91 @@
+// Next-concert card - ported from the Soli aside card (Concertagenda).
+// Tokens are scoped to the block and fall back to the theme's presets so the
+// card looks right whether or not the active theme defines them.
+.soli-next-concert {
+  --snc-cream: var(--wp--preset--color--paper, #faf6ee);
+  --snc-gold: var(--wp--preset--color--gold, #c9a24a);
+  --snc-ink: var(--wp--preset--color--ink, #1a1a2e);
+  --snc-line: var(--wp--preset--color--line, #e6e2da);
+  --snc-maroon: var(--wp--preset--color--maroon, #7a1f2b);
+  --snc-muted: var(--wp--preset--color--muted, #5a5a5e);
+  --snc-font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --snc-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  box-sizing: border-box;
+  max-width: 340px;
+  padding: 24px;
+  border: 1px solid var(--snc-line);
+  border-radius: 12px;
+  background: var(--snc-cream);
+  color: var(--snc-ink);
+  font-family: var(--snc-font-sans);
+
+  * {
+    box-sizing: border-box;
+  }
+
+  &__eyebrow {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--snc-maroon);
+  }
+
+  &__title {
+    display: inline-block;
+    margin: 10px 0 0;
+    font-family: var(--snc-font-display);
+    font-size: 20px;
+    line-height: 1.2;
+    color: var(--snc-ink);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--snc-maroon);
+    }
+  }
+
+  &__lead {
+    margin: 12px 0 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--snc-muted);
+  }
+
+  &__actions {
+    margin-top: 18px;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--snc-maroon);
+    background: var(--snc-maroon);
+    color: var(--snc-cream);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.12s, color 0.12s;
+
+    &:hover {
+      background: transparent;
+      color: var(--snc-maroon);
+    }
+  }
+
+  // Editor empty-state notice.
+  &--empty {
+    max-width: none;
+    text-align: center;
+    color: var(--snc-muted, #5a5a5e);
+    border-style: dashed;
+    border-color: var(--snc-gold, #c9a24a);
+  }
+}

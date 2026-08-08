@@ -1,0 +1,126 @@
+// Upcoming-dates list - ported from the "Komende data" card on the Soli
+// event detail page. Tokens fall back to the theme presets.
+.soli-event-dates {
+  --sed-cream: var(--wp--preset--color--paper, #faf6ee);
+  --sed-gold: var(--wp--preset--color--gold, #c9a24a);
+  --sed-ink: var(--wp--preset--color--ink, #1a1a2e);
+  --sed-line: var(--wp--preset--color--line, #e6e2da);
+  --sed-maroon: var(--wp--preset--color--maroon, #7a1f2b);
+  --sed-muted: var(--wp--preset--color--muted, #5a5a5e);
+  --sed-font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --sed-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  box-sizing: border-box;
+  max-width: 340px;
+  border: 1px solid var(--sed-line);
+  border-radius: 12px;
+  background: var(--sed-cream);
+  color: var(--sed-ink);
+  font-family: var(--sed-font-sans);
+  overflow: hidden;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  &__head {
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--sed-line);
+
+    h3 {
+      margin: 0;
+      font-family: var(--sed-font-display);
+      font-size: 18px;
+      line-height: 1.2;
+      color: var(--sed-ink);
+    }
+  }
+
+  &__body {
+    padding: 10px 22px 22px;
+  }
+
+  &__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      border-bottom: 1px solid var(--sed-line);
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+      > a,
+      > span:only-child {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      a {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 0;
+        color: inherit;
+        text-decoration: none;
+
+        &:hover .soli-event-dates__d {
+          color: var(--sed-maroon);
+        }
+      }
+    }
+
+    // Fallback padding when a date has no link wrapper.
+    li:not(:has(a)) {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+    }
+  }
+
+  &__d {
+    font-size: 14.5px;
+    font-weight: 500;
+
+    em {
+      margin-left: 8px;
+      font-style: normal;
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--sed-gold);
+    }
+  }
+
+  &__t {
+    font-size: 13px;
+    color: var(--sed-muted);
+    white-space: nowrap;
+  }
+
+  .is-next &__d {
+    font-weight: 700;
+  }
+
+  &__note {
+    margin: 16px 0 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--sed-muted);
+  }
+
+  &--empty {
+    max-width: none;
+    padding: 24px;
+    text-align: center;
+    color: var(--sed-muted, #5a5a5e);
+    border-style: dashed;
+    border-color: var(--sed-gold, #c9a24a);
+  }
+}

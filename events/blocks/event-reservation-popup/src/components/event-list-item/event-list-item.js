@@ -1,5 +1,6 @@
 import './event-list-item.scss';
 
+import {__} from '@wordpress/i18n';
 import {addEvent, deleteEvent} from "../../redux/events-slice";
 import {changeViewDate} from "../../redux/calendar-slice";
 import {useDispatch} from "react-redux";
@@ -30,27 +31,29 @@ export default function EventListItem({event}) {
 
     return (
         <div className="event-list-item">
-            <Button
-                className="focus-button"
-                variant="secondary"
-                onClick={() => handleViewDate(event.beginDate)}>
-                <img src={focusSVG}/>
-                View</Button>
             <EventListItemEditor
                 event={event}
             />
-            <Button
-                className="copy-button"
-                variant="secondary"
-                onClick={() => handleCopy(event)}>
-                <img src={copySVG}/>
-                Copy
-            </Button>
-            <Button
-                className="delete-button"
-                variant="secondary"
-                onClick={() => handleDelete(event.id)}>
-                <img src={deleteSVG}/>
-                Delete</Button>
+            <div className="event-list-item-actions">
+                <Button
+                    className="focus-button"
+                    variant="secondary"
+                    onClick={() => handleViewDate(event.beginDate)}>
+                    <img src={focusSVG}/>
+                    {__('View', 'soli-event')}</Button>
+                <Button
+                    className="copy-button"
+                    variant="secondary"
+                    onClick={() => handleCopy(event)}>
+                    <img src={copySVG}/>
+                    {__('Copy', 'soli-event')}
+                </Button>
+                <Button
+                    className="delete-button"
+                    variant="secondary"
+                    onClick={() => handleDelete(event.id)}>
+                    <img src={deleteSVG}/>
+                    {__('Delete', 'soli-event')}</Button>
+            </div>
         </div>);
 }

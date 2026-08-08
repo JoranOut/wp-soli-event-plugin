@@ -1,5 +1,6 @@
 import './email-button.scss';
 
+import {__, sprintf} from '@wordpress/i18n';
 import {Button} from "@wordpress/components"
 import {useSelector} from "react-redux";
 import {selectEvents} from "../../redux/events-slice";
@@ -12,13 +13,13 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 
 function renderRooms(selected){
     if (selected.length === ROOM_SLUGS.length) {
-        return "Hele gebouw";
+        return __('Whole building', 'soli-event');
     }
     return ROOM_NAMES.filter((_, index) => selected.includes(ROOM_SLUGS[index])).join(', ');
 }
 
 
-const ReservationEmail = ({onSend}) => {
+const ReservationEmail = ({recipient}) => {
     const rawReservations = useSelector(selectEvents);
     const reservations = !rawReservations ? [] : rawReservations.map(r => { return {
         start: dayjs(r.beginDate).format("DD MMMM YYYY (dddd) HH:mm"),
@@ -30,29 +31,32 @@ const ReservationEmail = ({onSend}) => {
     dayjs.locale("nl");
     dayjs.extend(customParseFormat);
 
-    const header = "Beste Muziekvereniging Soli,\n\n" +
-        "Ik zou graag de volgende ruimtes willen reserveren:\n\n";
+    const header = __('Dear Muziekvereniging Soli,\n\n', 'soli-event') +
+        __('I would like to reserve the following rooms:\n\n', 'soli-event');
     const reservationList = reservations
-        .map(r => `♫ ${r.rooms}:\n     van: ${r.start}   tot: ${r.end}`)
+        .map(r => sprintf(__('♫ %1$s:\n     from: %2$s   to: %3$s', 'soli-event'), r.rooms, r.start, r.end))
         .join('\n\n');
-    const footer = "\n\nMet vriendelijke groet,\n[Uw Naam]";
+    const footer = __('\n\nKind regards,\n[Your name]', 'soli-event');
     const emailBody = header + reservationList + footer;
 
-    // URL-encode the email body for the mailto link.
-    const mailtoLink = `mail` + `to` + `:recipient@` + `example.com?subject='Reservering ruimte Soli Muziekcentrum'&body=${encodeURIComponent(emailBody)}`;
+    // URL-encode the email body for the mailto link. The recipient is supplied
+    // by the block (data-recipient), configured per block in the editor
+    // sidebar; empty means the visitor fills in the recipient themselves.
+    const to = recipient || '';
+    const subject = encodeURIComponent(__('Room reservation Soli Muziekcentrum', 'soli-event'));
+    const mailtoLink = `mailto:${to}?subject=${subject}&body=${encodeURIComponent(emailBody)}`;
 
-    const sendEmail = () => {
-        window.location = mailtoLink;
-    }
-
+    // Rendered as a real <a href="mailto:..."> so the browser handles it
+    // natively (and it is inspectable/testable without navigating away).
+    const disabled = reservations.length === 0;
     return (
         <Button
-            disabled={reservations.length === 0}
+            disabled={disabled}
+            href={disabled ? undefined : mailtoLink}
             variant="primary"
-            className="email-button"
-            onClick={sendEmail}>
+            className="email-button">
             <img src={mailIcon}/>
-            Genereer Mail
+            {__('Generate email', 'soli-event')}
         </Button>
     );
 };

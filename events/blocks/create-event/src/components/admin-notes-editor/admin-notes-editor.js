@@ -1,4 +1,5 @@
 import "./admin-notes-editor.scss"
+import { __ } from '@wordpress/i18n';
 import {useState, useEffect} from '@wordpress/element';
 import {Modal, Button} from "@wordpress/components"
 import lockSVG from "../../../../../../inc/assets/img/icons/lock.svg";
@@ -8,9 +9,13 @@ import ImageButton from "../image-button/image-button";
 
 export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'small', hideNotes = false, onOpen, onClose}) {
     const [_adminNotes, setAdminNotes] = useState(adminNotes);
-    const [_buttonSize, setButtonSize] = useState(buttonSize);
 
     const [isOpen, setOpen] = useState(false);
+
+    // Resync when the adminNotes prop changes underneath us (undo/redo/reset).
+    useEffect(() => {
+        setAdminNotes(adminNotes);
+    }, [adminNotes]);
 
     const openModal = () => {
         setOpen(true);
@@ -41,7 +46,7 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
 
     const ModalContent = (
         <Modal
-            title="Admin Notes"
+            title={__("Admin Notes", "soli-event")}
             onRequestClose={closeModal}
             focusOnMount={true}
             isDismissible={true}
@@ -50,7 +55,7 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
             shouldCloseOnClickOutside={true}
             __experimentalHideHeader={false}
         >
-            <p className="notes-hint">These notes will only be visible in the admin area and only to people with high access level.</p>
+            <p className="notes-hint">{__("These notes will only be visible in the admin area and only to people with high access level.", "soli-event")}</p>
             <TextField
                 type="text"
                 name="name"
@@ -60,16 +65,16 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
                 multiline
                 onChange={(n) => handleChange(n)}
             />
-            {_adminNotes?.length > 65535 && <span className={"error"}>Too many characters</span>}
+            {_adminNotes?.length > 65535 && <span className={"error"}>{__("Too many characters", "soli-event")}</span>}
             <Button
                 type="submit"
                 className="submit-button"
                 variant="secondary"
-                onClick={() => submit()}>Close</Button>
+                onClick={() => submit()}>{__("Close", "soli-event")}</Button>
         </Modal>
     );
 
-    if(_buttonSize === "line" && !hideNotes){
+    if(buttonSize === "line" && !hideNotes){
         return (
             <div className="notes admin-notes">
                 <img src={lockSVG}/>
@@ -85,13 +90,13 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
     }
 
     return (
-        <div className={["admin-notes-editor", _buttonSize, _adminNotes == null ? 'empty' : ''].join(" ")}>
-            {_buttonSize === 'line' && <img src={lockSVG}/>}
+        <div className={["admin-notes-editor", buttonSize, _adminNotes == null ? 'empty' : ''].join(" ")}>
+            {buttonSize === 'line' && <img src={lockSVG}/>}
             {_adminNotes?.length > 0 && !hideNotes && <div className="notes-preview">
                 {_adminNotes}
             </div>}
             <ImageButton
-                label={_buttonSize == 'small' ? undefined : "Admin notes"}
+                label={buttonSize == 'small' ? undefined : __("Admin notes", "soli-event")}
                 className={"notes-button"}
                 src={lockSVG}
                 onClick={openModal}>

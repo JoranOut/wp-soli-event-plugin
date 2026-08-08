@@ -322,3 +322,15 @@ wp-config.php
 
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,wordpress,react,node
+# Playwright auth/session artifacts (contain live cookies)
+artifacts/
+e2e/.auth/
+
+# Symlinked skills from parent monorepo (not part of this plugin)
+.claude/skills/
+
+# Per-machine Claude Code settings
+.claude/settings.local.json
+
+# Playwright MCP scratch output (snapshots/console logs)
+.playwright-mcp/

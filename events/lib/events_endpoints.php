@@ -5,7 +5,29 @@ function soli_event_rest_api() {
   buildGETEventsBetweenDates();
   buildGETEventDatesFromEvent();
   buildGETFutureEventsByPageAndItemsPerPage();
+  buildGETFeedCategories();
   buildPOSTEventDates();
+}
+
+// Categories assigned to published events, for the calendar-subscribe block's
+// editor UI. Public read (the same data is server-rendered on the front end).
+function buildGETFeedCategories() {
+  register_rest_route('soli_event/v1', '/feed-categories', array(
+    'methods' => 'GET',
+    'permission_callback' => '__return_true', // *always set a permission callback
+    'callback' => function () {
+      $eventHandler = new \Soli\Events\EventsDatesTableHandler();
+      $categories = $eventHandler->getFeedCategories();
+      $categories = array_map(function ($cat) {
+        return array(
+          'id'   => (int) $cat['term_id'],
+          'name' => $cat['name'],
+          'slug' => $cat['slug'],
+        );
+      }, is_array($categories) ? $categories : array());
+      return new WP_REST_Response($categories, 200);
+    },
+  ));
 }
 
 function buildGETEventsBetweenDates() {
@@ -19,7 +41,7 @@ function buildGETEventsBetweenDates() {
       } catch (Exception $e) {
         return new WP_REST_Response(array(
           'code' => WP_REST_Server::INVALID_ARGUMENT,
-          'message' => 'Invalid request arguments.',
+          'message' => __('Invalid request arguments.', 'soli-event'),
         ), 400);
       }
 
@@ -43,6 +65,11 @@ function buildGETEventDatesFromEvent() {
     'callback' => function ($request) {
       $eventHandler = new \Soli\Events\EventsDatesTableHandler();
       $dates = $eventHandler->getDatesFromEvent($request['id']);
+      // Filter workflow-state dates for non-editors (F2): anonymous/subscriber
+      // only see PUBLIC/PRIVATE; editors see everything.
+      if (is_array($dates)) {
+        $dates = \Soli\Events\EventVisibility::filterVisibleRows($dates);
+      }
       $response = new WP_REST_Response($dates);
       filterAdminNotesFromDatesIfNoPermission($response);
       if (!$dates) {
@@ -107,9 +134,10 @@ function buildPOSTEventDates() {
       return current_user_can('edit_posts');
     }, // *always set a permission callback
     'callback' => function ($request) {
-      $eventHandler = new \Soli\Events\EventsDatesTableHandler();
       $body = json_decode($request->get_body());
-      $dates = $eventHandler->setDatesAtEvent($request['id'], $body);
+      // Shared write path with the post-save transport meta, so changes made
+      // through this endpoint land in the change log too.
+      $dates = \Soli\Events\soli_event_apply_dates($request['id'], $body);
       $response = new WP_REST_Response($dates);
       filterAdminNotesFromDatesIfNoPermission($response);
       if (!$dates) {
@@ -193,12 +221,24 @@ function validateStatus($status): bool {
   return in_array($status, $statii);
 }
 
-function filterAdminNotesFromDatesIfNoPermission(&$dates) {
-  if (!current_user_can('soli_event_admin_notes')) {
-    foreach ($dates as &$date) {
-      if (isset($date->admin_notes)) {
-        unset($date->admin_notes);
-      }
+function filterAdminNotesFromDatesIfNoPermission($response) {
+  if (current_user_can('soli_event_admin_notes')) {
+    return;
+  }
+
+  $data = $response->get_data();
+  if (!is_array($data)) {
+    return;
+  }
+
+  foreach ($data as &$date) {
+    if (is_array($date)) {
+      unset($date['admin_notes']);
+    } elseif (is_object($date)) {
+      unset($date->admin_notes);
     }
   }
+  unset($date);
+
+  $response->set_data($data);
 }

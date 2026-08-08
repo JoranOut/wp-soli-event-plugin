@@ -9,10 +9,18 @@ function soli_location_rest_api() {
 function buildGETSearchLocation() {
   register_rest_route('soli_event/v1', '/location/search', array(
     'methods' => 'GET',
-    'permission_callback' => '__return_true', // *always set a permission callback
+    // Only the editor-only create-event block consumes this; location data is
+    // not public, so gate it behind edit_posts (F9).
+    'permission_callback' => function () {
+      return current_user_can('edit_posts');
+    },
     'callback' => function ($request) {
       $query = $request->get_param('query');
-      $limit = $request->get_param('limit');
+      $limit = (int) $request->get_param('limit');
+      if ($limit < 1) {
+        $limit = 10;
+      }
+      $limit = min($limit, 50);
 
       $eventHandler = new \Soli\Events\LocationTableHandler();
       $dates = $eventHandler->searchLocation($query, $limit);
@@ -50,7 +58,7 @@ function buildPOSTCreateLocation() {
       if (!isset($body->name) || !isset($body->address)) {
         return new WP_REST_Response(array(
           'code' => WP_REST_Server::INVALID_ARGUMENT,
-          'message' => 'Invalid request arguments.',
+          'message' => __('Invalid request arguments.', 'soli-event'),
         ), 400);
       }
 

@@ -24,10 +24,21 @@
     grid-column: 1 / span 7;
   }
 
+  // Multi-day ranges don't fit on one line (the end date is as wide as the
+  // start date), so wrap onto two lines: start on the first, end aligned
+  // beneath it on the second, with "tot" spanning both lines and centered
+  // between them.
   &.line.multi-day {
-    grid-template: "start-date start-time . tot . end-time end-date";
+    grid-template-areas:
+      "start-date start-time . tot . . ."
+      "end-date   end-time   . tot . . .";
     grid-template-columns: subgrid;
     grid-column: 1 / span 7;
+    row-gap: 4px;
+
+    .tot {
+      align-self: center;
+    }
   }
 
   > div {

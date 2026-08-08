@@ -1,4 +1,5 @@
 import "./index.scss"
+import { __ } from '@wordpress/i18n';
 import EditableDateTable from "./components/editable-date-table/editable-date-table";
 import AdminEventsProvider from "./components/events-provider/admin-events-provider";
 import DateRangePicker from "./components/daterange-picker/daterange-picker";
@@ -9,10 +10,11 @@ import EventStatusSelector from "./components/event-status-selector/event-status
 import NotesEditor from "./components/notes-editor/notes-editor";
 import ConcertStatusSwitch from "./components/concert-status-switch/concert-status-switch";
 import AdminNotesEditor from "./components/admin-notes-editor/admin-notes-editor";
+import InvoiceButton from "./components/invoice-button/invoice-button";
 import {useEventState, useEventActions} from "./components/events-context";
 
 wp.blocks.registerBlockType("soli/create-event", {
-    title: "Create Event",
+    title: __("Create Event", "soli-event"),
     icon: "smiley",
     category: "soli",
     supports: {
@@ -104,12 +106,11 @@ function InnerEdit({userCanAdminNote}) {
     const {events} = useEventState();
     const hasMultiple = events.length > 1;
 
-    console.log("Rendering Create Event Block with events:", events);
-
     return (
         <>
             {!hasMultiple && <SingleEventEditor userCanAdminNote={userCanAdminNote}/>}
             {hasMultiple && <MultiEventEditor/>}
+            {events.length > 0 && <InvoiceButton/>}
         </>
     );
 }

@@ -5,9 +5,15 @@ namespace Soli\Events;
   Plugin Name: Soli Event Plugin
   Version: 1.1.3
   Author: Joran Out
+  Text Domain: soli-event
+  Domain Path: /languages
 */
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
+
+add_action('init', function () {
+  load_plugin_textdomain('soli-event', false, dirname(plugin_basename(__FILE__)) . '/languages');
+});
 define('SOLI_EVENT__PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
 define('SOLI_EVENT__PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('SOLI_EVENT__PLUGIN_DIR_URL', plugin_dir_url(__FILE__));
@@ -21,6 +27,9 @@ function onActivate() {
   $eventsDatesTableHandler->createEventTable();
   $eventsLocationTableHandler = new LocationTableHandler();
   $eventsLocationTableHandler->createLocationTable();
+  $eventsLogTableHandler = new EventsLogTableHandler();
+  $eventsLogTableHandler->createEventLogTable();
+  add_event_capabilities();
   flush_rewrite_rules();
 }
 
@@ -30,6 +39,12 @@ function onUninstall() {
   $eventsDatesTableHandler->dropEventTable();
   $eventsLocationTableHandler = new LocationTableHandler();
   $eventsLocationTableHandler->dropLocationTable();
+  $eventsLogTableHandler = new EventsLogTableHandler();
+  $eventsLogTableHandler->dropEventLogTable();
+  // Transport meta is normally deleted right after each save; clean up any
+  // rows left behind by interrupted saves.
+  delete_post_meta_by_key(SOLI_EVENT_DATES_META_KEY);
+  remove_event_capabilities();
 }
 
 register_deactivation_hook(__FILE__, 'Soli\Events\onDeactivate');

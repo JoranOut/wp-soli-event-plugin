@@ -1,4 +1,5 @@
 import './pagination-nav.scss';
+import { __ } from '@wordpress/i18n';
 
 function getNavPages(current, total) {
     const set = new Set();
@@ -31,46 +32,48 @@ export default function PaginationNav({ currentPage, totalPages, setCurrentPage 
     if (totalPages <= 1) return null;
     let pages = getNavPages(currentPage, totalPages);
 
-    const handleClick = (page, e) => {
-        e.preventDefault();
+    const goTo = (page) => {
         if (typeof page === "number" && page !== currentPage) {
             setCurrentPage(page);
         }
     };
 
     return (
-        <nav className="nav" aria-label="Pagination">
+        <nav className="nav" aria-label={__("Pagination", "soli-event")}>
             { currentPage !== 1 && (
-                <a href="#"
-                   onClick={e => handleClick(currentPage - 1, e)}>
-                    &#x3C; prev
-                </a>
+                <button type="button" className="page-link"
+                        onClick={() => goTo(currentPage - 1)}
+                        aria-label={__("Previous page", "soli-event")}>
+                    &#x3C; {__("prev", "soli-event")}
+                </button>
             )}
             {pages.map((page, idx) =>
                 page === '...' ? (
-                    <span key={idx === 1 ? idx + 1 : totalPages - 1} style={{ margin: '0 4px' }}>…</span>
+                    <span key={`ellipsis-${idx}`} style={{ margin: '0 4px' }}>…</span>
                 ) : (
-                    <a
-                        href="#"
+                    <button
+                        type="button"
+                        className="page-link"
                         key={page}
-                        onClick={e => handleClick(page, e)}
+                        onClick={() => goTo(page)}
+                        disabled={page === currentPage}
                         style={{
                             fontWeight: page === currentPage ? 'bold' : 'normal',
                             textDecoration: page === currentPage ? 'none' : 'underline',
-                            pointerEvents: page === currentPage ? 'none' : 'auto',
                             color: page === currentPage ? '#333' : '#0073aa'
                         }}
                         aria-current={page === currentPage ? 'page' : undefined}
                     >
                         {page}
-                    </a>
+                    </button>
                 )
             )}
             { currentPage !== totalPages &&
-                <a href="#"
-                   onClick={e => handleClick(currentPage + 1, e)}>
-                    next &#x3E;
-                </a>
+                <button type="button" className="page-link"
+                        onClick={() => goTo(currentPage + 1)}
+                        aria-label={__("Next page", "soli-event")}>
+                    {__("next", "soli-event")} &#x3E;
+                </button>
             }
         </nav>
     );

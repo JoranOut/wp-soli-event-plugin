@@ -21,6 +21,7 @@
     "@mui/material": "^5.15.17",
     "@mui/x-date-pickers": "^7.4.0",
     "dayjs": "^1.11.6",
+    "docx": "^9.5.0",
     "react-simple-timefield": "^3.2.5"
   }
 }

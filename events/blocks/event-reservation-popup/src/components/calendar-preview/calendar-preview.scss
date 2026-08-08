@@ -1,5 +1,19 @@
 .fc {
-  padding-top: 45px;
-  height: calc(100% - 45px);
+  height: 100%;
 }
 
+// Tone the FullCalendar toolbar down to dialog proportions: the default
+// 1.75em title outweighs the modal's own title. Kept in sync with the
+// .event-list h2 (event-list.scss) so both column headings align.
+.reservation-tool .fc {
+  .fc-toolbar-title {
+    font-size: 1.375rem;
+    line-height: 1.3;
+  }
+
+  .fc-toolbar.fc-header-toolbar {
+    margin-bottom: 0.75em;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}

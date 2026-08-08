@@ -2,11 +2,11 @@
 
 add_filter('manage_soli_event_posts_columns', 'set_custom_edit_soli_event_columns');
 function set_custom_edit_soli_event_columns($columns) {
-  $columns['start_date'] = __('Start Date', 'your_text_domain');
-  $columns['end_date'] = __('End Date', 'your_text_domain');
-  $columns['location'] = __('Location', 'your_text_domain');
-  $columns['status'] = __('Status', 'your_text_domain');
-  $columns['notes'] = __('Notes', 'your_text_domain');
+  $columns['start_date'] = __('Start Date', 'soli-event');
+  $columns['end_date'] = __('End Date', 'soli-event');
+  $columns['location'] = __('Location', 'soli-event');
+  $columns['status'] = __('Status', 'soli-event');
+  $columns['notes'] = __('Notes', 'soli-event');
 
   // Remove category, tags, and date columns
   unset($columns['categories']); // categories column key (category)
@@ -34,7 +34,7 @@ function custom_soli_event_column($column, $post_id) {
             $dt = new DateTime($post->start_date, $tz);
             echo esc_html( $dt->format("$date_format $time_format"));
         } else {
-            echo esc_html(__('—', 'your_text_domain'));
+            echo esc_html(__('-', 'soli-event'));
         }
     }
 
@@ -43,7 +43,7 @@ function custom_soli_event_column($column, $post_id) {
             $dt = new DateTime($post->end_date, $tz);
             echo esc_html( $dt->format("$date_format $time_format"));
         } else {
-            echo esc_html(__('—', 'your_text_domain'));
+            echo esc_html(__('-', 'soli-event'));
         }
     }
   }
@@ -51,7 +51,7 @@ function custom_soli_event_column($column, $post_id) {
     echo getLocationByEvent($post);
   }
   if ($column === 'status') {
-    echo esc_html($post->status ?? __('—', 'your_text_domain'));
+    echo esc_html($post->status ?? __('-', 'soli-event'));
   }
   if ($column === 'notes') {
       echo extractNotesAndAdminNotes($post);
@@ -66,7 +66,7 @@ function extractNotesAndAdminNotes($post): string
     if (current_user_can('soli_event_admin_notes') && !empty($post->admin_notes)) {
         $output .= '<div style="font-weight:600; color:red; margin-bottom:4px;" title="' . esc_attr($post->admin_notes) . '">'
             . esc_html($post->admin_notes)
-            . esc_html__(' (admin notes)', 'soli_events') . ' '
+            . esc_html__(' (admin notes)', 'soli-event') . ' '
             . '</div>';
     }
 
@@ -76,7 +76,7 @@ function extractNotesAndAdminNotes($post): string
     }
 
     if ($output === '') {
-        $output = __('-', 'your_text_domain');
+        $output = __('-', 'soli-event');
     }
 
     return $output;
@@ -84,19 +84,20 @@ function extractNotesAndAdminNotes($post): string
 
 function getLocationByEvent($post) {
   $rooms = $post->rooms;
-  if ($rooms) {
-    $rooms = json_decode($rooms);
-    if (is_array($rooms)){
-        return join(", ", $rooms);
+  if (!empty($rooms) && $rooms !== 'null') {
+    $decoded = json_decode($rooms);
+    if (is_array($decoded) && count($decoded) > 0) {
+      return join(", ", $decoded);
     }
-    return $rooms;
   }
 
   if (!empty($post->location_name)) {
-    return "<div style='cursor: help; text-decoration: underline' title='" . esc_html($post->location_address) . "'>" . esc_html($post->location_name) . "</div>";
+    $name = esc_html($post->location_name);
+    $address = esc_html($post->location_address);
+    return "<div>" . $name . ($address !== '' ? "<br><span style='font-style: italic'>" . $address . "</span>" : '') . "</div>";
   }
 
-  return __('—', 'your_text_domain');
+  return __('-', 'soli-event');
 }
 
 function load_events_admin_style($hook) {
@@ -138,8 +139,8 @@ function soli_event_extend_admin_query_clauses($clauses, $query) {
                                 , $event_dates_table.notes
                                 , $event_dates_table.admin_notes
                                 , $event_dates_table.rooms ";
-        $clauses['fields'] .= ", $event_location_table.name
-                                , $event_location_table.address";
+        $clauses['fields'] .= ", $event_location_table.name as location_name
+                                , $event_location_table.address as location_address";
 
         if ($search_term = $query->get('s')) {
             $like = '%' . $wpdb->esc_like($search_term) . '%';
@@ -175,7 +176,7 @@ function add_custom_view_link_with_event_param($actions, $post) {
         $url_with_param = add_query_arg('event', $event_id, $permalink);
 
         // Add the custom View link opening in a new tab
-        $view = '<a href="' . esc_url($url_with_param) . '" target="_blank">' . __('View', 'your_text_domain') . '</a>';
+        $view = '<a href="' . esc_url($url_with_param) . '" target="_blank">' . __('View', 'soli-event') . '</a>';
 
         $actions['view'] = $view;
     }

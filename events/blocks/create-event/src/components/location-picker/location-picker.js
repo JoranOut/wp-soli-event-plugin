@@ -1,4 +1,5 @@
 import "./location-picker.scss"
+import { __ } from '@wordpress/i18n';
 import {Modal, Button, ToggleControl} from "@wordpress/components"
 import {useState, useEffect} from '@wordpress/element';
 import LocationSearcher from "../location-searcher/location-searcher";
@@ -42,12 +43,12 @@ function LocationPicker({location, rooms, onChange}) {
                 {
                     displayLocation() ??
                     displayRooms(_rooms) ??
-                    "Kies een locatie"
+                    __("Choose a location", "soli-event")
                 }
             </Button>
             {isOpen && (
                 <Modal
-                    title="Kies een locatie"
+                    title={__("Choose a location", "soli-event")}
                     onRequestClose={closeModal}
                     size={"medium"}
                     focusOnMount={true}
@@ -59,7 +60,7 @@ function LocationPicker({location, rooms, onChange}) {
                     <div className="location-picker-modal">
 
                         <ToggleControl
-                            label="Muziekcentrum"
+                            label={__("Muziekcentrum", "soli-event")}
                             checked={isInternal}
                             onChange={() => {
                                 setInternal(!isInternal);

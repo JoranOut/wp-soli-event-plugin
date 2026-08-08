@@ -14,6 +14,7 @@ function fromDateDto(dateDto) {
         start: startDate,
         end: endDate,
         url: dateDto.guid,
+        excerpt: dateDto.post_excerpt,
         color: dateDto.color,
         featuredImage: dateDto.featured_image,
         featuredImageId: dateDto.featured_image_id,
