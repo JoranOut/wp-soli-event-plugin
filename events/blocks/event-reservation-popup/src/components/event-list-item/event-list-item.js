@@ -31,27 +31,29 @@ export default function EventListItem({event}) {
 
     return (
         <div className="event-list-item">
-            <Button
-                className="focus-button"
-                variant="secondary"
-                onClick={() => handleViewDate(event.beginDate)}>
-                <img src={focusSVG}/>
-                {__('View', 'soli-event')}</Button>
             <EventListItemEditor
                 event={event}
             />
-            <Button
-                className="copy-button"
-                variant="secondary"
-                onClick={() => handleCopy(event)}>
-                <img src={copySVG}/>
-                {__('Copy', 'soli-event')}
-            </Button>
-            <Button
-                className="delete-button"
-                variant="secondary"
-                onClick={() => handleDelete(event.id)}>
-                <img src={deleteSVG}/>
-                {__('Delete', 'soli-event')}</Button>
+            <div className="event-list-item-actions">
+                <Button
+                    className="focus-button"
+                    variant="secondary"
+                    onClick={() => handleViewDate(event.beginDate)}>
+                    <img src={focusSVG}/>
+                    {__('View', 'soli-event')}</Button>
+                <Button
+                    className="copy-button"
+                    variant="secondary"
+                    onClick={() => handleCopy(event)}>
+                    <img src={copySVG}/>
+                    {__('Copy', 'soli-event')}
+                </Button>
+                <Button
+                    className="delete-button"
+                    variant="secondary"
+                    onClick={() => handleDelete(event.id)}>
+                    <img src={deleteSVG}/>
+                    {__('Delete', 'soli-event')}</Button>
+            </div>
         </div>);
 }

@@ -34,7 +34,12 @@ export default function EventList(){
 
     return (
         <div className="event-list">
-            <h2>{__('Events', 'soli-event')}</h2>
+            <h2>{__('Time slots to reserve', 'soli-event')}</h2>
+            {events.length === 0 && (
+                <p className="event-list-empty">
+                    {__('No time slots yet. Click "new" to add your first one.', 'soli-event')}
+                </p>
+            )}
             {events.map((event) => (
                     <EventListItem
                         key={event.id}

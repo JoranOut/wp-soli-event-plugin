@@ -155,15 +155,16 @@ export async function createSingleEvent(
 // Create a page containing the given blocks and navigate to it on the front end.
 // Uses the official editor fixtures (createNewPost + insertBlock + publishPost)
 // instead of hand-driving the canvas, which is timing-sensitive on CI.
+// Blocks are either a block name or { name, attributes }.
 export async function createPageWithBlocks(
     { admin, page, editor }: { admin: any; page: any; editor: any },
-    blockNames: string[],
+    blocks: (string | { name: string; attributes?: Record<string, any> })[],
     title: string
 ) {
     await admin.createNewPost({ postType: 'page', title });
 
-    for (const name of blockNames) {
-        await editor.insertBlock({ name });
+    for (const block of blocks) {
+        await editor.insertBlock(typeof block === 'string' ? { name: block } : block);
     }
 
     await editor.publishPost();

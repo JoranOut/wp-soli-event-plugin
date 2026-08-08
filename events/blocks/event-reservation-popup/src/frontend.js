@@ -1,9 +1,9 @@
 import './index.scss'
-import {render} from '@wordpress/element';
+import {createRoot} from '@wordpress/element';
 import ReservationPopup from "./components/reservation-popup/reservation-popup";
 
 const divsToUpdate = document.querySelectorAll(".block-event-reservation-popup")
 
 divsToUpdate.forEach(function (div) {
-    render(<ReservationPopup recipient={div.dataset.recipient} />, div)
+    createRoot(div).render(<ReservationPopup recipient={div.dataset.recipient} />)
 })

@@ -23,16 +23,18 @@ export default function ReservationTool({closePopup, recipient}) {
         >
             <Provider store={store}>
                 <div className="reservation-tool">
-                    <CalendarPreview/>
-                    <EventList/>
+                    <div className="reservation-tool-panels">
+                        <CalendarPreview/>
+                        <EventList/>
+                    </div>
 
                     <div className="tool-buttons">
                         <Button
                             className="close-button"
                             variant="secondary"
                             onClick={closePopup}>{__('Close', 'soli-event')}</Button>
-                        <ReservationEmail recipient={recipient}/>
                         <TextCopyButton/>
+                        <ReservationEmail recipient={recipient}/>
                     </div>
                 </div>
             </Provider>

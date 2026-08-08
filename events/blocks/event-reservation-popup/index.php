@@ -16,6 +16,12 @@ class SoliBlockEventReservationPopup {
     register_block_type('soli/event-reservation-popup', array(
       'editor_script' => 'block-event-reservation-popup-js',
       'editor_style' => 'block-event-reservation-popup-css',
+      'attributes' => array(
+        'recipient' => array(
+          'type' => 'string',
+          'default' => '',
+        ),
+      ),
       'render_callback' => array($this, 'theHTML')
     ));
     wp_set_script_translations('block-event-reservation-popup-js', 'soli-event', SOLI_EVENT__PLUGIN_DIR_PATH . 'languages');
@@ -26,12 +32,15 @@ class SoliBlockEventReservationPopup {
     wp_enqueue_style('block-event-reservation-popup-frontend-styles',  plugin_dir_url(__FILE__) . 'build/index.css', array('wp-components'), SOLI_EVENT__PLUGIN_VERSION);
     wp_set_script_translations('block-event-reservation-popup-frontend', 'soli-event', SOLI_EVENT__PLUGIN_DIR_PATH . 'languages');
 
-    // The address the reservation mailto is pre-filled with. Deliberately does
-    // NOT default to the site admin e-mail (F5: that leaked a technical address
-    // into public HTML). Configure a public reservation address via the
-    // 'soli_event_reservation_email' option or the filter below; empty means the
-    // visitor fills in the recipient in their own mail client.
-    $recipient = apply_filters('soli_event_reservation_recipient', get_option('soli_event_reservation_email', ''));
+    // The address the reservation mailto is pre-filled with. This is a public
+    // reservation address, set per block in the editor sidebar. Falls back to
+    // the 'soli_event_reservation_email' option; the filter allows a site-wide
+    // override. Never put a personal/technical address here — it is printed in
+    // the public HTML.
+    $recipient = !empty($attributes['recipient'])
+      ? $attributes['recipient']
+      : get_option('soli_event_reservation_email', '');
+    $recipient = sanitize_email(apply_filters('soli_event_reservation_recipient', $recipient));
 
     ob_start();?>
     <div class="block-event-reservation-popup" data-recipient="<?php echo esc_attr($recipient); ?>"></div>

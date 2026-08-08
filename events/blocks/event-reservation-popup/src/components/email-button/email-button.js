@@ -19,7 +19,7 @@ function renderRooms(selected){
 }
 
 
-const ReservationEmail = ({onSend, recipient}) => {
+const ReservationEmail = ({recipient}) => {
     const rawReservations = useSelector(selectEvents);
     const reservations = !rawReservations ? [] : rawReservations.map(r => { return {
         start: dayjs(r.beginDate).format("DD MMMM YYYY (dddd) HH:mm"),
@@ -40,21 +40,21 @@ const ReservationEmail = ({onSend, recipient}) => {
     const emailBody = header + reservationList + footer;
 
     // URL-encode the email body for the mailto link. The recipient is supplied
-    // by the block (data-recipient), defaulting server-side to the site admin.
+    // by the block (data-recipient), configured per block in the editor
+    // sidebar; empty means the visitor fills in the recipient themselves.
     const to = recipient || '';
     const subject = encodeURIComponent(__('Room reservation Soli Muziekcentrum', 'soli-event'));
     const mailtoLink = `mailto:${to}?subject=${subject}&body=${encodeURIComponent(emailBody)}`;
 
-    const sendEmail = () => {
-        window.location = mailtoLink;
-    }
-
+    // Rendered as a real <a href="mailto:..."> so the browser handles it
+    // natively (and it is inspectable/testable without navigating away).
+    const disabled = reservations.length === 0;
     return (
         <Button
-            disabled={reservations.length === 0}
+            disabled={disabled}
+            href={disabled ? undefined : mailtoLink}
             variant="primary"
-            className="email-button"
-            onClick={sendEmail}>
+            className="email-button">
             <img src={mailIcon}/>
             {__('Generate email', 'soli-event')}
         </Button>

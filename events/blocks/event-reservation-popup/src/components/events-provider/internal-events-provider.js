@@ -78,7 +78,7 @@ export default function InternalEventsProvider({setEvents, range, children}) {
     } else {
         return (
             <>
-                <div className={isLoading ? "loading" : ""}
+                <div className={isLoading ? "calendar-wrapper loading" : "calendar-wrapper"}
                      ref={wrapperRef}>
 
                     {children}
