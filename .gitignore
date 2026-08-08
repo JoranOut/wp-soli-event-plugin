@@ -329,5 +329,8 @@ e2e/.auth/
 # Symlinked skills from parent monorepo (not part of this plugin)
 .claude/skills/
 
+# Per-machine Claude Code settings
+.claude/settings.local.json
+
 # Playwright MCP scratch output (snapshots/console logs)
 .playwright-mcp/
