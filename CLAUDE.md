@@ -46,10 +46,15 @@ A not-logged-in visitor opening an event with **no PUBLIC date** gets **HTTP 403
 
 Public calendar export (`events/lib/ical_feed.php`, RFC 5545 VCALENDAR, `text/calendar`). Exports **PUBLIC
 upcoming dates only** — PRIVATE and workflow-state dates are never included (stricter than on-site feeds: an
-export must not leak private events even masked). Filter with `?categorie=<slug|id>` (alias `?category=`);
-an unknown category returns an empty calendar. No authenticated/per-user variant. Registered via a rewrite
-rule (`^ical/?$`), flushed on activation and once per `ICAL_REWRITE_VERSION` bump. `/ical` 301-redirects to
-`/ical/` (WP trailing-slash canonical). Data via `EventsDatesTableHandler::getPublicFutureDatesForFeed()`.
+export must not leak private events even masked). Filter with `?categorie=<slug|id>` (alias `?category=`),
+which also accepts a comma-separated list (OR: an event matches if it is in any listed category); unknown
+entries are dropped and a request of only-unknowns returns an empty calendar. Filter to concerts with
+`?concerten=1` (alias `?concerts=1`, matches dates flagged `is_concert`), **OR-combined** with the category
+filter — e.g. `?concerten=1&categorie=harmonie` exports concert dates OR Harmonie dates. The concerts flag is
+always a valid condition, so it never triggers the empty-calendar case. No authenticated/per-user variant.
+Registered via a rewrite rule (`^ical/?$`), flushed on activation and once per `ICAL_REWRITE_VERSION` bump.
+`/ical` 301-redirects to `/ical/` (WP trailing-slash canonical). Data via
+`EventsDatesTableHandler::getPublicFutureDatesForFeed($category_ids, $concerts_only)`.
 
 ### Editing / admin surfaces (role-aware exception)
 

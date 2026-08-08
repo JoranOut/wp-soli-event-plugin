@@ -33,14 +33,17 @@ const t = (key: string) => title(key as CatalogueKey);
 
 let catNcId = 0;
 let catPrivId = 0;
+let catNc2Id = 0;
 
 test.beforeAll(async () => {
     const api = await apiFor('anonymous');
     catNcId = (await (await api.get('/wp-json/wp/v2/categories?slug=viz-nc')).json())[0]?.id;
     catPrivId = (await (await api.get('/wp-json/wp/v2/categories?slug=viz-nc-priv')).json())[0]?.id;
+    catNc2Id = (await (await api.get('/wp-json/wp/v2/categories?slug=viz-nc2')).json())[0]?.id;
     await api.dispose();
     expect(catNcId, 'viz-nc id').toBeTruthy();
     expect(catPrivId, 'viz-nc-priv id').toBeTruthy();
+    expect(catNc2Id, 'viz-nc2 id').toBeTruthy();
 });
 
 test.describe('iCal feed — envelope & headers', () => {
@@ -141,5 +144,58 @@ test.describe('iCal feed — category filtering', () => {
         expect(status).toBe(200);
         expect(body).toContain('BEGIN:VCALENDAR');
         expect(body).not.toContain('BEGIN:VEVENT');
+    });
+
+    test('comma-separated categories are OR-combined (slugs)', async () => {
+        const s = summaries((await feed('?categorie=viz-nc,viz-nc2')).body);
+        expect(s).toContain(t('nc-early')); // viz-nc
+        expect(s).toContain(t('nc-concert')); // viz-nc
+        expect(s).toContain(t('nc2-public')); // viz-nc2
+        expect(s).not.toContain(title('date-public')); // uncategorised, excluded
+    });
+
+    test('comma-separated categories mix slug and numeric id', async () => {
+        const s = summaries((await feed(`?categorie=viz-nc,${catNc2Id}`)).body);
+        expect(s).toContain(t('nc-early'));
+        expect(s).toContain(t('nc2-public'));
+    });
+
+    test('unknown entries in the list are dropped, known ones still apply', async () => {
+        const s = summaries((await feed('?categorie=viz-nc2,this-does-not-exist')).body);
+        expect(s).toContain(t('nc2-public'));
+        expect(s).not.toContain(t('nc-early')); // viz-nc not requested
+    });
+});
+
+test.describe('iCal feed — concerts filter', () => {
+    test('?concerten=1 exports only concert-flagged dates', async () => {
+        const s = summaries((await feed('?concerten=1')).body);
+        expect(s).toContain(title('concert')); // is_concert, uncategorised
+        expect(s).toContain(t('nc-concert')); // is_concert, viz-nc
+        expect(s).toContain(t('nc2-public')); // is_concert, viz-nc2
+        expect(s).not.toContain(t('nc-early')); // viz-nc but NOT a concert
+        expect(s).not.toContain(title('date-public')); // public future date, not a concert
+    });
+
+    test('?concerts=1 alias works', async () => {
+        const s = summaries((await feed('?concerts=1')).body);
+        expect(s).toContain(title('concert'));
+        expect(s).not.toContain(title('date-public'));
+    });
+
+    test('concerts OR category are unioned', async () => {
+        // concerts OR viz-nc -> every concert PLUS the non-concert viz-nc date.
+        const s = summaries((await feed('?concerten=1&categorie=viz-nc')).body);
+        expect(s).toContain(title('concert')); // concert (uncategorised)
+        expect(s).toContain(t('nc-concert')); // concert in viz-nc
+        expect(s).toContain(t('nc-early')); // NOT a concert, but in viz-nc
+        expect(s).not.toContain(title('date-public')); // neither a concert nor in viz-nc
+    });
+
+    test('a falsy concerten value does not restrict', async () => {
+        // ?concerten=0 alone -> no filter -> the full public agenda (concerts included).
+        const s = summaries((await feed('?concerten=0')).body);
+        expect(s).toContain(title('concert'));
+        expect(s).toContain(title('date-public')); // non-concert public date present
     });
 });

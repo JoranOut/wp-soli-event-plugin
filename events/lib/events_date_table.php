@@ -153,21 +153,45 @@ class EventsDatesTableHandler {
 
   // All upcoming PUBLIC dates for the iCal feed (/ical). Strictly PUBLIC only
   // (PRIVATE and workflow states are excluded from the exported feed) on
-  // published events. Pass a category term id to filter; 0 = all categories.
-  function getPublicFutureDatesForFeed($category_id = 0) {
+  // published events.
+  //
+  // The category ids and the concerts flag form a single OR group: pass one or
+  // more category term ids (an event matches if it is in ANY of them) and/or
+  // set $concerts_only to also include concert-flagged dates. When nothing is
+  // selected (empty ids + false), the whole public agenda is returned.
+  function getPublicFutureDatesForFeed($category_ids = array(), $concerts_only = false) {
     $now = current_time('Y-m-d H:i:s');
 
-    $joins  = '';
+    // Normalise to a list of positive, unique term ids (scalar accepted for BC).
+    $category_ids = array_values(array_unique(array_filter(
+      array_map('absint', (array) $category_ids)
+    )));
+
     $where  = 'WHERE w.post_status = %s AND d.status = %s AND d.end_date >= %s';
     $params = array('publish', EventVisibility::STATUS_PUBLIC, $now);
 
-    if ($category_id) {
+    // Build the OR filter group from the concerts flag + category membership.
+    // Categories use an IN (SELECT ...) subquery (not a join) so it composes
+    // with the concerts condition without producing duplicate date rows.
+    $or = array();
+    if ($concerts_only) {
+      $or[] = 'd.is_concert = 1';
+    }
+    if ($category_ids) {
       $term_relationships_table = $this->wpdb->prefix . 'term_relationships';
       $term_taxonomy_table      = $this->wpdb->prefix . 'term_taxonomy';
-      $joins .= " INNER JOIN $term_relationships_table tr ON tr.object_id = w.ID
-        INNER JOIN $term_taxonomy_table tt ON tt.term_taxonomy_id = tr.term_taxonomy_id AND tt.taxonomy = 'category'";
-      $where  .= ' AND tt.term_id = %d';
-      $params[] = absint($category_id);
+      $placeholders = implode(', ', array_fill(0, count($category_ids), '%d'));
+      $or[] = "w.ID IN (
+          SELECT tr.object_id
+          FROM $term_relationships_table tr
+          INNER JOIN $term_taxonomy_table tt
+            ON tt.term_taxonomy_id = tr.term_taxonomy_id AND tt.taxonomy = 'category'
+          WHERE tt.term_id IN ($placeholders)
+      )";
+      $params = array_merge($params, $category_ids);
+    }
+    if ($or) {
+      $where .= ' AND (' . implode(' OR ', $or) . ')';
     }
 
     $sql = "
@@ -179,7 +203,6 @@ class EventsDatesTableHandler {
             ON d.post_id = w.id
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
-        $joins
         $where
         ORDER BY d.start_date asc";
 

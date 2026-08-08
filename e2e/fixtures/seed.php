@@ -156,11 +156,13 @@ $ensure_cat = function ($slug, $name) {
 
 $cat_nc   = $ensure_cat('viz-nc', 'VIZ Next-Concert');
 $cat_priv = $ensure_cat('viz-nc-priv', 'VIZ Next-Concert Private');
+$cat_nc2  = $ensure_cat('viz-nc2', 'VIZ Next-Concert Two');
 
 $catalogue['nc-early']   = $make_cat_event('nc-early', $cat_nc, 'PUBLIC', 2, false);   // earliest, not a concert
 $catalogue['nc-concert'] = $make_cat_event('nc-concert', $cat_nc, 'PUBLIC', 5, true);  // later, is a concert
 $catalogue['nc-private'] = $make_cat_event('nc-private', $cat_priv, 'PRIVATE', 2, true); // private concert
-$catalogue['_categories'] = array('viz-nc' => $cat_nc, 'viz-nc-priv' => $cat_priv);
+$catalogue['nc2-public'] = $make_cat_event('nc2-public', $cat_nc2, 'PUBLIC', 3, true);  // public concert in a 2nd category (OR filter)
+$catalogue['_categories'] = array('viz-nc' => $cat_nc, 'viz-nc-priv' => $cat_priv, 'viz-nc2' => $cat_nc2);
 
 /* ---- 4. Role users -------------------------------------------------- */
 foreach ( array( 'viz_subscriber' => 'subscriber', 'viz_editor' => 'editor' ) as $login => $role ) {
