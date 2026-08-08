@@ -44,11 +44,18 @@
       margin: 0;
     }
 
+    .actions {
+      grid-area: submit;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     button.submit-button,
-    button.delete-button {
+    button.delete-button,
+    button.edit-button {
       display: flex;
       justify-content: center;
-      grid-area: submit;
 
       img {
         height: 21px;

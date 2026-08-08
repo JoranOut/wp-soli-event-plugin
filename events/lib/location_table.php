@@ -27,6 +27,9 @@ class LocationTableHandler {
         id BIGINT(20) unsigned NOT NULL AUTO_INCREMENT,
         name TEXT NOT NULL,
         address TEXT,
+        latitude DECIMAL(10,7),
+        longitude DECIMAL(10,7),
+        geocoded_address TEXT,
         PRIMARY KEY  (id)
     ) $this->charset;");
   }
@@ -52,6 +55,33 @@ class LocationTableHandler {
                 ON l.id = d.location
                 WHERE d.id=%d", $event_id);
     return $this->wpdb->get_results($query, ARRAY_A);
+  }
+
+  function getLocationById($location_id) {
+    $location_id = absint($location_id);
+    if (!$location_id) {
+      return null;
+    }
+    $query = $this->wpdb->prepare("
+                SELECT id, name, address, latitude, longitude, geocoded_address
+                FROM $this->event_location_table
+                WHERE id = %d", $location_id);
+    return $this->wpdb->get_row($query, ARRAY_A);
+  }
+
+  // Cache a geocoding result on the location row. geocoded_address records
+  // which address the coordinates belong to, so an address edit invalidates
+  // the cache (LocationGeocoder re-geocodes on mismatch).
+  function updateCoordinates($location_id, $latitude, $longitude, $geocoded_address) {
+    $this->wpdb->update(
+      $this->event_location_table,
+      array(
+        'latitude'         => $latitude,
+        'longitude'        => $longitude,
+        'geocoded_address' => $geocoded_address,
+      ),
+      array('id' => absint($location_id))
+    );
   }
 
   function searchLocation($search_query, $limit) {

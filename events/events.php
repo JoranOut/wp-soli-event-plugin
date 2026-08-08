@@ -19,6 +19,7 @@ require_once 'lib/event_capability.php';
 require_once 'lib/event_visibility.php';
 require_once 'lib/location_table.php';
 require_once 'lib/migrations.php';
+require_once 'lib/location_geocoder.php';
 require_once 'lib/location_endpoints.php';
 require_once 'lib/events_date_table.php';
 require_once 'lib/events_log_table.php';
