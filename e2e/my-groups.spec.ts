@@ -48,12 +48,18 @@ test.describe('my-groups — SSO group panel', () => {
         await expect(rows.nth(0).locator('.soli-ork-name')).toHaveText('VIZ Mijn Groep A');
         await expect(rows.nth(1).locator('.soli-ork-name')).toHaveText('VIZ Mijn Groep B');
 
-        // Group A's next date is the PUBLIC +3d one, not the PLANNED +1d one
-        // (seed and assertion both derive from "now", so the day number matches
-        // unless midnight passes between global-setup and this test).
-        const expected = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+        // Group A's next date is the PUBLIC +3d one, not the PLANNED +1d one.
+        // The seeder derives its dates from current_time() and the block renders
+        // them in the site timezone (Europe/Amsterdam, set in .wp-env-script.sh),
+        // so the expected day number has to be computed in that timezone too:
+        // taking it from UTC made this assertion fail every day between 22:00
+        // and 24:00 UTC, when the two calendars disagree about the date.
+        const expectedDay = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Europe/Amsterdam',
+            day: 'numeric',
+        }).format(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000));
         const metaA = rows.nth(0).locator('.soli-ork-meet');
-        await expect(metaA).toContainText(` ${expected.getUTCDate()} `);
+        await expect(metaA).toContainText(` ${expectedDay} `);
         await expect(metaA).toContainText('·');
 
         // Group B only has a PLANNED date, which must not surface.
