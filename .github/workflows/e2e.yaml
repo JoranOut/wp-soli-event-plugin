@@ -4,6 +4,10 @@ on:
   pull_request:
   push:
     branches: [ main ]
+  # Manual re-run. Needed because auto-merge.yml merges as GITHUB_TOKEN, and
+  # pushes made by GITHUB_TOKEN do not trigger workflows - so a bot-merged PR
+  # leaves main without a push run. This lets main be re-verified on demand.
+  workflow_dispatch:
 
 jobs:
   e2e:
