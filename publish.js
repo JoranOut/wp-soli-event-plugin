@@ -11,14 +11,17 @@ files.forEach(file => {
     }
 });
 
-// Step 2a: Read the readme.md file
-const readmeContent = fs.readFileSync(path.join(__dirname, 'readme.md'), 'utf8');
+// Step 2a: Read the README.md file
+// NOTE: the tracked filename is README.md. Reading 'readme.md' only works on a
+// case-insensitive filesystem (macOS) and throws ENOENT on the Linux runners
+// used by release.yml / nightly.yml.
+const readmeContent = fs.readFileSync(path.join(__dirname, 'README.md'), 'utf8');
 
 // Step 2b: Extract Plugin Name and Current Version using regex
 const pluginNameMatch = readmeContent.match(/~Plugin Name:\s*(.+?)~/);
 
 if (!pluginNameMatch) {
-    throw new Error('Could not find Plugin Name or Current Version in readme.md');
+    throw new Error('Could not find Plugin Name or Current Version in README.md');
 }
 
 const pluginName = pluginNameMatch[1].trim();
