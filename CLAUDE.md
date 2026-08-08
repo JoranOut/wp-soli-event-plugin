@@ -56,6 +56,18 @@ Registered via a rewrite rule (`^ical/?$`), flushed on activation and once per `
 `/ical` 301-redirects to `/ical/` (WP trailing-slash canonical). Data via
 `EventsDatesTableHandler::getPublicFutureDatesForFeed($category_ids, $concerts_only)`.
 
+### calendar-subscribe block (`soli/calendar-subscribe`)
+
+Interactive promo widget (`events/blocks/calendar-subscribe/`) that builds a live `/ical` subscribe URL. The
+visitor picks **All concerts** and/or **orchestras/groups** (categories used by published events, listed via
+`GET /soli_event/v1/feed-categories` → `EventsDatesTableHandler::getFeedCategories()`) from one searchable
+multi-select dropdown with removable chips (vanilla JS — scales to many categories); the selection is
+OR-combined into the URL (`?categorie=…&concerten=1`) with copy / add-to-calendar (`webcal://`) / download
+actions, plus a collapsed "How do I use this?" `<details>` explainer. The editor sets which options are
+pre-ticked via `defaultConcerts` / `defaultCategories` attributes (categories via a `FormTokenField` in the
+inspector); the front-end (`src/frontend.js`, plain DOM) keeps the URL in sync as the selection changes.
+Nothing ticked → the bare feed (whole public agenda).
+
 ### Editing / admin surfaces (role-aware exception)
 
 - `GET /events/{id}` (used by the create-event block) returns rows filtered by viewer via

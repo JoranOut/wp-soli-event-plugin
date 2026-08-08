@@ -5,7 +5,29 @@ function soli_event_rest_api() {
   buildGETEventsBetweenDates();
   buildGETEventDatesFromEvent();
   buildGETFutureEventsByPageAndItemsPerPage();
+  buildGETFeedCategories();
   buildPOSTEventDates();
+}
+
+// Categories assigned to published events, for the calendar-subscribe block's
+// editor UI. Public read (the same data is server-rendered on the front end).
+function buildGETFeedCategories() {
+  register_rest_route('soli_event/v1', '/feed-categories', array(
+    'methods' => 'GET',
+    'permission_callback' => '__return_true', // *always set a permission callback
+    'callback' => function () {
+      $eventHandler = new \Soli\Events\EventsDatesTableHandler();
+      $categories = $eventHandler->getFeedCategories();
+      $categories = array_map(function ($cat) {
+        return array(
+          'id'   => (int) $cat['term_id'],
+          'name' => $cat['name'],
+          'slug' => $cat['slug'],
+        );
+      }, is_array($categories) ? $categories : array());
+      return new WP_REST_Response($categories, 200);
+    },
+  ));
 }
 
 function buildGETEventsBetweenDates() {

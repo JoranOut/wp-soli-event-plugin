@@ -209,6 +209,28 @@ class EventsDatesTableHandler {
     return $this->wpdb->get_results($this->wpdb->prepare($sql, $params), ARRAY_A);
   }
 
+  // Categories assigned to published events, for the calendar-subscribe block.
+  // Returns [{term_id, name, slug}] ordered by name; only categories actually
+  // used by a published soli_event appear (empty ones are hidden).
+  function getFeedCategories() {
+    $terms_table              = $this->wpdb->prefix . 'terms';
+    $term_taxonomy_table      = $this->wpdb->prefix . 'term_taxonomy';
+    $term_relationships_table = $this->wpdb->prefix . 'term_relationships';
+
+    $sql = "
+        SELECT DISTINCT t.term_id, t.name, t.slug
+        FROM $terms_table t
+        INNER JOIN $term_taxonomy_table tt
+            ON tt.term_id = t.term_id AND tt.taxonomy = 'category'
+        INNER JOIN $term_relationships_table tr
+            ON tr.term_taxonomy_id = tt.term_taxonomy_id
+        INNER JOIN $this->post_table p
+            ON p.ID = tr.object_id AND p.post_type = %s AND p.post_status = %s
+        ORDER BY t.name ASC";
+
+    return $this->wpdb->get_results($this->wpdb->prepare($sql, 'soli_event', 'publish'), ARRAY_A);
+  }
+
   function getFutureDatesPerPageFromEvent($page, $itemsPerPage) {
     $dates = $this->loadFutureEventDatesPerPageFromDb($page, $itemsPerPage);
     if (empty($dates)) {

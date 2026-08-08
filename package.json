@@ -24,7 +24,8 @@
     "events/blocks/event-view-list",
     "events/blocks/concert-hero",
     "events/blocks/next-concert",
-    "events/blocks/event-dates"
+    "events/blocks/event-dates",
+    "events/blocks/calendar-subscribe"
   ],
   "keywords": [],
   "author": "",
