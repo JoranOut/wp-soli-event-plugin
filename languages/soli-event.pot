@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-19T10:14:56+00:00\n"
+"POT-Creation-Date: 2026-08-07T22:10:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: soli-event\n"
@@ -22,6 +22,69 @@ msgstr ""
 #. Author of the plugin
 #: soli-event-plugin.php
 msgid "Joran Out"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:59
+#: events/blocks/calendar-subscribe/src/index.js:65
+msgid "Subscribe to the agenda"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:85
+msgid "Copied!"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:86
+msgid "Select concerts, orchestras or groups…"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:87
+#: events/blocks/concert-hero/src/index.js:124
+msgid "Remove"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:88
+#: events/blocks/calendar-subscribe/src/index.js:79
+msgid "All concerts"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:103
+msgid "What do you want in your calendar?"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:135
+msgid "Search…"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:151
+msgid "No matches found."
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:160
+msgid "Add to calendar"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:164
+msgid "Copy link"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:167
+msgid "Download .ics"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:173
+msgid "How do I use this?"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:175
+msgid "Tick what you want in your calendar: all concerts and/or specific orchestras and groups."
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:176
+msgid "Click \"Add to calendar\" to subscribe with your calendar app, or copy the link and add it in Google Calendar or Outlook as a calendar \"from URL\"."
+msgstr ""
+
+#: events/blocks/calendar-subscribe/index.php:177
+msgid "Your calendar then stays up to date automatically. \"Download .ics\" gives a one-time snapshot that does not update."
 msgstr ""
 
 #: events/blocks/concert-hero/index.php:28
@@ -46,29 +109,36 @@ msgstr ""
 msgid "No upcoming concert found. Flag an event date as a concert to populate this hero."
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:129
+#: events/blocks/concert-hero/index.php:136
 msgid "Concert programme"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:133
+#: events/blocks/concert-hero/index.php:140
 #: events/blocks/event-view-calendar/src/index.js:33
 msgid "Day"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:135
+#: events/blocks/concert-hero/index.php:142
 msgid "Start"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:136
+#: events/blocks/concert-hero/index.php:143
 msgid "hrs"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:138
+#: events/blocks/concert-hero/index.php:145
+#: events/blocks/event-location-map/index.php:34
+#: events/blocks/event-location-map/index.php:75
 #: events/lib/events_admin_table.php:7
+#: events/blocks/event-location-map/src/index.js:17
 msgid "Location"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:145
+#: events/blocks/concert-hero/index.php:153
+msgid "About this concert →"
+msgstr ""
+
+#: events/blocks/concert-hero/index.php:155
 msgid "Full agenda →"
 msgstr ""
 
@@ -86,25 +156,74 @@ msgstr ""
 msgid "next up"
 msgstr ""
 
+#: events/blocks/event-location-map/index.php:91
+msgid "The location map resolves on an event page, where it shows the venue of the current event date."
+msgstr ""
+
+#: events/blocks/event-location-map/index.php:99
+msgid "This event has no upcoming dates, so the location map stays hidden on the front end."
+msgstr ""
+
+#: events/blocks/event-location-map/index.php:107
+msgid "No location is set for this event date, so the map stays hidden on the front end."
+msgstr ""
+
+#: events/blocks/event-location-map/index.php:117
+msgid "The location address could not be found on the map, so the map stays hidden on the front end."
+msgstr ""
+
+#: events/blocks/event-location-map/index.php:162
+msgid "Get directions"
+msgstr ""
+
+#: events/blocks/my-groups/index.php:27
+#: events/blocks/my-groups/index.php:49
+#: events/blocks/my-groups/src/index.js:19
+msgid "My orchestras"
+msgstr ""
+
+#: events/blocks/my-groups/index.php:53
+msgid "Shown to logged-in members only: this panel lists the groups from their Soli account."
+msgstr ""
+
+#: events/blocks/my-groups/index.php:59
+msgid "Your account has no group assignments from the Soli administration (they sync at SSO login). Members see their own groups here."
+msgstr ""
+
+#: events/blocks/my-groups/index.php:64
+msgid "None of your groups are linked to a category yet. Set the Soli administration group ID on each group's category."
+msgstr ""
+
+#: events/blocks/my-groups/index.php:104
+msgid "no upcoming events"
+msgstr ""
+
+#. translators: 1: date (e.g. "Tue 12 Aug"), 2: time (e.g. "19:30").
+#: events/blocks/my-groups/index.php:107
+#, php-format
+msgctxt "group next event: date · time"
+msgid "%1$s · %2$s"
+msgstr ""
+
 #: events/blocks/next-concert/index.php:27
-#: events/blocks/next-concert/index.php:40
-#: events/blocks/next-concert/src/index.js:20
+#: events/blocks/next-concert/index.php:42
+#: events/blocks/next-concert/src/index.js:22
 msgid "Concert agenda"
 msgstr ""
 
 #: events/blocks/next-concert/index.php:28
-#: events/blocks/next-concert/index.php:41
-#: events/blocks/next-concert/src/index.js:21
+#: events/blocks/next-concert/index.php:43
+#: events/blocks/next-concert/src/index.js:23
 msgid "The next concert on Soli’s programme."
 msgstr ""
 
 #: events/blocks/next-concert/index.php:29
-#: events/blocks/next-concert/index.php:42
-#: events/blocks/next-concert/src/index.js:22
+#: events/blocks/next-concert/index.php:44
+#: events/blocks/next-concert/src/index.js:24
 msgid "Agenda →"
 msgstr ""
 
-#: events/blocks/next-concert/index.php:53
+#: events/blocks/next-concert/index.php:60
 msgid "No upcoming concert found. Flag an event date as a concert to populate this card."
 msgstr ""
 
@@ -122,6 +241,7 @@ msgid "public"
 msgstr ""
 
 #: events/inc/values.php:52
+#: events/lib/event_visibility.php:48
 msgid "private"
 msgstr ""
 
@@ -131,6 +251,16 @@ msgstr ""
 
 #: events/inc/values.php:57
 msgid "pending approval"
+msgstr ""
+
+#: events/lib/category_onderdeel.php:46
+#: events/lib/category_onderdeel.php:57
+msgid "Soli administration group ID"
+msgstr ""
+
+#: events/lib/category_onderdeel.php:48
+#: events/lib/category_onderdeel.php:60
+msgid "The onderdeel-ID of this orchestra/group in the Soli administration. Links SSO group memberships to this category, e.g. for the \"My orchestras\" block. Leave empty for categories that are not a group."
 msgstr ""
 
 #: events/lib/events_admin_log_page.php:9
@@ -149,6 +279,7 @@ msgstr ""
 
 #: events/lib/events_admin_log_page.php:38
 #: events/lib/post_type.php:7
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:124
 msgid "Event"
 msgstr ""
 
@@ -273,6 +404,7 @@ msgid "Status"
 msgstr ""
 
 #: events/lib/events_admin_table.php:9
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:178
 msgid "Notes"
 msgstr ""
 
@@ -289,7 +421,7 @@ msgid " (admin notes)"
 msgstr ""
 
 #: events/lib/events_admin_table.php:179
-#: events/blocks/event-reservation-popup/src/components/event-list-item/event-list-item.js:39
+#: events/blocks/event-reservation-popup/src/components/event-list-item/event-list-item.js:43
 msgid "View"
 msgstr ""
 
@@ -303,9 +435,13 @@ msgstr ""
 msgid "This page displays various calendar views for managing your events."
 msgstr ""
 
-#: events/lib/events_endpoints.php:22
-#: events/lib/location_endpoints.php:57
+#: events/lib/events_endpoints.php:44
+#: events/lib/location_endpoints.php:61
 msgid "Invalid request arguments."
+msgstr ""
+
+#: events/lib/ical_feed.php:142
+msgid "Agenda"
 msgstr ""
 
 #: events/lib/plugin_settings_page.php:7
@@ -355,7 +491,6 @@ msgstr ""
 
 #: events/lib/post_type.php:6
 #: events/lib/post_type.php:35
-#: events/blocks/event-reservation-popup/src/components/event-list/event-list.js:37
 msgid "Events"
 msgstr ""
 
@@ -387,11 +522,11 @@ msgstr ""
 msgid "No Events Found"
 msgstr ""
 
-#: events/lib/post_type_query.php:92
+#: events/lib/post_type_query.php:123
 msgid "Future Events"
 msgstr ""
 
-#: events/lib/post_type_query.php:93
+#: events/lib/post_type_query.php:124
 msgid "All Events"
 msgstr ""
 
@@ -400,7 +535,55 @@ msgid "Single Event"
 msgstr ""
 
 #: events/lib/single_event_template.php:18
-msgid "Event detail page: title, content, and the upcoming dates and next concert cards."
+msgid "Event detail page: title, content, and the upcoming dates, location map and next concert cards."
+msgstr ""
+
+#: events/lib/single_event_template.php:46
+msgid "This event is private."
+msgstr ""
+
+#: events/lib/single_event_template.php:47
+msgid "Forbidden"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/src/index.js:10
+msgid "Calendar subscribe"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/src/index.js:11
+msgid "Let visitors build an iCal subscribe link for concerts and/or orchestras."
+msgstr ""
+
+#: events/blocks/calendar-subscribe/src/index.js:61
+#: events/blocks/concert-hero/src/index.js:45
+#: events/blocks/event-dates/src/index.js:37
+#: events/blocks/my-groups/src/index.js:32
+#: events/blocks/next-concert/src/index.js:66
+msgid "Content"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/src/index.js:63
+msgid "Heading"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/src/index.js:69
+msgid "Description"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/src/index.js:74
+msgid "Default selection"
+msgstr ""
+
+#: events/blocks/calendar-subscribe/src/index.js:76
+msgid "These options are pre-ticked when a visitor opens the page. They can still change them."
+msgstr ""
+
+#: events/blocks/calendar-subscribe/src/index.js:85
+msgid "No categories are assigned to any published event yet."
+msgstr ""
+
+#: events/blocks/calendar-subscribe/src/index.js:89
+msgid "Orchestras and groups"
 msgstr ""
 
 #: events/blocks/concert-hero/src/index.js:14
@@ -411,14 +594,8 @@ msgstr ""
 msgid "Hero banner for the next upcoming concert."
 msgstr ""
 
-#: events/blocks/concert-hero/src/index.js:45
-#: events/blocks/event-dates/src/index.js:37
-#: events/blocks/next-concert/src/index.js:36
-msgid "Content"
-msgstr ""
-
 #: events/blocks/concert-hero/src/index.js:47
-#: events/blocks/next-concert/src/index.js:38
+#: events/blocks/next-concert/src/index.js:68
 msgid "Eyebrow label"
 msgstr ""
 
@@ -436,7 +613,7 @@ msgstr ""
 
 #: events/blocks/concert-hero/src/index.js:63
 #: events/blocks/concert-hero/src/index.js:76
-#: events/blocks/next-concert/src/index.js:50
+#: events/blocks/next-concert/src/index.js:80
 msgid "Label"
 msgstr ""
 
@@ -445,7 +622,7 @@ msgid "Agenda link"
 msgstr ""
 
 #: events/blocks/concert-hero/src/index.js:69
-msgid "Used by the primary button and the card link."
+msgid "Used by the primary button; the card link points to the concert itself and only falls back to this."
 msgstr ""
 
 #: events/blocks/concert-hero/src/index.js:74
@@ -453,7 +630,7 @@ msgid "Secondary button"
 msgstr ""
 
 #: events/blocks/concert-hero/src/index.js:81
-#: events/blocks/next-concert/src/index.js:54
+#: events/blocks/next-concert/src/index.js:84
 msgid "Link"
 msgstr ""
 
@@ -463,10 +640,6 @@ msgstr ""
 
 #: events/blocks/concert-hero/src/index.js:120
 msgid "Select image"
-msgstr ""
-
-#: events/blocks/concert-hero/src/index.js:124
-msgid "Remove"
 msgstr ""
 
 #: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:49
@@ -484,7 +657,7 @@ msgstr ""
 
 #: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:73
 #: events/blocks/create-event/src/components/notes-editor/notes-editor.js:74
-#: events/blocks/event-reservation-popup/src/components/reservation-tool/reservation-tool.js:33
+#: events/blocks/event-reservation-popup/src/components/reservation-tool/reservation-tool.js:35
 msgid "Close"
 msgstr ""
 
@@ -526,15 +699,15 @@ msgid "to"
 msgstr ""
 
 #: events/blocks/create-event/src/components/delete-button/delete-button.js:9
-#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:73
+#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:87
 msgid "delete"
 msgstr ""
 
-#: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:102
+#: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:103
 msgid "Event data was saved, but could not be reloaded. Reload the page."
 msgstr ""
 
-#: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:182
+#: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:192
 #: events/blocks/create-event/src/components/events-provider/events-provider.js:32
 #: events/blocks/event-reservation-popup/src/components/events-provider/internal-events-provider.js:74
 #: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:119
@@ -543,10 +716,246 @@ msgstr ""
 msgid "Error: %s"
 msgstr ""
 
-#: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:185
+#: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:195
 #: events/blocks/create-event/src/components/events-provider/events-provider.js:35
-#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:89
+#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:107
 msgid "Loading…"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:105
+msgid "When does it take place?"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:106
+msgid "Where does it take place?"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:107
+msgid "Details"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:108
+msgid "Does it repeat?"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:119
+msgid "Plan your first date"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:162
+msgid "You can leave this empty and pick a location later."
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:179
+#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:59
+msgid "These notes will only be visible in the admin area."
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:195
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:342
+msgid "Choose a repeat frequency"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:199
+msgid "Does not repeat"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:200
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:362
+msgid "Weekly"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:201
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:364
+msgid "Every other week"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:202
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:366
+msgid "Monthly"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:217
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:91
+msgid "Until date"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:223
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:97
+msgid "Number"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:232
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:416
+msgid "Repeat until and including:"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:250
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
+msgid "weeks"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:251
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
+msgid "times every other week"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:252
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
+msgid "months"
+msgstr ""
+
+#. translators: %d is the number of repeated dates that will be added.
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:261
+#, js-format
+msgid "%d extra dates will be added:"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:279
+msgid "Skip"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:284
+msgid "Back"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:289
+msgid "Next"
+msgstr ""
+
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:294
+msgid "Finish"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:149
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:169
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:176
+msgid "Invoice this event"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:162
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:276
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:302
+msgid "Invoice"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:183
+msgid "Choose the period and the dates to invoice, then download the invoice as a Word document."
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:190
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:149
+msgid "From"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:196
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:150
+msgid "Until"
+msgstr ""
+
+#. translators: %s: number of hours, e.g. 2,50
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:222
+#, js-format
+msgid "%s hours"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:231
+msgid "No dates in the chosen period."
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:238
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:241
+msgid "Hourly rate (€)"
+msgstr ""
+
+#. translators: %d: number of selected dates
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:247
+#, js-format
+msgid "%d date selected"
+msgid_plural "%d dates selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:257
+msgid "Download invoice"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:63
+msgid "invoice"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:97
+msgid "Invoice number"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:98
+msgid "Invoice date"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:100
+msgid "Due date"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:148
+msgid "Date"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:151
+msgid "Hours"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:157
+msgid "Amount (€)"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:235
+msgid "Total hours"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:244
+msgid "Subtotal (€)"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:247
+msgid "VAT percentage"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:250
+msgid "VAT (€)"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:257
+msgid "Total (€)"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:306
+msgid "To"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:313
+msgid "Subject"
+msgstr ""
+
+#. translators: %d: number of days
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:323
+#, js-format
+msgid "Please pay within %d days, quoting the invoice number, to IBAN"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:328
+msgid "in the name of"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:331
+msgid "Chamber of Commerce"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:332
+msgid "VAT number"
+msgstr ""
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:339
+msgid "Tip: change the hourly rate or the VAT percentage in the table, then select everything (Ctrl+A) and press F9 to recalculate all amounts."
 msgstr ""
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:66
@@ -558,20 +967,36 @@ msgid "Create a location"
 msgstr ""
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:81
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:64
 msgid "Location name*"
 msgstr ""
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:88
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:97
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:71
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:80
 msgid "required"
 msgstr ""
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:90
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:73
 msgid "Location address*"
 msgstr ""
 
 #: events/blocks/create-event/src/components/location-creator/location-creator.js:103
 msgid "Save and select"
+msgstr ""
+
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:50
+msgid "Edit location"
+msgstr ""
+
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:61
+msgid "This location is shared: changes apply to every event date it is assigned to."
+msgstr ""
+
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:87
+msgid "Save changes"
 msgstr ""
 
 #: events/blocks/create-event/src/components/location-picker/location-picker.js:46
@@ -583,24 +1008,25 @@ msgstr ""
 msgid "Muziekcentrum"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:71
+#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:83
 msgid "(selected)"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:84
+#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:86
+#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:97
+msgid "edit"
+msgstr ""
+
+#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:101
 msgid "Select"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:88
+#: events/blocks/create-event/src/components/location-searcher/location-searcher.js:106
 msgid "Nothing found…"
 msgstr ""
 
 #: events/blocks/create-event/src/components/notes-editor/notes-editor.js:50
 msgid "Notepad"
-msgstr ""
-
-#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:59
-msgid "These notes will only be visible in the admin area."
 msgstr ""
 
 #: events/blocks/create-event/src/components/notes-editor/notes-editor.js:100
@@ -619,7 +1045,7 @@ msgstr ""
 msgid "( ! ) This event has already taken place"
 msgstr ""
 
-#: events/blocks/create-event/src/components/selected-date/selected-date.js:70
+#: events/blocks/create-event/src/components/selected-date/selected-date.js:75
 msgid "No location known"
 msgstr ""
 
@@ -633,14 +1059,6 @@ msgstr ""
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:67
 msgid "Hide"
-msgstr ""
-
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:91
-msgid "Until date"
-msgstr ""
-
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:97
-msgid "Number"
 msgstr ""
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:167
@@ -671,47 +1089,15 @@ msgstr ""
 msgid "Select how the event repeats"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:342
-msgid "Choose a repeat frequency"
-msgstr ""
-
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:360
 msgid "Select an option"
-msgstr ""
-
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:362
-msgid "Weekly"
-msgstr ""
-
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:364
-msgid "Every other week"
-msgstr ""
-
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:366
-msgid "Monthly"
-msgstr ""
-
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
-msgid "weeks"
-msgstr ""
-
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
-msgid "times every other week"
-msgstr ""
-
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
-msgid "months"
-msgstr ""
-
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:416
-msgid "Repeat until and including:"
 msgstr ""
 
 #: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:451
 msgid "Use"
 msgstr ""
 
-#: events/blocks/create-event/src/index.js:16
+#: events/blocks/create-event/src/index.js:17
 msgid "Create Event"
 msgstr ""
 
@@ -724,6 +1110,7 @@ msgid "Lists the next upcoming dates of the current event."
 msgstr ""
 
 #: events/blocks/event-dates/src/index.js:39
+#: events/blocks/event-location-map/src/index.js:41
 msgid "Card heading"
 msgstr ""
 
@@ -737,6 +1124,38 @@ msgstr ""
 
 #: events/blocks/event-dates/src/index.js:52
 msgid "Optional line shown under the list."
+msgstr ""
+
+#: events/blocks/event-location-map/src/index.js:9
+msgid "Event Location Map"
+msgstr ""
+
+#: events/blocks/event-location-map/src/index.js:10
+msgid "Shows the location of the current event date on a map."
+msgstr ""
+
+#: events/blocks/event-location-map/src/index.js:39
+msgid "Map"
+msgstr ""
+
+#: events/blocks/event-location-map/src/index.js:46
+msgid "Zoom level"
+msgstr ""
+
+#: events/blocks/event-location-map/src/index.js:53
+msgid "Home venue"
+msgstr ""
+
+#: events/blocks/event-location-map/src/index.js:55
+msgid "Name"
+msgstr ""
+
+#: events/blocks/event-location-map/src/index.js:56
+msgid "Shown for dates at the internal venue (rooms, no external location)."
+msgstr ""
+
+#: events/blocks/event-location-map/src/index.js:61
+msgid "Address"
 msgstr ""
 
 #: events/blocks/event-reservation-popup/src/components/calendar-preview/calendar-preview.js:37
@@ -776,7 +1195,7 @@ msgid ""
 "[Your name]"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/components/email-button/email-button.js:45
+#: events/blocks/event-reservation-popup/src/components/email-button/email-button.js:46
 msgid "Room reservation Soli Muziekcentrum"
 msgstr ""
 
@@ -784,15 +1203,23 @@ msgstr ""
 msgid "Generate email"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/components/event-list-item/event-list-item.js:48
+#: events/blocks/event-reservation-popup/src/components/event-list-item/event-list-item.js:49
 msgid "Copy"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/components/event-list-item/event-list-item.js:55
+#: events/blocks/event-reservation-popup/src/components/event-list-item/event-list-item.js:56
 msgid "Delete"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/components/event-list/event-list.js:48
+#: events/blocks/event-reservation-popup/src/components/event-list/event-list.js:37
+msgid "Time slots to reserve"
+msgstr ""
+
+#: events/blocks/event-reservation-popup/src/components/event-list/event-list.js:40
+msgid "No time slots yet. Click \"new\" to add your first one."
+msgstr ""
+
+#: events/blocks/event-reservation-popup/src/components/event-list/event-list.js:53
 msgid "new"
 msgstr ""
 
@@ -818,8 +1245,20 @@ msgstr ""
 msgid "Copy text"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/index.js:6
+#: events/blocks/event-reservation-popup/src/index.js:8
 msgid "Event Reservation Popup"
+msgstr ""
+
+#: events/blocks/event-reservation-popup/src/index.js:21
+msgid "Reservation e-mail"
+msgstr ""
+
+#: events/blocks/event-reservation-popup/src/index.js:23
+msgid "Recipient e-mail address"
+msgstr ""
+
+#: events/blocks/event-reservation-popup/src/index.js:24
+msgid "The generated reservation e-mail is addressed to this public address. Leave empty to let the visitor fill in the recipient themselves."
 msgstr ""
 
 #: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:45
@@ -859,6 +1298,7 @@ msgid "Allow switching views"
 msgstr ""
 
 #: events/blocks/event-view-calendar/src/index.js:43
+#: events/blocks/next-concert/src/index.js:52
 msgid "Only concerts"
 msgstr ""
 
@@ -908,18 +1348,50 @@ msgstr ""
 msgid "Show Navigation"
 msgstr ""
 
-#: events/blocks/next-concert/src/index.js:12
+#: events/blocks/my-groups/src/index.js:11
+msgid "My Orchestras"
+msgstr ""
+
+#: events/blocks/my-groups/src/index.js:12
+msgid "The logged-in member's groups (from their Soli account) with each group's next event."
+msgstr ""
+
+#: events/blocks/my-groups/src/index.js:34
+msgid "Title"
+msgstr ""
+
+#: events/blocks/next-concert/src/index.js:14
 msgid "Next Concert"
 msgstr ""
 
-#: events/blocks/next-concert/src/index.js:13
+#: events/blocks/next-concert/src/index.js:15
 msgid "Compact card linking the next upcoming concert."
 msgstr ""
 
 #: events/blocks/next-concert/src/index.js:43
+msgid "All categories (no filter)"
+msgstr ""
+
+#: events/blocks/next-concert/src/index.js:50
+msgid "Selection"
+msgstr ""
+
+#: events/blocks/next-concert/src/index.js:54
+msgid "Only event dates flagged as concerts are shown."
+msgstr ""
+
+#: events/blocks/next-concert/src/index.js:55
+msgid "Any upcoming event date can be shown."
+msgstr ""
+
+#: events/blocks/next-concert/src/index.js:60
+msgid "Category"
+msgstr ""
+
+#: events/blocks/next-concert/src/index.js:73
 msgid "Lead text"
 msgstr ""
 
-#: events/blocks/next-concert/src/index.js:48
+#: events/blocks/next-concert/src/index.js:78
 msgid "Button"
 msgstr ""

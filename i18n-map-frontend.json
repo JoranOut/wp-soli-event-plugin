@@ -18,6 +18,7 @@
   "events/blocks/create-event/src/components/events-provider/events-provider.js": "events/blocks/create-event/build/frontend.js",
   "events/blocks/create-event/src/components/image-button/image-button.js": "events/blocks/create-event/build/frontend.js",
   "events/blocks/create-event/src/components/location-creator/location-creator.js": "events/blocks/create-event/build/frontend.js",
+  "events/blocks/create-event/src/components/location-editor/location-editor.js": "events/blocks/create-event/build/frontend.js",
   "events/blocks/create-event/src/components/location-picker/location-picker.js": "events/blocks/create-event/build/frontend.js",
   "events/blocks/create-event/src/components/location-searcher/location-searcher.js": "events/blocks/create-event/build/frontend.js",
   "events/blocks/create-event/src/components/more-dropdown/more-dropdown.js": "events/blocks/create-event/build/frontend.js",

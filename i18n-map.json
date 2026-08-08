@@ -1,4 +1,5 @@
 {
+  "events/blocks/calendar-subscribe/src/index.js": "events/blocks/calendar-subscribe/build/index.js",
   "events/blocks/concert-hero/src/index.js": "events/blocks/concert-hero/build/index.js",
   "events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/concert-status-switch/concert-status-switch.js": "events/blocks/create-event/build/index.js",
@@ -17,8 +18,12 @@
   "events/blocks/create-event/src/components/events-provider/admin-events-provider.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/events-provider/event-mapper.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/events-provider/events-provider.js": "events/blocks/create-event/build/index.js",
+  "events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/image-button/image-button.js": "events/blocks/create-event/build/index.js",
+  "events/blocks/create-event/src/components/invoice-button/invoice-button.js": "events/blocks/create-event/build/index.js",
+  "events/blocks/create-event/src/components/invoice-button/invoice-docx.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/location-creator/location-creator.js": "events/blocks/create-event/build/index.js",
+  "events/blocks/create-event/src/components/location-editor/location-editor.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/location-picker/location-picker.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/location-searcher/location-searcher.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/more-dropdown/more-dropdown.js": "events/blocks/create-event/build/index.js",
@@ -33,6 +38,7 @@
   "events/blocks/create-event/src/frontend.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/index.js": "events/blocks/create-event/build/index.js",
   "events/blocks/event-dates/src/index.js": "events/blocks/event-dates/build/index.js",
+  "events/blocks/event-location-map/src/index.js": "events/blocks/event-location-map/build/index.js",
   "events/blocks/event-reservation-popup/src/components/calendar-preview/calendar-preview.js": "events/blocks/event-reservation-popup/build/index.js",
   "events/blocks/event-reservation-popup/src/components/daterange-picker/daterange-picker.js": "events/blocks/event-reservation-popup/build/index.js",
   "events/blocks/event-reservation-popup/src/components/email-button/email-button.js": "events/blocks/event-reservation-popup/build/index.js",
@@ -65,5 +71,6 @@
   "events/blocks/event-view-list/src/components/nav/pagination-nav.js": "events/blocks/event-view-list/build/index.js",
   "events/blocks/event-view-list/src/frontend.js": "events/blocks/event-view-list/build/index.js",
   "events/blocks/event-view-list/src/index.js": "events/blocks/event-view-list/build/index.js",
+  "events/blocks/my-groups/src/index.js": "events/blocks/my-groups/build/index.js",
   "events/blocks/next-concert/src/index.js": "events/blocks/next-concert/build/index.js"
 }
