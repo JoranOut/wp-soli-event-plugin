@@ -1,4 +1,4 @@
-name: E2E (Playwright on wp-env)
+name: Test
 
 on:
   pull_request:
@@ -10,7 +10,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  e2e:
+  # Job id is the required status check context (must match the "PR requirements"
+  # ruleset, and the `test` name used across all Soli repos). The workflow name
+  # never appears as a check context.
+  test:
     runs-on: ubuntu-latest
     timeout-minutes: 45
 

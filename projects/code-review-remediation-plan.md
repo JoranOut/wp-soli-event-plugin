@@ -206,7 +206,7 @@ Not yet pushed / no PRs opened — awaiting go-ahead.
 - **Acceptance:** Import gone; bundle + `*.asset.php` deps clean.
 
 ### 4.5 Editor `index.php` fixes for CI-verifiable download of build artifacts
-- Confirm the E2E workflow (`.github/workflows/e2e.yaml`) still builds and passes after workspace fix. Consider committing build artifacts only if the release process depends on them (currently `build/` is not tracked — keep it that way and rely on the build step).
+- Confirm the E2E workflow (`.github/workflows/test.yml`) still builds and passes after workspace fix. Consider committing build artifacts only if the release process depends on them (currently `build/` is not tracked — keep it that way and rely on the build step).
 
 ---
 
