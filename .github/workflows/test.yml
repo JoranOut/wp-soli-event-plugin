@@ -42,11 +42,11 @@ jobs:
           COMPOSE_HTTP_TIMEOUT: 200
         run: npm run wp-env:start
 
-      # Wait for the test site (port 8889) to be up before running tests
-      - name: Wait for WordPress (8889)
+      # Wait for the test site (port 8901) to be up before running tests
+      - name: Wait for WordPress (8901)
         run: |
           for i in {1..60}; do
-            if curl -sSf http://localhost:8889/wp-login.php >/dev/null; then
+            if curl -sSf http://localhost:8901/wp-login.php >/dev/null; then
               echo "WordPress is up";
               break
             fi
@@ -57,7 +57,7 @@ jobs:
       - name: Run Playwright tests
         env:
           CI: true
-          BASE_URL: http://localhost:8889
+          BASE_URL: http://localhost:8901
         run: |
           # Add any extra flags after "--"
           npm run test:playwright -- --reporter=html

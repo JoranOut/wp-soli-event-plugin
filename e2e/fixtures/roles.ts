@@ -12,7 +12,7 @@ import {
 import * as fs from 'fs';
 import { type Role, storageStateFor } from './catalogue';
 
-export const BASE_URL = process.env.BASE_URL || 'http://localhost:8889';
+export const BASE_URL = process.env.BASE_URL || 'http://localhost:8901';
 
 // The storageState files minted by RequestUtils carry a `nonce` alongside the
 // cookies. WordPress REST cookie auth is rejected without the X-WP-Nonce header,

@@ -18,7 +18,7 @@ const config = defineConfig({
         // session) and `contextOptions` - otherwise the browser context loads
         // no auth and every test would need to log in manually.
         ...baseConfig.use,
-        baseURL: process.env.BASE_URL || 'http://localhost:8889',
+        baseURL: process.env.BASE_URL || 'http://localhost:8901',
         screenshot: 'only-on-failure',
         video: process.env.CI ? 'retain-on-failure' : 'on', // keep videos for failures in CI
         trace: 'retain-on-failure',                         // full click-by-click trace on failure

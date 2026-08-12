@@ -16,7 +16,7 @@ import { ROLE_USERS, storageStateFor } from './fixtures/catalogue';
 const PLUGIN_PATH = 'wp-content/plugins/wp-soli-event-plugin/e2e/fixtures/seed.php';
 
 async function globalSetup(config: FullConfig) {
-    const baseURL = (config.projects[0].use.baseURL as string) || 'http://localhost:8889';
+    const baseURL = (config.projects[0].use.baseURL as string) || 'http://localhost:8901';
 
     // 1. Admin storageState (base behaviour). WP_ADMIN_USER by default.
     const adminCtx = await request.newContext({ baseURL });
@@ -27,7 +27,7 @@ async function globalSetup(config: FullConfig) {
     await adminCtx.dispose();
 
     // 2. Seed the catalogue into the tests instance (idempotent). Runs in the
-    //    tests-cli container, which backs baseURL :8889.
+    //    tests-cli container, which backs baseURL :8901.
     execSync(`npx wp-env run tests-cli wp eval-file ${PLUGIN_PATH}`, {
         stdio: 'inherit',
     });
