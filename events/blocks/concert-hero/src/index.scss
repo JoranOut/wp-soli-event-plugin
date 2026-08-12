@@ -79,11 +79,18 @@
     color: var(--sch-gold);
   }
 
+  // Own container so the title scales with the space left next to the card.
+  &__content {
+    container-type: inline-size;
+    min-width: 0;
+  }
+
   &__title {
     margin: 0;
     font-family: var(--sch-font-display);
     font-weight: 700;
-    font-size: clamp(56px, 8vw, 120px);
+    // cqi = % of the content column's width, so a wider card shrinks the title.
+    font-size: clamp(48px, 14cqi, 120px);
     line-height: 0.95;
     letter-spacing: -0.01em;
     color: var(--sch-cream);
@@ -160,7 +167,7 @@
   }
 
   &__card {
-    max-width: 340px;
+    max-width: 420px;
     padding: 28px;
     border-radius: 10px 10px 3px 10px;
     background: var(--sch-cream);
@@ -239,7 +246,9 @@
     }
 
     &__body {
-      grid-template-columns: 1.4fr 1fr;
+      // Card column sizes to its content (up to its max-width); the title
+      // column takes whatever is left and the title scales to it (cqi).
+      grid-template-columns: minmax(0, 1fr) auto;
     }
 
     &__aside {
