@@ -35,6 +35,33 @@ jobs:
           echo "nightly_version=${NIGHTLY_VERSION}" >> $GITHUB_OUTPUT
           echo "date=${DATE}" >> $GITHUB_OUTPUT
 
+      - name: Stamp nightly version
+        env:
+          V: ${{ steps.version.outputs.nightly_version }}
+        run: |
+          set -euo pipefail
+          # publish.js zips what is on disk, so the nightly version has to be
+          # written into the version locations *before* the build. Without this
+          # the zip reports the stable version, no site can tell a nightly from
+          # a stable install, and the updater's channel split cannot engage.
+          # Working tree only - nothing is committed back to the repo.
+          sed -i -E "s|^(  Version: ).*$|\1${V}|" soli-event-plugin.php
+          sed -i -E "s|(SOLI_EVENT__PLUGIN_VERSION', \")[^\"]*(\")|\1${V}\2|" soli-event-plugin.php
+          sed -i -E "s|(~Current Version:[[:space:]]*)[^~]*(~)|\1${V}\2|" README.md
+          # package.json is excluded from the zip, but keep it consistent so a
+          # later change to publish.js's ignore list cannot reintroduce a drift.
+          node -e 'const f="package.json",p=require("./"+f);p.version=process.argv[1];require("fs").writeFileSync(f,JSON.stringify(p,null,2)+"\n")' "$V"
+
+          # Fail loudly rather than shipping a mis-stamped zip.
+          grep -qF -- "  Version: ${V}" soli-event-plugin.php \
+            || { echo "::error::failed to stamp the plugin header version"; exit 1; }
+          grep -qF -- "SOLI_EVENT__PLUGIN_VERSION', \"${V}\"" soli-event-plugin.php \
+            || { echo "::error::failed to stamp SOLI_EVENT__PLUGIN_VERSION"; exit 1; }
+          grep -qE -- "~Current Version:[[:space:]]*${V}~" README.md \
+            || { echo "::error::failed to stamp the version into README.md"; exit 1; }
+          test "$(node -p "require('./package.json').version")" = "$V"
+          echo "Stamped $V into all version locations."
+
       # publish.js excludes every block's src/, so the block bundles must be
       # built before the zip is created or the plugin ships without its JS.
       - name: Build blocks
