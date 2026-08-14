@@ -17,6 +17,13 @@
     "test:playwright:debug": "wp-scripts test-playwright --debug",
     "test:playwright:headed": "wp-scripts test-playwright --headed"
   },
+  "engines": {
+    "node": ">=20"
+  },
+  "wordpress": {
+    "_comment": "Oldest supported WordPress branch. The e2e suite runs against the newest patch of this branch as well as the newest release, and the release workflows stamp it into the plugin's 'requires'. Raise it when production no longer runs it.",
+    "requiresAtLeast": "6.9"
+  },
   "workspaces": [
     "events/blocks/create-event",
     "events/blocks/event-reservation-popup",
