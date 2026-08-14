@@ -72,8 +72,12 @@ add_action('init', function () {
       // releases API and overrides this with the release's zip asset.
       'zip_url' => 'https://github.com/JoranOut/wp-soli-event-plugin/releases/latest/download/wp-soli-event-plugin.zip', // the zip url of the GitHub repo
       'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-      'requires' => '6.0.0', // which version of WordPress does your plugin require?
-      'tested' => '6.6.6',  // which version of WordPress is your plugin tested up to?
+      'requires' => '6.9', // oldest branch the e2e suite covers; see package.json wordpress.requiresAtLeast
+      // Both ends of the range are rewritten at packaging time by the nightly
+      // and release workflows to the WordPress versions the e2e suite actually
+      // ran against, so the plugin screen stops reporting "compatibility not
+      // tested". Do not reformat.
+      'tested' => '7.0.4',  // which version of WordPress is your plugin tested up to?
       'readme' => 'README.md', // which file to use as the readme for the version number
     );
 

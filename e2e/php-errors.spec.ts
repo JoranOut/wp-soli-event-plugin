@@ -46,7 +46,16 @@ test.describe('PHP diagnostics', () => {
     }) => {
         await page.goto('/wp-admin/site-health.php?tab=debug');
         // The "WordPress Constants" table lives in a collapsed accordion panel.
-        await page.locator('#health-check-section-wp-constants').click();
+        // Target the trigger by aria-controls rather than by its own id: WordPress
+        // only added `id="health-check-section-*"` to that button in 7.0, so an
+        // id selector silently times out on the floor leg of the matrix, while
+        // aria-controls is the a11y contract its own JS relies on and is present
+        // in every version the suite runs against.
+        await page
+            .locator(
+                'button[aria-controls="health-check-accordion-block-wp-constants"]'
+            )
+            .click();
         const panel = page.locator('#health-check-accordion-block-wp-constants');
 
         for (const constant of ['WP_DEBUG', 'WP_DEBUG_DISPLAY']) {
