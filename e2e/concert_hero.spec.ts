@@ -52,6 +52,26 @@ test.describe('Concert Hero Block', () => {
         await expect(card).toContainText(/\d{1,2}:\d{2}\s*hrs/);
     });
 
+    test('never shows an Orchestra row for categories outside the orkesten parent', async ({ admin, page, editor }) => {
+        // The run env seeds several categories (viz-mg-a, nc1, ...) and assigns
+        // them to concert events, but none of them live under an 'orkesten'
+        // parent - no such parent even exists here. Whatever concert the hero
+        // resolves as "next", those categories are not orchestras, so the card
+        // must never grow an Orchestra row.
+        await createSingleEvent({ admin, page }, { title: uniqueTitle('Hero No Orchestra') });
+
+        await createPageWithBlocks(
+            { admin, page, editor },
+            ['soli/concert-hero'],
+            uniqueTitle('Concert Hero No Orchestra Page')
+        );
+
+        const card = page.locator('.soli-concert-hero__card');
+        await expect(card).toBeVisible();
+        await expect(card).toContainText('Start');
+        await expect(card).not.toContainText('Orchestra');
+    });
+
     test('inserts in the editor without crashing (link picker mounts)', async ({ admin, editor, page }) => {
         await admin.createNewPost({ postType: 'page', title: uniqueTitle('Hero Editor') });
         await editor.insertBlock({ name: 'soli/concert-hero' });
