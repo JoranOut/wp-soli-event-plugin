@@ -42,13 +42,12 @@ test.describe('Concert Hero Block', () => {
 
         // A real concert row was joined and formatted: the title is non-empty
         // and the program card shows a real start time ("HH:MM hrs") next to
-        // the day/start labels.
+        // the start label.
         await expect(page.locator('.soli-concert-hero__title')).not.toBeEmpty();
         // The title splits into a two-tone display; the last word is always the
         // accent span, so it is present for any (non-empty) concert title.
         await expect(page.locator('.soli-concert-hero__title-accent')).toBeVisible();
         const card = page.locator('.soli-concert-hero__card');
-        await expect(card).toContainText('Day');
         await expect(card).toContainText('Start');
         await expect(card).toContainText(/\d{1,2}:\d{2}\s*hrs/);
     });

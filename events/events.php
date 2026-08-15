@@ -34,6 +34,7 @@ require_once 'lib/events_admin_view_page.php';
 require_once 'lib/events_admin_log_page.php';
 require_once 'lib/plugin_settings_page.php';
 require_once 'lib/category_onderdeel.php';
+require_once 'lib/orkesten_categories.php';
 require_once 'inc/values.php';
 require_once 'blocks/create-event/index.php';
 require_once 'blocks/event-view-calendar/index.php';
