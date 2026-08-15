@@ -63,7 +63,6 @@ class SoliBlockConcertHero {
 
     $start_ts   = strtotime($concert['start_date']);
     $full_date  = ucfirst(date_i18n('l j F Y', $start_ts));
-    $day        = ucfirst(date_i18n('l', $start_ts));
     $start_time = date_i18n('H:i', $start_ts);
 
     $title    = \Soli\Events\EventVisibility::maskTitle($concert['status'] ?? null, $concert['post_title']);
@@ -98,6 +97,17 @@ class SoliBlockConcertHero {
 
     $loc_name = isset($concert['location_name']) ? $concert['location_name'] : '';
     $loc_addr = isset($concert['location_address']) ? $concert['location_address'] : '';
+
+    // The orchestra(s) performing: the event's categories under the
+    // 'orkesten' parent. Other categories are not orchestras and stay hidden.
+    $orchestra = '';
+    if (!empty($concert['post_id'])) {
+      $terms = get_the_terms((int) $concert['post_id'], 'category');
+      if ($terms && !is_wp_error($terms)) {
+        $terms = \Soli\Events\OrkestenCategories::filterTerms($terms);
+        $orchestra = implode(', ', wp_list_pluck($terms, 'name'));
+      }
+    }
 
     $wrapper = get_block_wrapper_attributes(array('class' => 'soli-concert-hero'));
 
@@ -137,16 +147,19 @@ class SoliBlockConcertHero {
             <p class="soli-concert-hero__card-date"><?php echo esc_html($full_date); ?></p>
             <hr class="soli-concert-hero__card-rule" />
             <dl class="soli-concert-hero__card-list">
-              <dt><?php esc_html_e('Day', 'soli-event'); ?></dt>
-              <dd><?php echo esc_html($day); ?></dd>
+              <?php if ($orchestra) : ?>
+                <dt><?php esc_html_e('Orchestra', 'soli-event'); ?></dt>
+                <dd><?php echo esc_html($orchestra); ?></dd>
+              <?php endif; ?>
               <dt><?php esc_html_e('Start', 'soli-event'); ?></dt>
               <dd><?php echo esc_html($start_time); ?> <?php esc_html_e('hrs', 'soli-event'); ?></dd>
               <?php if ($loc_name) : ?>
                 <dt><?php esc_html_e('Location', 'soli-event'); ?></dt>
-                <dd>
-                  <?php echo esc_html($loc_name); ?>
-                  <?php if ($loc_addr) : ?><br /><span class="soli-concert-hero__card-muted"><?php echo esc_html($loc_addr); ?></span><?php endif; ?>
-                </dd>
+                <dd><?php echo esc_html($loc_name); ?></dd>
+              <?php endif; ?>
+              <?php if ($loc_addr) : ?>
+                <dt><?php esc_html_e('Address', 'soli-event'); ?></dt>
+                <dd><span class="soli-concert-hero__card-muted"><?php echo esc_html($loc_addr); ?></span></dd>
               <?php endif; ?>
             </dl>
             <?php if ($event_url) : ?>
