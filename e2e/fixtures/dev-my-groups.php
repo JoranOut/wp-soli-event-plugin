@@ -91,7 +91,7 @@ $user = get_user_by( 'login', 'admin' );
 if ( $user ) {
 	update_user_meta(
 		$user->ID,
-		'soli_passport_assignments',
+		'soli_oidc_assignments',
 		array(
 			array( 'onderdeel_id' => 101, 'instrument_soort_id' => 1, 'instrument_soort' => 'Bugel', 'instrument_familie' => 'Koper' ),
 			array( 'onderdeel_id' => 102, 'instrument_soort_id' => 2, 'instrument_soort' => 'Gitaar', 'instrument_familie' => 'Overig' ),

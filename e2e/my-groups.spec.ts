@@ -4,7 +4,7 @@
  * Seeded fixtures (seed.php §3c + §4):
  *   viz-mg-a (onderdeel 9001): mg-a-planned (PLANNED, +1d) + mg-a-public (PUBLIC, +3d)
  *   viz-mg-b (onderdeel 9002): mg-b-planned (PLANNED, +2d) only
- *   viz_subscriber carries soli_passport_assignments for 9001 + 9002;
+ *   viz_subscriber carries soli_oidc_assignments for 9001 + 9002;
  *   viz_editor has no assignments (exercises the editor-only empty note).
  *
  * Locks: assignments→category resolution via term meta, per-group "next date"

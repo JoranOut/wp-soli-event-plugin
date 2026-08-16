@@ -8,8 +8,8 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
  * Links event categories to "onderdelen" (orchestras/groups) in the Soli
  * administration (laravel-soli-administration).
  *
- * At SSO login the passport plugin stores the user's group memberships in the
- * 'soli_passport_assignments' user meta; each entry only carries the numeric
+ * At SSO login the wp-soli-oidc-client-plugin stores the user's group memberships in the
+ * 'soli_oidc_assignments' user meta; each entry only carries the numeric
  * onderdeel_id of a group, never its name. That id is opaque to WordPress, so
  * an editor maps it once per category via a field on the category add/edit
  * screens (term meta 'soli_event_onderdeel_id'). The my-groups block resolves
@@ -19,9 +19,9 @@ class CategoryOnderdeel {
 
   const TERM_META_KEY = 'soli_event_onderdeel_id';
 
-  // Written by wp-soli-passport-plugin (Role_Sync::ASSIGNMENTS_META_KEY); read
-  // by key so this plugin works without a hard dependency on the passport class.
-  const ASSIGNMENTS_META_KEY = 'soli_passport_assignments';
+  // Written by wp-soli-oidc-client-plugin (Assignments_Sync::META_KEY); read
+  // by key so this plugin works without a hard dependency on that class.
+  const ASSIGNMENTS_META_KEY = 'soli_oidc_assignments';
 
   function __construct() {
     add_action('init', array($this, 'registerTermMeta'));
@@ -107,7 +107,7 @@ class CategoryOnderdeel {
 
     /**
      * Filter the onderdeel ids resolved for a user, e.g. to source memberships
-     * from something other than the passport assignments meta.
+     * from something other than the OIDC assignments meta.
      *
      * @param int[] $ids     Unique onderdeel ids.
      * @param int   $user_id WordPress user id.

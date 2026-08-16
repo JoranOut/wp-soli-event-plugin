@@ -169,7 +169,7 @@ $catalogue['_categories'] = array('viz-nc' => $cat_nc, 'viz-nc-priv' => $cat_pri
 // has a PLANNED date BEFORE its PUBLIC one, so the panel showing the +3d date
 // proves workflow states are skipped; group B only has a PLANNED date, so it
 // renders the "no upcoming events" label. viz_subscriber (section 4) carries
-// the matching soli_passport_assignments meta.
+// the matching soli_oidc_assignments meta.
 $cat_mg_a = $ensure_cat('viz-mg-a', 'VIZ Mijn Groep A');
 $cat_mg_b = $ensure_cat('viz-mg-b', 'VIZ Mijn Groep B');
 update_term_meta($cat_mg_a, 'soli_event_onderdeel_id', 9001);
@@ -299,7 +299,7 @@ $mg_user = get_user_by( 'login', 'viz_subscriber' );
 if ( $mg_user ) {
 	update_user_meta(
 		$mg_user->ID,
-		'soli_passport_assignments',
+		'soli_oidc_assignments',
 		array(
 			array( 'onderdeel_id' => 9001, 'instrument_soort_id' => 1, 'instrument_soort' => 'Bugel', 'instrument_familie' => 'Koper' ),
 			array( 'onderdeel_id' => 9002, 'instrument_soort_id' => 2, 'instrument_soort' => 'Kleine trom', 'instrument_familie' => 'Slagwerk' ),
