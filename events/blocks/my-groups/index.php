@@ -53,15 +53,16 @@ class SoliBlockMyGroups {
       return $this->editorNote($title, __('Shown to logged-in members only: this panel lists the groups from their Soli account.', 'soli-event'));
     }
 
-    $onderdeel_ids = \Soli\Events\CategoryOnderdeel::getUserOnderdeelIds($user_id);
-    if (empty($onderdeel_ids)) {
+    $onderdeel_ids   = \Soli\Events\CategoryOnderdeel::getUserOnderdeelIds($user_id);
+    $onderdeel_slugs = \Soli\Events\CategoryOnderdeel::getUserOnderdeelSlugs($user_id);
+    if (empty($onderdeel_ids) && empty($onderdeel_slugs)) {
       // The preview renders with YOUR account; a member logging in through SSO gets their own groups.
       return $this->editorNote($title, __('Your account has no group assignments from the Soli administration (they sync at SSO login). Members see their own groups here.', 'soli-event'));
     }
 
-    $terms = \Soli\Events\CategoryOnderdeel::getCategoriesForOnderdeelIds($onderdeel_ids);
+    $terms = \Soli\Events\CategoryOnderdeel::getCategoriesForUser($user_id);
     if (empty($terms)) {
-      return $this->editorNote($title, __('None of your groups are linked to a category yet. Set the Soli administration group ID on each group\'s category.', 'soli-event'));
+      return $this->editorNote($title, __('None of your groups are linked to a category yet. Give the category the same slug as the group in the Soli administration, or set the group ID on the category.', 'soli-event'));
     }
 
     // One row per group: the category plus its next upcoming visible date.

@@ -174,6 +174,10 @@ $cat_mg_a = $ensure_cat('viz-mg-a', 'VIZ Mijn Groep A');
 $cat_mg_b = $ensure_cat('viz-mg-b', 'VIZ Mijn Groep B');
 update_term_meta($cat_mg_a, 'soli_event_onderdeel_id', 9001);
 update_term_meta($cat_mg_b, 'soli_event_onderdeel_id', 9002);
+// Group C has NO term-meta mapping: it must resolve purely through the
+// onderdeel_slug in the assignments matching the category slug.
+$cat_mg_c = $ensure_cat('viz-mg-c', 'VIZ Mijn Groep C');
+delete_term_meta($cat_mg_c, 'soli_event_onderdeel_id');
 
 $catalogue['mg-a-planned'] = $make_cat_event('mg-a-planned', $cat_mg_a, 'PLANNED', 1, false);
 $catalogue['mg-a-public']  = $make_cat_event('mg-a-public', $cat_mg_a, 'PUBLIC', 3, false);
@@ -301,8 +305,10 @@ if ( $mg_user ) {
 		$mg_user->ID,
 		'soli_oidc_assignments',
 		array(
-			array( 'onderdeel_id' => 9001, 'instrument_soort_id' => 1, 'instrument_soort' => 'Bugel', 'instrument_familie' => 'Koper' ),
-			array( 'onderdeel_id' => 9002, 'instrument_soort_id' => 2, 'instrument_soort' => 'Kleine trom', 'instrument_familie' => 'Slagwerk' ),
+			array( 'onderdeel_id' => 9001, 'onderdeel' => 'VIZ Groep A', 'onderdeel_slug' => 'viz-groep-a', 'instrument_soort_id' => 1, 'instrument_soort' => 'Bugel', 'instrument_familie' => 'Koper' ),
+			array( 'onderdeel_id' => 9002, 'onderdeel' => 'VIZ Groep B', 'onderdeel_slug' => 'viz-groep-b', 'instrument_soort_id' => 2, 'instrument_soort' => 'Kleine trom', 'instrument_familie' => 'Slagwerk' ),
+			// Only the slug links this one to a category (viz-mg-c has no term meta).
+			array( 'onderdeel_id' => 9003, 'onderdeel' => 'VIZ Mijn Groep C', 'onderdeel_slug' => 'viz-mg-c', 'instrument_soort_id' => 3, 'instrument_soort' => 'Trombone', 'instrument_familie' => 'Koper' ),
 		)
 	);
 }
