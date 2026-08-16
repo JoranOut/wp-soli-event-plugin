@@ -93,10 +93,12 @@ location row. A date with neither location nor rooms stays hidden.
 "Mijn orkesten" panel for the members page (`events/blocks/my-groups/`, ported from the theme's
 `page-mijn-pagina` pattern): the logged-in member's groups, each with its next upcoming event. Group
 membership comes from the **SSO assignments** the wp-soli-oidc-client-plugin syncs at login (user meta
-`soli_oidc_assignments`, written by laravel-soli-administration's `assignments` claim); each entry only
-carries a numeric `onderdeel_id`, so editors link a category to its administration group once via a
-term-meta field on the category add/edit screens (`soli_event_onderdeel_id`,
-`events/lib/category_onderdeel.php` — also exposes the `soli_event_user_onderdeel_ids` filter). Per matched
+`soli_oidc_assignments`, written by laravel-soli-administration's `assignments` claim); each entry carries
+a numeric `onderdeel_id` plus the group's `onderdeel` name and `onderdeel_slug`. Categories resolve two
+ways, merged: automatically when the category slug equals `onderdeel_slug`, or via a term-meta field on
+the category add/edit screens (`soli_event_onderdeel_id`) for categories whose slug differs
+(`events/lib/category_onderdeel.php` — also exposes the `soli_event_user_onderdeel_ids` and
+`soli_event_user_onderdeel_slugs` filters). Per matched
 category the row shows the next visible date via `getNextConcert(only_concerts=false, category_id)`, so
 workflow-state dates never surface (F1); rows sort soonest-first, groups without an upcoming date last with
 a "no upcoming events" label. A row links to its next event's single page; a group without an upcoming

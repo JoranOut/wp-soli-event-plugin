@@ -4,10 +4,12 @@
  * Seeded fixtures (seed.php §3c + §4):
  *   viz-mg-a (onderdeel 9001): mg-a-planned (PLANNED, +1d) + mg-a-public (PUBLIC, +3d)
  *   viz-mg-b (onderdeel 9002): mg-b-planned (PLANNED, +2d) only
- *   viz_subscriber carries soli_oidc_assignments for 9001 + 9002;
+ *   viz-mg-c: no term meta and no events — resolves purely via onderdeel_slug
+ *   viz_subscriber carries soli_oidc_assignments for 9001 + 9002 (id-mapped,
+ *   their slugs deliberately match no category) + 9003 (slug-matched only);
  *   viz_editor has no assignments (exercises the editor-only empty note).
  *
- * Locks: assignments→category resolution via term meta, per-group "next date"
+ * Locks: assignments→category resolution via term meta and via slug, per-group "next date"
  * skipping workflow states (PLANNED +1d must lose to PUBLIC +3d), the
  * no-upcoming-events label, rows linking to the next event itself, and that
  * anonymous visitors and plain members without assignments never see the
@@ -42,11 +44,13 @@ test.describe('my-groups — SSO group panel', () => {
         await view.goto(url);
 
         const rows = view.locator('.soli-my-groups .soli-my-groups__list li');
-        await expect(rows).toHaveCount(2);
+        await expect(rows).toHaveCount(3);
 
-        // Sorted soonest-first, groups without an upcoming event last: A then B.
+        // Sorted soonest-first, groups without an upcoming event last: A, then
+        // B and C (C is the slug-matched group, present without any term meta).
         await expect(rows.nth(0).locator('.soli-ork-name')).toHaveText('VIZ Mijn Groep A');
         await expect(rows.nth(1).locator('.soli-ork-name')).toHaveText('VIZ Mijn Groep B');
+        await expect(rows.nth(2).locator('.soli-ork-name')).toHaveText('VIZ Mijn Groep C');
 
         // Group A's next date is the PUBLIC +3d one, not the PLANNED +1d one.
         // The seeder derives its dates from current_time() and the block renders

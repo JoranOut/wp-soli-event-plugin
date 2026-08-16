@@ -93,8 +93,8 @@ if ( $user ) {
 		$user->ID,
 		'soli_oidc_assignments',
 		array(
-			array( 'onderdeel_id' => 101, 'instrument_soort_id' => 1, 'instrument_soort' => 'Bugel', 'instrument_familie' => 'Koper' ),
-			array( 'onderdeel_id' => 102, 'instrument_soort_id' => 2, 'instrument_soort' => 'Gitaar', 'instrument_familie' => 'Overig' ),
+			array( 'onderdeel_id' => 101, 'onderdeel' => 'Harmonie', 'onderdeel_slug' => 'harmonie', 'instrument_soort_id' => 1, 'instrument_soort' => 'Bugel', 'instrument_familie' => 'Koper' ),
+			array( 'onderdeel_id' => 102, 'onderdeel' => 'Funband', 'onderdeel_slug' => 'funband', 'instrument_soort_id' => 2, 'instrument_soort' => 'Gitaar', 'instrument_familie' => 'Overig' ),
 		)
 	);
 	echo "assignments set for user 'admin' (onderdeel 101 + 102)\n";

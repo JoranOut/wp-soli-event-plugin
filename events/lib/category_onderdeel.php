@@ -9,11 +9,12 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
  * administration (laravel-soli-administration).
  *
  * At SSO login the wp-soli-oidc-client-plugin stores the user's group memberships in the
- * 'soli_oidc_assignments' user meta; each entry only carries the numeric
- * onderdeel_id of a group, never its name. That id is opaque to WordPress, so
- * an editor maps it once per category via a field on the category add/edit
- * screens (term meta 'soli_event_onderdeel_id'). The my-groups block resolves
- * user -> onderdeel ids -> categories through this class.
+ * 'soli_oidc_assignments' user meta; each entry carries the numeric
+ * onderdeel_id plus the group's name and slug. Categories resolve two ways,
+ * merged: automatically when the category slug equals the assignment's
+ * onderdeel_slug, or via an explicit per-category mapping on the category
+ * add/edit screens (term meta 'soli_event_onderdeel_id') for categories whose
+ * slug differs from the administration's.
  */
 class CategoryOnderdeel {
 
@@ -113,6 +114,61 @@ class CategoryOnderdeel {
      * @param int   $user_id WordPress user id.
      */
     return apply_filters('soli_event_user_onderdeel_ids', $ids, $user_id);
+  }
+
+  /**
+   * The onderdeel slugs of the groups a user belongs to, from the assignments
+   * synced at SSO login. Empty for users who never logged in through SSO or
+   * whose assignments predate the provider sending 'onderdeel_slug'.
+   *
+   * @param int $user_id WordPress user id.
+   * @return string[] Unique onderdeel slugs.
+   */
+  static function getUserOnderdeelSlugs($user_id) {
+    $assignments = get_user_meta($user_id, self::ASSIGNMENTS_META_KEY, true);
+
+    $slugs = array();
+    if (is_array($assignments)) {
+      foreach ($assignments as $assignment) {
+        if (is_array($assignment) && !empty($assignment['onderdeel_slug'])) {
+          $slugs[] = sanitize_title($assignment['onderdeel_slug']);
+        }
+      }
+    }
+    $slugs = array_values(array_unique(array_filter($slugs)));
+
+    /**
+     * Filter the onderdeel slugs resolved for a user.
+     *
+     * @param string[] $slugs   Unique onderdeel slugs.
+     * @param int      $user_id WordPress user id.
+     */
+    return apply_filters('soli_event_user_onderdeel_slugs', $slugs, $user_id);
+  }
+
+  /**
+   * The categories for a user's groups: categories whose slug matches an
+   * assignment's onderdeel_slug, merged with categories explicitly mapped by
+   * onderdeel id via term meta.
+   *
+   * @param int $user_id WordPress user id.
+   * @return \WP_Term[] Unique terms, or empty when the user has no assignments.
+   */
+  static function getCategoriesForUser($user_id) {
+    $terms = self::getCategoriesForOnderdeelIds(self::getUserOnderdeelIds($user_id));
+
+    foreach (self::getUserOnderdeelSlugs($user_id) as $slug) {
+      $term = get_term_by('slug', $slug, 'category');
+      if ($term instanceof \WP_Term) {
+        $terms[] = $term;
+      }
+    }
+
+    $unique = array();
+    foreach ($terms as $term) {
+      $unique[$term->term_id] = $term;
+    }
+    return array_values($unique);
   }
 
   /**
