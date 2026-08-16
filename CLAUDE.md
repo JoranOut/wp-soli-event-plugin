@@ -92,8 +92,8 @@ location row. A date with neither location nor rooms stays hidden.
 
 "Mijn orkesten" panel for the members page (`events/blocks/my-groups/`, ported from the theme's
 `page-mijn-pagina` pattern): the logged-in member's groups, each with its next upcoming event. Group
-membership comes from the **SSO assignments** the passport plugin syncs at login (user meta
-`soli_passport_assignments`, written by laravel-soli-administration's `assignments` claim); each entry only
+membership comes from the **SSO assignments** the wp-soli-oidc-client-plugin syncs at login (user meta
+`soli_oidc_assignments`, written by laravel-soli-administration's `assignments` claim); each entry only
 carries a numeric `onderdeel_id`, so editors link a category to its administration group once via a
 term-meta field on the category add/edit screens (`soli_event_onderdeel_id`,
 `events/lib/category_onderdeel.php` — also exposes the `soli_event_user_onderdeel_ids` filter). Per matched
