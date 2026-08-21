@@ -9,7 +9,7 @@ export function uniqueTitle(base: string) {
 
 // The MUI-heavy Create Event block can take several seconds to paint on CI's
 // constrained runner (fast locally). Give block-load waits generous headroom.
-export const BLOCK_LOAD_TIMEOUT = 60_000;
+export const BLOCK_LOAD_TIMEOUT = 30_000;
 
 // The status a new event defaults to (EVENT_STATUS[0] in inc/values.js).
 export const DEFAULT_EVENT_STATUS = 'OPTION';
