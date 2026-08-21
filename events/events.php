@@ -45,5 +45,4 @@ require_once 'blocks/next-concert/index.php';
 require_once 'blocks/event-dates/index.php';
 require_once 'blocks/event-location-map/index.php';
 require_once 'blocks/calendar-subscribe/index.php';
-require_once 'blocks/featured-image/index.php';
 require_once 'blocks/my-groups/index.php';

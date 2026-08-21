@@ -1,5 +1,8 @@
 import "./index.scss"
 import { __ } from '@wordpress/i18n';
+import { useRef, useState, useEffect } from '@wordpress/element';
+import createCache from '@emotion/cache';
+import { CacheProvider } from '@emotion/react';
 import EditableDateTable from "./components/editable-date-table/editable-date-table";
 import AdminEventsProvider from "./components/events-provider/admin-events-provider";
 import DateRangePicker from "./components/daterange-picker/daterange-picker";
@@ -12,6 +15,45 @@ import ConcertStatusSwitch from "./components/concert-status-switch/concert-stat
 import AdminNotesEditor from "./components/admin-notes-editor/admin-notes-editor";
 import InvoiceButton from "./components/invoice-button/invoice-button";
 import {useEventState, useEventActions} from "./components/events-context";
+
+/**
+ * Emotion cache scoped to the document that owns the block's canvas DOM node.
+ * In WordPress 7.1+ the editor renders inside an iframe, so the canvas
+ * document differs from the outer wp-admin document.  Without this wrapper
+ * Emotion's default insertion point (the outer document's <head>) is invisible
+ * to the iframe, and all MUI runtime styles are lost.
+ *
+ * The anchor <span> must live inside the block's canvas subtree so that
+ * element.ownerDocument resolves to the iframe document, not the outer one.
+ * Do not anchor from InspectorControls — those render in the sidebar (outer
+ * document) and would defeat the purpose.
+ */
+function IframeAwareMuiProvider( { children } ) {
+    const anchorRef = useRef( null );
+    const [ cache, setCache ] = useState( null );
+
+    useEffect( () => {
+        const node = anchorRef.current;
+        if ( ! node ) return;
+        const ownerDoc = node.ownerDocument;
+        setCache(
+            createCache( {
+                key: 'soli-ce',
+                container: ownerDoc.head,
+                prepend: true,
+            } )
+        );
+    }, [] );
+
+    return (
+        <>
+            <span ref={ anchorRef } style={ { display: 'none' } } />
+            { cache ? (
+                <CacheProvider value={ cache }>{ children }</CacheProvider>
+            ) : children }
+        </>
+    );
+}
 
 wp.blocks.registerBlockType("soli/create-event", {
     title: __("Create Event", "soli-event"),
@@ -121,9 +163,11 @@ function EditComponent({context}) {
 
     return (
         <div className="soli-block-create-event">
-            <AdminEventsProvider post_id={postId}>
-                <InnerEdit userCanAdminNote={userCanAdminNote}/>
-            </AdminEventsProvider>
+            <IframeAwareMuiProvider>
+                <AdminEventsProvider post_id={postId}>
+                    <InnerEdit userCanAdminNote={userCanAdminNote}/>
+                </AdminEventsProvider>
+            </IframeAwareMuiProvider>
         </div>
     );
 }
