@@ -40,7 +40,6 @@ function IframeAwareMuiProvider( { children } ) {
             createCache( {
                 key: 'soli-ce',
                 container: ownerDoc.head,
-                prepend: true,
             } )
         );
     }, [] );
@@ -50,7 +49,7 @@ function IframeAwareMuiProvider( { children } ) {
             <span ref={ anchorRef } style={ { display: 'none' } } />
             { cache ? (
                 <CacheProvider value={ cache }>{ children }</CacheProvider>
-            ) : children }
+            ) : null }
         </>
     );
 }
