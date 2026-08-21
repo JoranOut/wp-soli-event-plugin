@@ -17,7 +17,7 @@
  */
 
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
-import { BLOCK_LOAD_TIMEOUT, uniqueTitle } from './helpers';
+import { BLOCK_LOAD_TIMEOUT } from './helpers';
 
 test.describe('Create Event block — MUI styles in editor canvas document', () => {
     test('Emotion/MUI styles are inserted into the editor canvas document', async ({ admin, page }) => {

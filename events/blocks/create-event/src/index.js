@@ -47,9 +47,9 @@ function IframeAwareMuiProvider( { children } ) {
     return (
         <>
             <span ref={ anchorRef } style={ { display: 'none' } } />
-            { cache ? (
+            { cache && (
                 <CacheProvider value={ cache }>{ children }</CacheProvider>
-            ) : null }
+            ) }
         </>
     );
 }
