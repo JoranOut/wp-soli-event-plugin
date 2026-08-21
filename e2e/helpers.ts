@@ -9,7 +9,7 @@ export function uniqueTitle(base: string) {
 
 // The MUI-heavy Create Event block can take several seconds to paint on CI's
 // constrained runner (fast locally). Give block-load waits generous headroom.
-export const BLOCK_LOAD_TIMEOUT = 30_000;
+export const BLOCK_LOAD_TIMEOUT = 60_000;
 
 // The status a new event defaults to (EVENT_STATUS[0] in inc/values.js).
 export const DEFAULT_EVENT_STATUS = 'OPTION';
@@ -62,7 +62,9 @@ export async function createSingleEvent(
     // constrained runner this paint can take several seconds, so allow a
     // generous timeout - the welcome guide is disabled, so its waitFor only
     // rejects at the timeout and must not lose the race before the block paints.
-    const winner = await Promise.race([
+    // Promise.any is used (not Promise.race) so that the guide timing out does
+    // not reject the overall wait when the block is still loading.
+    const winner = await Promise.any([
         guide.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'guide'),
         eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'title'),
     ]);
