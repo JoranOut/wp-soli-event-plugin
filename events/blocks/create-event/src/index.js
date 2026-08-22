@@ -1,5 +1,6 @@
 import "./index.scss"
 import { __ } from '@wordpress/i18n';
+import EditorEmotionCache from "./editor-emotion-cache";
 import EditableDateTable from "./components/editable-date-table/editable-date-table";
 import AdminEventsProvider from "./components/events-provider/admin-events-provider";
 import DateRangePicker from "./components/daterange-picker/daterange-picker";
@@ -120,10 +121,12 @@ function EditComponent({context}) {
     const userCanAdminNote = window?.createEventPermissions?.canSeeAdminNotes ?? false;
 
     return (
-        <div className="soli-block-create-event">
-            <AdminEventsProvider post_id={postId}>
-                <InnerEdit userCanAdminNote={userCanAdminNote}/>
-            </AdminEventsProvider>
-        </div>
+        <EditorEmotionCache>
+            <div className="soli-block-create-event">
+                <AdminEventsProvider post_id={postId}>
+                    <InnerEdit userCanAdminNote={userCanAdminNote}/>
+                </AdminEventsProvider>
+            </div>
+        </EditorEmotionCache>
     );
 }
