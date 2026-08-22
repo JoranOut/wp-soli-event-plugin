@@ -25,7 +25,7 @@ test.describe('Location editing (create-event picker)', () => {
         // cover the editor, and the first-event wizard covers the block.
         const guide = page.locator('.components-guide');
         const eventBlock = page.getByLabel('Block: Create Event');
-        const winner = await Promise.race([
+        const winner = await Promise.any([
             guide.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'guide'),
             eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'block'),
         ]);

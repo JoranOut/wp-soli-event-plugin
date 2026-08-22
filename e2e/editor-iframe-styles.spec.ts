@@ -11,9 +11,9 @@
  *   2. MUI-generated <style> tags are present in the same document as the
  *      block canvas, not only in the outer wp-admin document.
  *
- * The check is performed via ownerDocument of an element inside the canvas
- * subtree so it is compatible with both the legacy full-page editor and the
- * WP 7.1 iframe-based editor.
+ * The check is performed inside the frame (or the top-level page when no
+ * editor-canvas iframe exists) so it is compatible with both the legacy
+ * full-page editor and the WP 7.1 iframe-based editor.
  */
 
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
@@ -28,6 +28,15 @@ test.describe('Create Event block — MUI styles in editor canvas document', () 
 
         await page.locator('#editor').waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
 
+        // Dismiss known editor overlays before touching the canvas.
+        // components-modal__screen-overlay can appear on top of the editor;
+        // pressing Escape is the standard WP dismissal.
+        const overlay = page.locator('.components-modal__screen-overlay');
+        if (await overlay.isVisible().catch(() => false)) {
+            await page.keyboard.press('Escape');
+            await expect(overlay).toBeHidden();
+        }
+
         // Dismiss the welcome guide if it appears.
         const guide = page.locator('.components-guide');
         await Promise.any([
@@ -38,52 +47,37 @@ test.describe('Create Event block — MUI styles in editor canvas document', () 
             page.getByLabel('Block: Create Event').waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }),
         ]);
 
-        // Dismiss first-event wizard if it appears.
+        // Dismiss first-event wizard if it appears (it renders inside the canvas).
         const wizard = page.locator('.first-event-wizard');
-        const wizardVisible = await wizard.isVisible().catch(() => false);
-        if (wizardVisible) {
+        if (await wizard.isVisible().catch(() => false)) {
             await wizard.getByRole('button', { name: 'Skip' }).click();
             await expect(wizard).toBeHidden();
         }
 
-        // Wait for the Create Event block canvas content to be present.
-        const eventBlock = page.getByLabel('Block: Create Event');
-        await eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
+        // Resolve the editor canvas: WP 7.1+ uses an iframe; older WP uses the
+        // top-level page. Use frameLocator when the iframe is present so that
+        // waiting for canvas elements is correctly scoped to the frame.
+        const canvasIframe = page.locator('iframe[name="editor-canvas"]');
+        const hasIframe = (await canvasIframe.count()) > 0;
+        const canvas = hasIframe
+            ? page.frameLocator('iframe[name="editor-canvas"]')
+            : page;
 
-        // Locate an element rendered inside the canvas subtree.  The
-        // .soli-block-create-event wrapper is the outermost canvas element of
-        // the block — use it to resolve ownerDocument and check that Emotion
-        // style tags are present in that same document's <head>.
-        //
-        // In WP 7.1+ the canvas is an iframe, so the element's ownerDocument
-        // is the iframe document; in older WP it is the main document.  Either
-        // way, MUI styles must exist in that document.
-        const muiStylesInCanvasDocument = await page.evaluate(() => {
-            // Walk every frame (top-level document + all iframes).
-            const docs: Document[] = [document];
-            for (const frame of Array.from(document.querySelectorAll('iframe'))) {
-                try {
-                    const fd = frame.contentDocument;
-                    if (fd) docs.push(fd);
-                } catch {
-                    // cross-origin frames are inaccessible; skip them.
-                }
-            }
+        // Wait for the Create Event block to be present in the canvas.
+        await canvas.locator('.soli-block-create-event').waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
 
-            for (const doc of docs) {
-                // Look for the create-event block canvas node.
-                const blockCanvas = doc.querySelector('.soli-block-create-event');
-                if (!blockCanvas) continue;
-
-                // The canvas document's <head> must contain at least one
-                // Emotion-generated <style> element (key attribute starts with
-                // the cache key used by IframeAwareMuiProvider: 'soli-ce').
-                const emotionStyles = Array.from(doc.head.querySelectorAll('style[data-emotion]'));
-                return emotionStyles.some(el => el.getAttribute('data-emotion')?.startsWith('soli-ce'));
-            }
-
-            return false;
-        });
+        // Verify that at least one Emotion <style> with the 'soli-ce' key
+        // exists in the same document as the canvas block.  When iframed, this
+        // must be the iframe's document; when not iframed, the main document.
+        const muiStylesInCanvasDocument = hasIframe
+            ? await page.frameLocator('iframe[name="editor-canvas"]').locator('html').evaluate((html) => {
+                const styles = Array.from(html.ownerDocument.head.querySelectorAll('style[data-emotion]'));
+                return styles.some((el) => el.getAttribute('data-emotion')?.startsWith('soli-ce'));
+            })
+            : await page.evaluate(() => {
+                const styles = Array.from(document.head.querySelectorAll('style[data-emotion]'));
+                return styles.some((el) => el.getAttribute('data-emotion')?.startsWith('soli-ce'));
+            });
 
         expect(
             muiStylesInCanvasDocument,

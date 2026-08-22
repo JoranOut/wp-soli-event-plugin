@@ -1,10 +1,32 @@
-import { expect } from '@wordpress/e2e-test-utils-playwright';
+import { expect, type Page, type FrameLocator } from '@wordpress/e2e-test-utils-playwright';
 import { addDays, format } from 'date-fns';
 import { nl, enUS } from 'date-fns/locale';
 
 // Unique per-test identifier so concurrent tests never collide on shared state.
 export function uniqueTitle(base: string) {
     return `${base} ${Math.random().toString(36).slice(2, 10)}`;
+}
+
+/**
+ * Returns a Playwright locator scope for the Gutenberg block editor canvas.
+ *
+ * WordPress 7.1+ renders the editor canvas inside an iframe
+ * (iframe[name="editor-canvas"]). When that iframe is present, selectors for
+ * block content must be scoped to the frame; otherwise the top-level page is
+ * used. Use this helper for any selector that targets elements rendered inside
+ * the block canvas (e.g. .single-event, .date-list-item, .soli-block-*).
+ *
+ * Do NOT use this for admin-page chrome, toolbar controls, sidebar panels,
+ * modals outside the canvas, or frontend pages — those always live on the
+ * top-level page.
+ */
+export async function editorCanvas(page: Page): Promise<Page | FrameLocator> {
+    const iframe = page.locator('iframe[name="editor-canvas"]');
+    const exists = await iframe.count().then((n) => n > 0).catch(() => false);
+    if (exists) {
+        return page.frameLocator('iframe[name="editor-canvas"]');
+    }
+    return page;
 }
 
 // The MUI-heavy Create Event block can take several seconds to paint on CI's

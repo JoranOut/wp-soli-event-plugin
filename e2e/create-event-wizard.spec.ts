@@ -13,7 +13,7 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import { addDays, format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { uniqueTitle, BLOCK_LOAD_TIMEOUT } from './helpers';
+import { uniqueTitle, BLOCK_LOAD_TIMEOUT, editorCanvas } from './helpers';
 
 test.describe('First-event wizard', () => {
     test.describe.configure({ mode: 'parallel' });
@@ -87,9 +87,10 @@ test.describe('First-event wizard', () => {
         await expect(wizard).toBeHidden();
 
         // --- The block now shows all three dates with every field applied.
-        const rows = page.locator('.date-list-item');
+        const canvas = await editorCanvas(page);
+        const rows = canvas.locator('.date-list-item');
         await expect(rows).toHaveCount(3);
-        await expect(page.locator('.date-list-item .concert-status-switch input:checked')).toHaveCount(3);
+        await expect(canvas.locator('.date-list-item .concert-status-switch input:checked')).toHaveCount(3);
         await expect(page.getByRole('combobox', { name: 'PUBLIC' })).toHaveCount(3);
         await expect(rows.first()).toContainText(note);
         await expect(rows.first()).toContainText('Grote zaal');
@@ -134,7 +135,8 @@ test.describe('First-event wizard', () => {
 
         // The pre-wizard behaviour: the inline single-event editor with the
         // fabricated default date is still there, untouched.
-        await expect(page.locator('.single-event')).toBeVisible();
-        await expect(page.locator('.single-event .date-range-picker')).toBeVisible();
+        const canvas = await editorCanvas(page);
+        await expect(canvas.locator('.single-event')).toBeVisible();
+        await expect(canvas.locator('.single-event .date-range-picker')).toBeVisible();
     });
 });
