@@ -44,6 +44,11 @@ test.describe('Create Event block — MUI styles in editor canvas document', () 
                 await page.keyboard.press('Escape');
                 await expect(guide).toBeHidden();
             }),
+            // WP 7.1+: block is inside the canvas iframe.
+            page.frameLocator('iframe[name="editor-canvas"]')
+                .getByLabel('Block: Create Event')
+                .waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }),
+            // Older WP: block is on the top-level page.
             page.getByLabel('Block: Create Event').waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }),
         ]);
 

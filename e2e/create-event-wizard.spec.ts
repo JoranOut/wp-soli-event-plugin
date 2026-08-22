@@ -91,12 +91,12 @@ test.describe('First-event wizard', () => {
         const rows = canvas.locator('.date-list-item');
         await expect(rows).toHaveCount(3);
         await expect(canvas.locator('.date-list-item .concert-status-switch input:checked')).toHaveCount(3);
-        await expect(page.getByRole('combobox', { name: 'PUBLIC' })).toHaveCount(3);
+        await expect(canvas.getByRole('combobox', { name: 'PUBLIC' })).toHaveCount(3);
         await expect(rows.first()).toContainText(note);
         await expect(rows.first()).toContainText('Grote zaal');
 
         // --- Save as draft and verify the persisted rows ------------------
-        await page.getByRole('textbox', { name: 'Add title' }).fill(title);
+        await canvas.getByRole('textbox', { name: 'Add title' }).fill(title);
         await page.getByRole('button', { name: 'Save draft', exact: true }).click();
         await expect(page.getByRole('button', { name: 'Saved' })).toBeVisible({ timeout: BLOCK_LOAD_TIMEOUT });
 

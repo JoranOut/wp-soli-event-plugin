@@ -77,7 +77,14 @@ export async function createSingleEvent(
 
     await page.locator('#editor').waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
     const guide = page.locator('.components-guide');
-    const eventBlock = page.getByLabel('Block: Create Event');
+
+    // In WP 7.1+ the editor canvas is inside an iframe; in older WP it is the
+    // top-level page.  Add both variants to the race so the helper works with
+    // either.
+    const eventBlockFlat = page.getByLabel('Block: Create Event');
+    const eventBlockIframe = page
+        .frameLocator('iframe[name="editor-canvas"]')
+        .getByLabel('Block: Create Event');
 
     // The Create Event block renders a stack of heavy MUI components
     // (date/time pickers, selectors, editors) synchronously. On CI's
@@ -88,31 +95,45 @@ export async function createSingleEvent(
     // not reject the overall wait when the block is still loading.
     const winner = await Promise.any([
         guide.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'guide'),
-        eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'title'),
+        eventBlockFlat.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'title'),
+        eventBlockIframe.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'title'),
     ]);
 
     if (winner === 'guide') {
         await page.keyboard.press('Escape');
         await expect(guide).toBeHidden();
-        await eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
+        await Promise.any([
+            eventBlockFlat.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }),
+            eventBlockIframe.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }),
+        ]);
     }
 
     // A brand-new event opens the first-event wizard on top of the block (it
-    // appears once the block's events fetch resolves). This helper drives the
-    // inline editor directly, so dismiss it.
+    // appears once the block's events fetch resolves).  In WP 7.1+ the wizard
+    // renders via @wordpress/components/Modal which portals to the outer
+    // document body even when the block itself is inside the canvas iframe, so
+    // page.locator() is correct here.  This helper drives the inline editor
+    // directly, so dismiss the wizard.
     const wizard = page.locator('.first-event-wizard');
     await wizard.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
     await wizard.getByRole('button', { name: 'Skip' }).click();
     await expect(wizard).toBeHidden();
 
+    // After the wizard is gone, all block content (title, dates, location
+    // button, switches) lives inside the canvas – either the iframe (WP 7.1+)
+    // or the top-level page (older WP).  Modals opened by the block
+    // (@wordpress/components/Modal) still portal to the outer document, so
+    // those interactions keep using `page`.
+    const canvas = await editorCanvas(page);
+
     // Fill in event details
-    await page.getByRole('textbox', { name: 'Add title' }).fill(title);
+    await canvas.getByRole('textbox', { name: 'Add title' }).fill(title);
 
     // Enter the date into the MUI masked field (D MMMM, YYYY). Land on the
     // leftmost (day) section, then type the digits consecutively and let MUI's
     // section auto-advance carry across day -> month -> year. A single ddMMyyyy
     // blast (or manual ArrowRight between sections) misaligns and yields garbage.
-    const dateInput = page.getByRole('textbox', { name: 'DD MMMM, YYYY' }).first();
+    const dateInput = canvas.getByRole('textbox', { name: 'DD MMMM, YYYY' }).first();
     await dateInput.click();
     await dateInput.press('ArrowLeft');
     await dateInput.press('ArrowLeft');
@@ -122,10 +143,13 @@ export async function createSingleEvent(
     await page.keyboard.type(format(date, 'yyyy', { locale: enUS }), { delay: 100 });
     await dateInput.press('Tab');
 
-    await page.getByRole('textbox', { name: 'hh:mm' }).first().fill(startTime);
-    await page.getByRole('textbox', { name: 'hh:mm' }).nth(1).fill(endTime);
+    await canvas.getByRole('textbox', { name: 'hh:mm' }).first().fill(startTime);
+    await canvas.getByRole('textbox', { name: 'hh:mm' }).nth(1).fill(endTime);
 
-    await page.getByRole('button', { name: 'Choose a location' }).click();
+    // "Choose a location" is a block button (canvas).  The picker that opens
+    // is a @wordpress/components/Modal, which portals to the outer document;
+    // so subsequent checkbox/save interactions use `page`.
+    await canvas.getByRole('button', { name: 'Choose a location' }).click();
     if (namedLocation) {
         // External location path: create and select a named venue.
         await page.getByRole('button', { name: 'New location' }).click();
@@ -142,11 +166,13 @@ export async function createSingleEvent(
         await page.getByRole('button', { name: 'Save', exact: true }).click();
     }
 
-    // Flag as a concert & publish
-    await page.locator('.MuiButtonBase-root.MuiSwitch-switchBase').click();
+    // Concert switch and status selector live inside the canvas.  The MUI
+    // Select dropdown portals to the canvas document's body (the iframe's body
+    // in WP 7.1+), so the option must also be scoped to the canvas.
+    await canvas.locator('.MuiButtonBase-root.MuiSwitch-switchBase').click();
     if (!keepDefaultStatus) {
-        await page.getByRole('combobox', { name: 'OPTION' }).click();
-        await page.getByRole('option', { name: status }).click();
+        await canvas.getByRole('combobox', { name: 'OPTION' }).click();
+        await canvas.getByRole('option', { name: status }).click();
     }
     await page.getByRole('button', { name: 'Publish', exact: true }).click();
     await page

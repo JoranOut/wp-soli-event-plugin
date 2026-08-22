@@ -26,6 +26,7 @@ export default function EventStatusSelector({status, onChange}) {
                 onChange={handleChange}
                 sx={{fontSize: '13px', borderRadius: 0,
                     color: EVENT_STATUS_COLOR[status]}}
+                MenuProps={{ sx: { zIndex: 200000 } }}
             >
                 {EVENT_STATUS.map((s, i) => {
                     return (
