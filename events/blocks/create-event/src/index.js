@@ -1,4 +1,5 @@
 import "./index.scss"
+import EditorStyleScope from "../../../inc/editor-style-scope";
 import { __ } from '@wordpress/i18n';
 import EditableDateTable from "./components/editable-date-table/editable-date-table";
 import AdminEventsProvider from "./components/events-provider/admin-events-provider";
@@ -121,9 +122,11 @@ function EditComponent({context}) {
 
     return (
         <div className="soli-block-create-event">
-            <AdminEventsProvider post_id={postId}>
-                <InnerEdit userCanAdminNote={userCanAdminNote}/>
-            </AdminEventsProvider>
+            <EditorStyleScope>
+                <AdminEventsProvider post_id={postId}>
+                    <InnerEdit userCanAdminNote={userCanAdminNote}/>
+                </AdminEventsProvider>
+            </EditorStyleScope>
         </div>
     );
 }

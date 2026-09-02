@@ -1,4 +1,5 @@
 import "./time-generator-modal-button.scss"
+import EditorStyleScope from "../../../../../inc/editor-style-scope";
 import { __ } from '@wordpress/i18n';
 import {SelectControl, Modal, Button} from "@wordpress/components"
 import {useState, useEffect} from '@wordpress/element';
@@ -247,76 +248,40 @@ function TimeGeneratorModalButton(props) {
             shouldCloseOnClickOutside={true}
             __experimentalHideHeader={false}
         >
-            <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale={'nl'}
-            >
-                <div className={"generate-grid"}>
-                    <div className={"grid-top-left"}>
-                        <DateRangePicker
-                            className={"dateformat"}
-                            minimalDate={props.minimalDate}
-                            date={{startDate: startDate, endDate: endDate}}
-                            updateDate={(date) => {
-                                setStartDate(dayjs(date.startDate));
-                                setEndDate(dayjs(date.endDate));
-                                generateData({
-                                    startDate: date.startDate,
-                                    endDate: date.endDate,
-                                    frequency: frequency,
-                                    method: method,
-                                    endRepeatDate: endRepeatDate,
-                                    repeatAmount: repeatAmount,
-                                    rooms: rooms,
-                                    location: location,
-                                    status: status,
-                                    useNotes: useNotes,
-                                });
-                            }}
-                            edit={true}
-                        />
-                        <LocationPicker
-                            location={location}
-                            rooms={rooms}
-                            onChange={(rooms, location) => {
-                                updateLocation(rooms, location);
-                                generateData({
-                                    startDate: startDate,
-                                    endDate: endDate,
-                                    frequency: frequency,
-                                    method: method,
-                                    endRepeatDate: endRepeatDate,
-                                    repeatAmount: repeatAmount,
-                                    rooms: rooms,
-                                    location: location,
-                                    status: status,
-                                    useNotes: useNotes,
-                                });
-                            }}
-                        />
-                        <EventStatusSelector
-                            status={status}
-                            onChange={(status) => {
-                                setStatus(status);
-                                generateData({
-                                    startDate: startDate,
-                                    endDate: endDate,
-                                    frequency: frequency,
-                                    method: method,
-                                    endRepeatDate: endRepeatDate,
-                                    repeatAmount: repeatAmount,
-                                    rooms: rooms,
-                                    location: location,
-                                    status: status,
-                                    useNotes: useNotes,
-                                });
-                            }}
-                        />
-                        <FormControlLabel control={
-                            <Switch
-                                checked={useNotes}
-                                onChange={(event, checked) => {
-                                    setUseNotes(checked);
+            <EditorStyleScope>
+                <LocalizationProvider
+                    dateAdapter={AdapterDayjs}
+                    adapterLocale={'nl'}
+                >
+                    <div className={"generate-grid"}>
+                        <div className={"grid-top-left"}>
+                            <DateRangePicker
+                                className={"dateformat"}
+                                minimalDate={props.minimalDate}
+                                date={{startDate: startDate, endDate: endDate}}
+                                updateDate={(date) => {
+                                    setStartDate(dayjs(date.startDate));
+                                    setEndDate(dayjs(date.endDate));
+                                    generateData({
+                                        startDate: date.startDate,
+                                        endDate: date.endDate,
+                                        frequency: frequency,
+                                        method: method,
+                                        endRepeatDate: endRepeatDate,
+                                        repeatAmount: repeatAmount,
+                                        rooms: rooms,
+                                        location: location,
+                                        status: status,
+                                        useNotes: useNotes,
+                                    });
+                                }}
+                                edit={true}
+                            />
+                            <LocationPicker
+                                location={location}
+                                rooms={rooms}
+                                onChange={(rooms, location) => {
+                                    updateLocation(rooms, location);
                                     generateData({
                                         startDate: startDate,
                                         endDate: endDate,
@@ -327,130 +292,168 @@ function TimeGeneratorModalButton(props) {
                                         rooms: rooms,
                                         location: location,
                                         status: status,
-                                        useNotes: checked,
-                                    });
-                                }}
-                            />
-                        } label={__('copy notes', 'soli-event')}/>
-
-                    </div>
-                    <div className={"grid-top-right"}>
-
-                        <SelectControl
-                            className={"frequentie"}
-                            help={__('Select how the event repeats', 'soli-event')}
-                            label={__('Choose a repeat frequency', 'soli-event')}
-                            value={frequency ?? ''}
-                            onChange={(frequency) => {
-                                setFrequency(frequency);
-                                generateData({
-                                    startDate: startDate,
-                                    endDate: endDate,
-                                    frequency: frequency,
-                                    method: method,
-                                    endRepeatDate: endRepeatDate,
-                                    repeatAmount: repeatAmount,
-                                    rooms: rooms,
-                                    location: location,
-                                    status: status,
-                                    useNotes: useNotes,
-                                });
-                            }}
-                            options={[{
-                                disabled: true, label: __('Select an option', 'soli-event'), value: ''
-                            }, {
-                                label: __('Weekly', 'soli-event'), value: RepeatingOptions.WEEKLY
-                            }, {
-                                label: __('Every other week', 'soli-event'), value: RepeatingOptions.BIWEEKLY
-                            }, {
-                                label: __('Monthly', 'soli-event'), value: RepeatingOptions.MONTHLY
-                            }]}
-                        />
-
-                        {!!frequency && <RadioRepeatingMethod
-                            className={"method"}
-                            onChange={(newMethod) => {
-                                setMethod(newMethod);
-                                generateData({
-                                    startDate: startDate,
-                                    endDate: endDate,
-                                    frequency: frequency,
-                                    method: newMethod,
-                                    endRepeatDate: endRepeatDate,
-                                    repeatAmount: repeatAmount,
-                                    rooms: rooms,
-                                    location: location,
-                                    status: status,
-                                    useNotes: useNotes,
-                                });
-                            }}
-                        />}
-
-                        {!!frequency && method === RepeatingMethod.TIMES && <>
-                            <NumberedInput
-                                className={"times"}
-                                value={repeatAmount}
-                                min={0}
-                                onChange={(event, val) => {
-                                    setRepeatAmount(val);
-                                    generateData({
-                                        startDate: startDate,
-                                        endDate: endDate,
-                                        frequency: frequency,
-                                        method: RepeatingMethod.TIMES,
-                                        endRepeatDate: null,
-                                        repeatAmount: val,
-                                        rooms: rooms,
-                                        location: location,
-                                        status: status,
                                         useNotes: useNotes,
                                     });
                                 }}
-                                endAdornment={{
-                                    WEEKLY: __('weeks', 'soli-event'), BIWEEKLY: __('times every other week', 'soli-event'), MONTHLY: __('months', 'soli-event')
-                                }[frequency]}
                             />
-                        </>}
-
-                        {!!frequency && method === RepeatingMethod.UNTIL_DATE && <>
-                            <p>{__('Repeat until and including:', 'soli-event')}</p>
-                            <DatePicker
-                                className="repeat-end-date"
-                                value={endRepeatDate}
-                                minDate={startDate}
-                                onChange={(newEndRepeatDate) => {
-                                    setEndRepeatDate(dayjs(newEndRepeatDate));
+                            <EventStatusSelector
+                                status={status}
+                                onChange={(status) => {
+                                    setStatus(status);
                                     generateData({
                                         startDate: startDate,
                                         endDate: endDate,
                                         frequency: frequency,
                                         method: method,
-                                        endRepeatDate: newEndRepeatDate,
-                                        repeatAmount: null,
+                                        endRepeatDate: endRepeatDate,
+                                        repeatAmount: repeatAmount,
                                         rooms: rooms,
                                         location: location,
                                         status: status,
                                         useNotes: useNotes,
                                     });
                                 }}
-                                format="dddd D MMMM, YYYY"
                             />
-                        </>}
+                            <FormControlLabel control={
+                                <Switch
+                                    checked={useNotes}
+                                    onChange={(event, checked) => {
+                                        setUseNotes(checked);
+                                        generateData({
+                                            startDate: startDate,
+                                            endDate: endDate,
+                                            frequency: frequency,
+                                            method: method,
+                                            endRepeatDate: endRepeatDate,
+                                            repeatAmount: repeatAmount,
+                                            rooms: rooms,
+                                            location: location,
+                                            status: status,
+                                            useNotes: checked,
+                                        });
+                                    }}
+                                />
+                            } label={__('copy notes', 'soli-event')}/>
 
-                        {!!error && <p>
-                            {error}
-                        </p>}
+                        </div>
+                        <div className={"grid-top-right"}>
+
+                            <SelectControl
+                                className={"frequentie"}
+                                help={__('Select how the event repeats', 'soli-event')}
+                                label={__('Choose a repeat frequency', 'soli-event')}
+                                value={frequency ?? ''}
+                                onChange={(frequency) => {
+                                    setFrequency(frequency);
+                                    generateData({
+                                        startDate: startDate,
+                                        endDate: endDate,
+                                        frequency: frequency,
+                                        method: method,
+                                        endRepeatDate: endRepeatDate,
+                                        repeatAmount: repeatAmount,
+                                        rooms: rooms,
+                                        location: location,
+                                        status: status,
+                                        useNotes: useNotes,
+                                    });
+                                }}
+                                options={[{
+                                    disabled: true, label: __('Select an option', 'soli-event'), value: ''
+                                }, {
+                                    label: __('Weekly', 'soli-event'), value: RepeatingOptions.WEEKLY
+                                }, {
+                                    label: __('Every other week', 'soli-event'), value: RepeatingOptions.BIWEEKLY
+                                }, {
+                                    label: __('Monthly', 'soli-event'), value: RepeatingOptions.MONTHLY
+                                }]}
+                            />
+
+                            {!!frequency && <RadioRepeatingMethod
+                                className={"method"}
+                                onChange={(newMethod) => {
+                                    setMethod(newMethod);
+                                    generateData({
+                                        startDate: startDate,
+                                        endDate: endDate,
+                                        frequency: frequency,
+                                        method: newMethod,
+                                        endRepeatDate: endRepeatDate,
+                                        repeatAmount: repeatAmount,
+                                        rooms: rooms,
+                                        location: location,
+                                        status: status,
+                                        useNotes: useNotes,
+                                    });
+                                }}
+                            />}
+
+                            {!!frequency && method === RepeatingMethod.TIMES && <>
+                                <NumberedInput
+                                    className={"times"}
+                                    value={repeatAmount}
+                                    min={0}
+                                    onChange={(event, val) => {
+                                        setRepeatAmount(val);
+                                        generateData({
+                                            startDate: startDate,
+                                            endDate: endDate,
+                                            frequency: frequency,
+                                            method: RepeatingMethod.TIMES,
+                                            endRepeatDate: null,
+                                            repeatAmount: val,
+                                            rooms: rooms,
+                                            location: location,
+                                            status: status,
+                                            useNotes: useNotes,
+                                        });
+                                    }}
+                                    endAdornment={{
+                                        WEEKLY: __('weeks', 'soli-event'), BIWEEKLY: __('times every other week', 'soli-event'), MONTHLY: __('months', 'soli-event')
+                                    }[frequency]}
+                                />
+                            </>}
+
+                            {!!frequency && method === RepeatingMethod.UNTIL_DATE && <>
+                                <p>{__('Repeat until and including:', 'soli-event')}</p>
+                                <DatePicker
+                                    className="repeat-end-date"
+                                    value={endRepeatDate}
+                                    minDate={startDate}
+                                    onChange={(newEndRepeatDate) => {
+                                        setEndRepeatDate(dayjs(newEndRepeatDate));
+                                        generateData({
+                                            startDate: startDate,
+                                            endDate: endDate,
+                                            frequency: frequency,
+                                            method: method,
+                                            endRepeatDate: newEndRepeatDate,
+                                            repeatAmount: null,
+                                            rooms: rooms,
+                                            location: location,
+                                            status: status,
+                                            useNotes: useNotes,
+                                        });
+                                    }}
+                                    format="dddd D MMMM, YYYY"
+                                />
+                            </>}
+
+                            {!!error && <p>
+                                {error}
+                            </p>}
+                        </div>
+
+                        {generatedData.length > 0 && <DateViewToggle
+                            data={generatedData}/>}
+
+                        {generatedData.length > 0 && <Button
+                            className="submit-button"
+                            variant="secondary"
+                            onClick={submit}>{__('Use', 'soli-event')}</Button>}
                     </div>
-
-                    {generatedData.length > 0 && <DateViewToggle
-                        data={generatedData}/>}
-
-                    {generatedData.length > 0 && <Button
-                        className="submit-button"
-                        variant="secondary"
-                        onClick={submit}>{__('Use', 'soli-event')}</Button>}
-                </div>
-            </LocalizationProvider>
+                </LocalizationProvider>
+            </EditorStyleScope>
         </Modal>)}
     </>);
 }
