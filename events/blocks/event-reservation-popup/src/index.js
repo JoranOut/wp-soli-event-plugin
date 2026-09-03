@@ -1,4 +1,5 @@
 import "./index.scss"
+import EditorStyleScope from "../../../inc/editor-style-scope";
 import {__} from '@wordpress/i18n';
 import {InspectorControls} from '@wordpress/block-editor';
 import {PanelBody, TextControl} from '@wordpress/components';
@@ -28,7 +29,9 @@ function EditComponent({attributes, setAttributes}) {
                     />
                 </PanelBody>
             </InspectorControls>
-            <ReservationPopup recipient={attributes.recipient}/>
+            <EditorStyleScope>
+                <ReservationPopup recipient={attributes.recipient}/>
+            </EditorStyleScope>
         </>
     )
 }

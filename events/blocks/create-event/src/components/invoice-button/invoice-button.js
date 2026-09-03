@@ -1,4 +1,5 @@
 import "./invoice-button.scss";
+import EditorStyleScope from "../../../../../inc/editor-style-scope";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import { Modal, Button } from "@wordpress/components";
 import { createPortal, useEffect, useMemo, useState } from "@wordpress/element";
@@ -178,86 +179,88 @@ function InvoiceButton() {
                     shouldCloseOnEsc={true}
                     shouldCloseOnClickOutside={true}
                 >
-                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="nl">
-                        <p className="invoice-help">
-                            {__(
-                                "Choose the period and the dates to invoice, then download the invoice as a Word document.",
-                                "soli-event"
-                            )}
-                        </p>
-                        <div className="invoice-range">
-                            <DatePicker
-                                label={__("From", "soli-event")}
-                                value={fromDate}
-                                onChange={(date) => setFromDate(date)}
-                                format="D MMMM YYYY"
-                            />
-                            <DatePicker
-                                label={__("Until", "soli-event")}
-                                value={toDate}
-                                onChange={(date) => setToDate(date)}
-                                format="D MMMM YYYY"
-                            />
-                        </div>
-                        <div className="invoice-date-list">
-                            {rowsInRange.map((row) => {
-                                const start = row.start.locale("nl");
-                                const end = dayjs(row.endDate).locale("nl");
-                                const sameDay = start.isSame(end, "day");
-                                return (
-                                    <label key={row.key} className="invoice-date-row">
-                                        <Checkbox
-                                            size="small"
-                                            checked={!excluded.has(row.key)}
-                                            onChange={() => toggleRow(row.key)}
-                                        />
-                                        <span className="invoice-date-label">
-                                            {start.format("dd DD-MM-YYYY HH:mm")}
-                                            {" - "}
-                                            {sameDay ? end.format("HH:mm") : end.format("dd DD-MM-YYYY HH:mm")}
-                                        </span>
-                                        <span className="invoice-date-duration">
-                                            {sprintf(
-                                                /* translators: %s: number of hours, e.g. 2,50 */
-                                                __("%s hours", "soli-event"),
-                                                formatHours(durationInHours(row))
-                                            )}
-                                        </span>
-                                    </label>
-                                );
-                            })}
-                            {rowsInRange.length === 0 && (
-                                <p className="invoice-empty">
-                                    {__("No dates in the chosen period.", "soli-event")}
-                                </p>
-                            )}
-                        </div>
-                        <div className="invoice-footer">
-                            <TextField
-                                className="invoice-rate"
-                                label={__("Hourly rate (€)", "soli-event")}
-                                size="small"
-                                value={rate}
-                                onChange={(event) => setRate(event.target.value)}
-                                inputProps={{ inputMode: "decimal" }}
-                            />
-                            <span className="invoice-selected-count">
-                                {sprintf(
-                                    /* translators: %d: number of selected dates */
-                                    _n("%d date selected", "%d dates selected", selectedRows.length, "soli-event"),
-                                    selectedRows.length
+                    <EditorStyleScope>
+                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="nl">
+                            <p className="invoice-help">
+                                {__(
+                                    "Choose the period and the dates to invoice, then download the invoice as a Word document.",
+                                    "soli-event"
                                 )}
-                            </span>
-                            <Button
-                                variant="primary"
-                                className="invoice-download-button"
-                                disabled={busy || selectedRows.length === 0}
-                                onClick={download}
-                            >
-                                {__("Download invoice", "soli-event")}
-                            </Button>
-                        </div>
-                    </LocalizationProvider>
+                            </p>
+                            <div className="invoice-range">
+                                <DatePicker
+                                    label={__("From", "soli-event")}
+                                    value={fromDate}
+                                    onChange={(date) => setFromDate(date)}
+                                    format="D MMMM YYYY"
+                                />
+                                <DatePicker
+                                    label={__("Until", "soli-event")}
+                                    value={toDate}
+                                    onChange={(date) => setToDate(date)}
+                                    format="D MMMM YYYY"
+                                />
+                            </div>
+                            <div className="invoice-date-list">
+                                {rowsInRange.map((row) => {
+                                    const start = row.start.locale("nl");
+                                    const end = dayjs(row.endDate).locale("nl");
+                                    const sameDay = start.isSame(end, "day");
+                                    return (
+                                        <label key={row.key} className="invoice-date-row">
+                                            <Checkbox
+                                                size="small"
+                                                checked={!excluded.has(row.key)}
+                                                onChange={() => toggleRow(row.key)}
+                                            />
+                                            <span className="invoice-date-label">
+                                                {start.format("dd DD-MM-YYYY HH:mm")}
+                                                {" - "}
+                                                {sameDay ? end.format("HH:mm") : end.format("dd DD-MM-YYYY HH:mm")}
+                                            </span>
+                                            <span className="invoice-date-duration">
+                                                {sprintf(
+                                                    /* translators: %s: number of hours, e.g. 2,50 */
+                                                    __("%s hours", "soli-event"),
+                                                    formatHours(durationInHours(row))
+                                                )}
+                                            </span>
+                                        </label>
+                                    );
+                                })}
+                                {rowsInRange.length === 0 && (
+                                    <p className="invoice-empty">
+                                        {__("No dates in the chosen period.", "soli-event")}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="invoice-footer">
+                                <TextField
+                                    className="invoice-rate"
+                                    label={__("Hourly rate (€)", "soli-event")}
+                                    size="small"
+                                    value={rate}
+                                    onChange={(event) => setRate(event.target.value)}
+                                    inputProps={{ inputMode: "decimal" }}
+                                />
+                                <span className="invoice-selected-count">
+                                    {sprintf(
+                                        /* translators: %d: number of selected dates */
+                                        _n("%d date selected", "%d dates selected", selectedRows.length, "soli-event"),
+                                        selectedRows.length
+                                    )}
+                                </span>
+                                <Button
+                                    variant="primary"
+                                    className="invoice-download-button"
+                                    disabled={busy || selectedRows.length === 0}
+                                    onClick={download}
+                                >
+                                    {__("Download invoice", "soli-event")}
+                                </Button>
+                            </div>
+                        </LocalizationProvider>
+                    </EditorStyleScope>
                 </Modal>
             )}
         </>

@@ -1,5 +1,6 @@
 import { expect } from '@wordpress/e2e-test-utils-playwright';
-import { addDays, format } from 'date-fns';
+import type { FrameLocator, Locator, Page } from '@playwright/test';
+import { addDays, differenceInCalendarMonths, format } from 'date-fns';
 import { nl, enUS } from 'date-fns/locale';
 
 // Unique per-test identifier so concurrent tests never collide on shared state.
@@ -10,6 +11,64 @@ export function uniqueTitle(base: string) {
 // The MUI-heavy Create Event block can take several seconds to paint on CI's
 // constrained runner (fast locally). Give block-load waits generous headroom.
 export const BLOCK_LOAD_TIMEOUT = 30_000;
+
+// WordPress renders block content inside the `editor-canvas` iframe from 7.1
+// on; 6.9 renders it straight into the admin document. Anything *in* the
+// canvas - the blocks, the post title, and (since the blocks pin their MUI
+// portal containers to their own document) MUI dropdowns opened from a block -
+// must be addressed through this root. Editor chrome stays on `page`: the
+// header, the document sidebar, snackbars, and `@wordpress/components` Modals,
+// which portal into the parent document on every version.
+//
+// Whether the editor is iframed is a property of the WordPress version, so it
+// is resolved once per worker. Call this only with an editor open, or the first
+// call memoises the wrong answer for the whole worker.
+let editorIsIframed: boolean | undefined;
+
+export async function editorCanvas(page: Page): Promise<Page | FrameLocator> {
+    if (editorIsIframed === undefined) {
+        editorIsIframed = await page
+            .locator('iframe[name="editor-canvas"]')
+            .waitFor({ state: 'attached', timeout: BLOCK_LOAD_TIMEOUT })
+            .then(() => true)
+            .catch(() => false);
+    }
+
+    return editorIsIframed ? page.frameLocator('iframe[name="editor-canvas"]') : page;
+}
+
+// Set a MUI date field through its calendar popup rather than by typing into
+// the field.
+//
+// Typing is not an option inside the editor canvas: @mui/x-date-pickers 7.x
+// resolves the focused element with `getActiveElement(document)` against the
+// *global* document (internals/hooks/useField/useFieldV7TextField.js). From WP
+// 7.1 the block renders in the editor-canvas iframe, where the parent
+// document's activeElement is the <iframe> itself, so the field concludes it is
+// not focused and drops every keystroke. Clicking through the calendar works on
+// both versions, and it is the path a real editor has on WP 7.1.
+//
+// The popup lands in the same document as the field because the blocks pin
+// their MUI portal containers there (events/inc/editor-style-scope.js).
+export async function pickDate(scope: Page | FrameLocator, field: Locator, date: Date) {
+    await field.getByRole('button').first().click();
+
+    const dialog = scope.getByRole('dialog');
+    // The calendar opens on the month of the field's current value, which is
+    // today for a fresh event. Step by whole months rather than reading the
+    // header, whose month names follow the picker's dayjs locale.
+    const months = differenceInCalendarMonths(date, new Date());
+    const nav = months < 0 ? 'Previous month' : 'Next month';
+    for (let i = 0; i < Math.abs(months); i++) {
+        await dialog.getByRole('button', { name: nav }).click();
+    }
+
+    await dialog
+        .getByRole('gridcell', { name: format(date, 'd', { locale: enUS }), exact: true })
+        .first()
+        .click();
+    await expect(dialog).toBeHidden();
+}
 
 // The status a new event defaults to (EVENT_STATUS[0] in inc/values.js).
 export const DEFAULT_EVENT_STATUS = 'OPTION';
@@ -55,7 +114,8 @@ export async function createSingleEvent(
 
     await page.locator('#editor').waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
     const guide = page.locator('.components-guide');
-    const eventBlock = page.getByLabel('Block: Create Event');
+    const canvas = await editorCanvas(page);
+    const eventBlock = canvas.getByLabel('Block: Create Event');
 
     // The Create Event block renders a stack of heavy MUI components
     // (date/time pickers, selectors, editors) synchronously. On CI's
@@ -82,26 +142,14 @@ export async function createSingleEvent(
     await expect(wizard).toBeHidden();
 
     // Fill in event details
-    await page.getByRole('textbox', { name: 'Add title' }).fill(title);
+    await canvas.getByRole('textbox', { name: 'Add title' }).fill(title);
 
-    // Enter the date into the MUI masked field (D MMMM, YYYY). Land on the
-    // leftmost (day) section, then type the digits consecutively and let MUI's
-    // section auto-advance carry across day -> month -> year. A single ddMMyyyy
-    // blast (or manual ArrowRight between sections) misaligns and yields garbage.
-    const dateInput = page.getByRole('textbox', { name: 'DD MMMM, YYYY' }).first();
-    await dateInput.click();
-    await dateInput.press('ArrowLeft');
-    await dateInput.press('ArrowLeft');
-    await dateInput.press('ArrowLeft');
-    await page.keyboard.type(format(date, 'dd', { locale: enUS }), { delay: 100 });
-    await page.keyboard.type(format(date, 'MM', { locale: enUS }), { delay: 100 });
-    await page.keyboard.type(format(date, 'yyyy', { locale: enUS }), { delay: 100 });
-    await dateInput.press('Tab');
+    await pickDate(canvas, canvas.locator('div.start-date'), date);
 
-    await page.getByRole('textbox', { name: 'hh:mm' }).first().fill(startTime);
-    await page.getByRole('textbox', { name: 'hh:mm' }).nth(1).fill(endTime);
+    await canvas.getByRole('textbox', { name: 'hh:mm' }).first().fill(startTime);
+    await canvas.getByRole('textbox', { name: 'hh:mm' }).nth(1).fill(endTime);
 
-    await page.getByRole('button', { name: 'Choose a location' }).click();
+    await canvas.getByRole('button', { name: 'Choose a location' }).click();
     if (namedLocation) {
         // External location path: create and select a named venue.
         await page.getByRole('button', { name: 'New location' }).click();
@@ -119,10 +167,10 @@ export async function createSingleEvent(
     }
 
     // Flag as a concert & publish
-    await page.locator('.MuiButtonBase-root.MuiSwitch-switchBase').click();
+    await canvas.locator('.MuiButtonBase-root.MuiSwitch-switchBase').click();
     if (!keepDefaultStatus) {
-        await page.getByRole('combobox', { name: 'OPTION' }).click();
-        await page.getByRole('option', { name: status }).click();
+        await canvas.getByRole('combobox', { name: 'OPTION' }).click();
+        await canvas.getByRole('option', { name: status }).click();
     }
     await page.getByRole('button', { name: 'Publish', exact: true }).click();
     await page

@@ -1,4 +1,5 @@
 import "./first-event-wizard.scss"
+import EditorStyleScope from "../../../../../inc/editor-style-scope";
 import { __, sprintf } from '@wordpress/i18n';
 import {useState, useMemo} from '@wordpress/element';
 import {Modal, Button, SelectControl} from "@wordpress/components";
@@ -123,180 +124,182 @@ function FirstEventWizardInner({onClose}) {
             shouldCloseOnEsc={true}
             shouldCloseOnClickOutside={false}
         >
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'nl'}>
-                <div className="wizard-progress" role="list">
-                    {stepTitles.map((title, i) => (
-                        <span
-                            key={title}
-                            role="listitem"
-                            aria-current={i === step ? 'step' : undefined}
-                            className={['wizard-dot', i === step ? 'active' : '', i < step ? 'done' : ''].join(' ')}
-                        />
-                    ))}
-                </div>
-
-                <h3 className="wizard-step-title">{stepTitles[step]}</h3>
-
-                {step === 0 && (
-                    <div className="wizard-step">
-                        <DateRangePicker
-                            date={{startDate, endDate}}
-                            updateDate={(date) => {
-                                setStartDate(date.startDate);
-                                setEndDate(date.endDate);
-                            }}
-                        />
-                    </div>
-                )}
-
-                {step === 1 && (
-                    <div className="wizard-step">
-                        <LocationPicker
-                            location={location}
-                            rooms={rooms}
-                            onChange={(newRooms, newLocation) => {
-                                setRooms(newRooms);
-                                setLocation(newLocation);
-                            }}
-                        />
-                        <p className="wizard-hint">{__('You can leave this empty and pick a location later.', 'soli-event')}</p>
-                    </div>
-                )}
-
-                {step === 2 && (
-                    <div className="wizard-step wizard-details">
-                        <EventStatusSelector
-                            status={status}
-                            onChange={setStatus}
-                        />
-                        <ConcertStatusSwitch
-                            concertStatus={concertStatus}
-                            onChange={setConcertStatus}
-                        />
-                        <TextField
-                            className="wizard-notes"
-                            label={__('Notes', 'soli-event')}
-                            helperText={__('These notes will only be visible in the admin area.', 'soli-event')}
-                            value={notes ?? ''}
-                            multiline
-                            minRows={2}
-                            onChange={(event) => {
-                                const value = event.target.value;
-                                setNotes(value.length > 0 ? value : null);
-                            }}
-                        />
-                    </div>
-                )}
-
-                {step === 3 && (
-                    <div className="wizard-step wizard-repeat">
-                        <SelectControl
-                            className="wizard-frequency"
-                            label={__('Choose a repeat frequency', 'soli-event')}
-                            value={frequency}
-                            onChange={setFrequency}
-                            options={[
-                                {label: __('Does not repeat', 'soli-event'), value: ''},
-                                {label: __('Weekly', 'soli-event'), value: RepeatingOptions.WEEKLY},
-                                {label: __('Every other week', 'soli-event'), value: RepeatingOptions.BIWEEKLY},
-                                {label: __('Monthly', 'soli-event'), value: RepeatingOptions.MONTHLY},
-                            ]}
-                        />
-
-                        {!!frequency && (
-                            <FormControl>
-                                <RadioGroup
-                                    row
-                                    name="wizard-repeat-method"
-                                    value={method}
-                                    onChange={(event, newMethod) => setMethod(newMethod)}
-                                >
-                                    <FormControlLabel
-                                        value={RepeatingMethod.UNTIL_DATE}
-                                        control={<Radio/>}
-                                        label={__('Until date', 'soli-event')}
-                                        labelPlacement="end"
-                                    />
-                                    <FormControlLabel
-                                        value={RepeatingMethod.TIMES}
-                                        control={<Radio/>}
-                                        label={__('Number', 'soli-event')}
-                                        labelPlacement="end"
-                                    />
-                                </RadioGroup>
-                            </FormControl>
-                        )}
-
-                        {!!frequency && method === RepeatingMethod.UNTIL_DATE && (
-                            <div className="wizard-repeat-until">
-                                <p>{__('Repeat until and including:', 'soli-event')}</p>
-                                <DatePicker
-                                    className="repeat-end-date"
-                                    value={endRepeatDate}
-                                    minDate={dayjs(startDate)}
-                                    onChange={(newDate) => setEndRepeatDate(dayjs(newDate))}
-                                    format="dddd D MMMM, YYYY"
-                                />
-                            </div>
-                        )}
-
-                        {!!frequency && method === RepeatingMethod.TIMES && (
-                            <NumberedInput
-                                className="wizard-repeat-times"
-                                value={repeatAmount}
-                                min={0}
-                                onChange={(event, val) => setRepeatAmount(val)}
-                                endAdornment={{
-                                    WEEKLY: __('weeks', 'soli-event'),
-                                    BIWEEKLY: __('times every other week', 'soli-event'),
-                                    MONTHLY: __('months', 'soli-event'),
-                                }[frequency]}
+            <EditorStyleScope>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'nl'}>
+                    <div className="wizard-progress" role="list">
+                        {stepTitles.map((title, i) => (
+                            <span
+                                key={title}
+                                role="listitem"
+                                aria-current={i === step ? 'step' : undefined}
+                                className={['wizard-dot', i === step ? 'active' : '', i < step ? 'done' : ''].join(' ')}
                             />
-                        )}
-
-                        {generatedDates.length > 0 && (
-                            <div className="wizard-generated">
-                                <p>{sprintf(
-                                    // translators: %d is the number of repeated dates that will be added.
-                                    __('%d extra dates will be added:', 'soli-event'),
-                                    generatedDates.length
-                                )}</p>
-                                <ul>
-                                    {generatedDates.slice(0, 5).map((date) => (
-                                        <li key={date.startDate.toISOString()}>
-                                            {date.startDate.toLocaleString('nl-NL', dateOptions)}
-                                        </li>
-                                    ))}
-                                    {generatedDates.length > 5 && <li>…</li>}
-                                </ul>
-                            </div>
-                        )}
+                        ))}
                     </div>
-                )}
 
-                <div className="wizard-footer">
-                    <Button variant="link" onClick={onClose}>
-                        {__('Skip', 'soli-event')}
-                    </Button>
-                    <div className="wizard-nav">
-                        {step > 0 && (
-                            <Button variant="secondary" onClick={() => setStep(step - 1)}>
-                                {__('Back', 'soli-event')}
-                            </Button>
-                        )}
-                        {step < STEPS - 1 && (
-                            <Button variant="primary" onClick={() => setStep(step + 1)}>
-                                {__('Next', 'soli-event')}
-                            </Button>
-                        )}
-                        {step === STEPS - 1 && (
-                            <Button variant="primary" onClick={finish}>
-                                {__('Finish', 'soli-event')}
-                            </Button>
-                        )}
+                    <h3 className="wizard-step-title">{stepTitles[step]}</h3>
+
+                    {step === 0 && (
+                        <div className="wizard-step">
+                            <DateRangePicker
+                                date={{startDate, endDate}}
+                                updateDate={(date) => {
+                                    setStartDate(date.startDate);
+                                    setEndDate(date.endDate);
+                                }}
+                            />
+                        </div>
+                    )}
+
+                    {step === 1 && (
+                        <div className="wizard-step">
+                            <LocationPicker
+                                location={location}
+                                rooms={rooms}
+                                onChange={(newRooms, newLocation) => {
+                                    setRooms(newRooms);
+                                    setLocation(newLocation);
+                                }}
+                            />
+                            <p className="wizard-hint">{__('You can leave this empty and pick a location later.', 'soli-event')}</p>
+                        </div>
+                    )}
+
+                    {step === 2 && (
+                        <div className="wizard-step wizard-details">
+                            <EventStatusSelector
+                                status={status}
+                                onChange={setStatus}
+                            />
+                            <ConcertStatusSwitch
+                                concertStatus={concertStatus}
+                                onChange={setConcertStatus}
+                            />
+                            <TextField
+                                className="wizard-notes"
+                                label={__('Notes', 'soli-event')}
+                                helperText={__('These notes will only be visible in the admin area.', 'soli-event')}
+                                value={notes ?? ''}
+                                multiline
+                                minRows={2}
+                                onChange={(event) => {
+                                    const value = event.target.value;
+                                    setNotes(value.length > 0 ? value : null);
+                                }}
+                            />
+                        </div>
+                    )}
+
+                    {step === 3 && (
+                        <div className="wizard-step wizard-repeat">
+                            <SelectControl
+                                className="wizard-frequency"
+                                label={__('Choose a repeat frequency', 'soli-event')}
+                                value={frequency}
+                                onChange={setFrequency}
+                                options={[
+                                    {label: __('Does not repeat', 'soli-event'), value: ''},
+                                    {label: __('Weekly', 'soli-event'), value: RepeatingOptions.WEEKLY},
+                                    {label: __('Every other week', 'soli-event'), value: RepeatingOptions.BIWEEKLY},
+                                    {label: __('Monthly', 'soli-event'), value: RepeatingOptions.MONTHLY},
+                                ]}
+                            />
+
+                            {!!frequency && (
+                                <FormControl>
+                                    <RadioGroup
+                                        row
+                                        name="wizard-repeat-method"
+                                        value={method}
+                                        onChange={(event, newMethod) => setMethod(newMethod)}
+                                    >
+                                        <FormControlLabel
+                                            value={RepeatingMethod.UNTIL_DATE}
+                                            control={<Radio/>}
+                                            label={__('Until date', 'soli-event')}
+                                            labelPlacement="end"
+                                        />
+                                        <FormControlLabel
+                                            value={RepeatingMethod.TIMES}
+                                            control={<Radio/>}
+                                            label={__('Number', 'soli-event')}
+                                            labelPlacement="end"
+                                        />
+                                    </RadioGroup>
+                                </FormControl>
+                            )}
+
+                            {!!frequency && method === RepeatingMethod.UNTIL_DATE && (
+                                <div className="wizard-repeat-until">
+                                    <p>{__('Repeat until and including:', 'soli-event')}</p>
+                                    <DatePicker
+                                        className="repeat-end-date"
+                                        value={endRepeatDate}
+                                        minDate={dayjs(startDate)}
+                                        onChange={(newDate) => setEndRepeatDate(dayjs(newDate))}
+                                        format="dddd D MMMM, YYYY"
+                                    />
+                                </div>
+                            )}
+
+                            {!!frequency && method === RepeatingMethod.TIMES && (
+                                <NumberedInput
+                                    className="wizard-repeat-times"
+                                    value={repeatAmount}
+                                    min={0}
+                                    onChange={(event, val) => setRepeatAmount(val)}
+                                    endAdornment={{
+                                        WEEKLY: __('weeks', 'soli-event'),
+                                        BIWEEKLY: __('times every other week', 'soli-event'),
+                                        MONTHLY: __('months', 'soli-event'),
+                                    }[frequency]}
+                                />
+                            )}
+
+                            {generatedDates.length > 0 && (
+                                <div className="wizard-generated">
+                                    <p>{sprintf(
+                                        // translators: %d is the number of repeated dates that will be added.
+                                        __('%d extra dates will be added:', 'soli-event'),
+                                        generatedDates.length
+                                    )}</p>
+                                    <ul>
+                                        {generatedDates.slice(0, 5).map((date) => (
+                                            <li key={date.startDate.toISOString()}>
+                                                {date.startDate.toLocaleString('nl-NL', dateOptions)}
+                                            </li>
+                                        ))}
+                                        {generatedDates.length > 5 && <li>…</li>}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="wizard-footer">
+                        <Button variant="link" onClick={onClose}>
+                            {__('Skip', 'soli-event')}
+                        </Button>
+                        <div className="wizard-nav">
+                            {step > 0 && (
+                                <Button variant="secondary" onClick={() => setStep(step - 1)}>
+                                    {__('Back', 'soli-event')}
+                                </Button>
+                            )}
+                            {step < STEPS - 1 && (
+                                <Button variant="primary" onClick={() => setStep(step + 1)}>
+                                    {__('Next', 'soli-event')}
+                                </Button>
+                            )}
+                            {step === STEPS - 1 && (
+                                <Button variant="primary" onClick={finish}>
+                                    {__('Finish', 'soli-event')}
+                                </Button>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </LocalizationProvider>
+                </LocalizationProvider>
+            </EditorStyleScope>
         </Modal>
     );
 }

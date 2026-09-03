@@ -1,4 +1,5 @@
 import "./index.scss"
+import EditorStyleScope from "../../../inc/editor-style-scope";
 import { __ } from '@wordpress/i18n';
 import CalendarWrapper from "./components/calendar-wrapper/calendar-wrapper";
 import { InspectorControls } from '@wordpress/block-editor';
@@ -52,13 +53,15 @@ function EditComponent({ attributes, setAttributes }) {
                 </PanelBody>
             </InspectorControls>
 
-            <CalendarWrapper
-                className="alignwide"
-                calendarType={calendar_type}
-                adjustable={adjustable}
-                onlyConcerts={only_concerts}
-                showRoomsFilter={show_rooms_filter}
-            />
+            <EditorStyleScope>
+                <CalendarWrapper
+                    className="alignwide"
+                    calendarType={calendar_type}
+                    adjustable={adjustable}
+                    onlyConcerts={only_concerts}
+                    showRoomsFilter={show_rooms_filter}
+                />
+            </EditorStyleScope>
         </>
     )
 }

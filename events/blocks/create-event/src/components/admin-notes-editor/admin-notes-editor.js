@@ -1,4 +1,5 @@
 import "./admin-notes-editor.scss"
+import EditorStyleScope from "../../../../../inc/editor-style-scope";
 import { __ } from '@wordpress/i18n';
 import {useState, useEffect} from '@wordpress/element';
 import {Modal, Button} from "@wordpress/components"
@@ -55,22 +56,24 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
             shouldCloseOnClickOutside={true}
             __experimentalHideHeader={false}
         >
-            <p className="notes-hint">{__("These notes will only be visible in the admin area and only to people with high access level.", "soli-event")}</p>
-            <TextField
-                type="text"
-                name="name"
-                maxLength="65535"
-                className="notes-textfield"
-                value={_adminNotes}
-                multiline
-                onChange={(n) => handleChange(n)}
-            />
-            {_adminNotes?.length > 65535 && <span className={"error"}>{__("Too many characters", "soli-event")}</span>}
-            <Button
-                type="submit"
-                className="submit-button"
-                variant="secondary"
-                onClick={() => submit()}>{__("Close", "soli-event")}</Button>
+            <EditorStyleScope>
+                <p className="notes-hint">{__("These notes will only be visible in the admin area and only to people with high access level.", "soli-event")}</p>
+                <TextField
+                    type="text"
+                    name="name"
+                    maxLength="65535"
+                    className="notes-textfield"
+                    value={_adminNotes}
+                    multiline
+                    onChange={(n) => handleChange(n)}
+                />
+                {_adminNotes?.length > 65535 && <span className={"error"}>{__("Too many characters", "soli-event")}</span>}
+                <Button
+                    type="submit"
+                    className="submit-button"
+                    variant="secondary"
+                    onClick={() => submit()}>{__("Close", "soli-event")}</Button>
+            </EditorStyleScope>
         </Modal>
     );
 

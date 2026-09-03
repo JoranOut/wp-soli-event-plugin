@@ -1,4 +1,5 @@
 import './reservation-tool.scss';
+import EditorStyleScope from "../../../../../inc/editor-style-scope";
 
 import {__} from '@wordpress/i18n';
 import {Modal, Button} from "@wordpress/components"
@@ -21,23 +22,25 @@ export default function ReservationTool({closePopup, recipient}) {
             shouldCloseOnClickOutside={true}
             __experimentalHideHeader={false}
         >
-            <Provider store={store}>
-                <div className="reservation-tool">
-                    <div className="reservation-tool-panels">
-                        <CalendarPreview/>
-                        <EventList/>
-                    </div>
+            <EditorStyleScope>
+                <Provider store={store}>
+                    <div className="reservation-tool">
+                        <div className="reservation-tool-panels">
+                            <CalendarPreview/>
+                            <EventList/>
+                        </div>
 
-                    <div className="tool-buttons">
-                        <Button
-                            className="close-button"
-                            variant="secondary"
-                            onClick={closePopup}>{__('Close', 'soli-event')}</Button>
-                        <TextCopyButton/>
-                        <ReservationEmail recipient={recipient}/>
+                        <div className="tool-buttons">
+                            <Button
+                                className="close-button"
+                                variant="secondary"
+                                onClick={closePopup}>{__('Close', 'soli-event')}</Button>
+                            <TextCopyButton/>
+                            <ReservationEmail recipient={recipient}/>
+                        </div>
                     </div>
-                </div>
-            </Provider>
+                </Provider>
+            </EditorStyleScope>
         </Modal>
     )
 }
