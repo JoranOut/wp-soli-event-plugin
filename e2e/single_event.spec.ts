@@ -1,6 +1,7 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import {
     createSingleEvent,
+    editorCanvas,
     createCalendarPage,
     uniqueTitle,
     DEFAULT_EVENT_STATUS,
@@ -41,7 +42,9 @@ test.describe('Event Tests',  () => {
         await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
 
         const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
-        await expect(eventRow.locator('td.column-title a.row-title')).toContainText(ctx.title);
+        // The primary column is a <th> from WP 7.1 and a <td> before it, so the
+        // selector must not name the tag.
+        await expect(eventRow.locator('.column-title a.row-title')).toContainText(ctx.title);
         await expect(eventRow.locator('td.column-start_date')).toContainText(
             `${ctx.formattedUS} ${ctx.startTime}`
         );
@@ -60,14 +63,15 @@ test.describe('Event Tests',  () => {
         await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
 
         const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
-        await eventRow.locator('td.column-title a.row-title').click();
+        await eventRow.locator('.column-title a.row-title').click();
 
-        await expect(page.getByLabel('Add title')).toContainText(ctx.title);
-        await expect(page.locator('div.start-date input')).toHaveValue(ctx.formattedEditor);
-        await expect(page.locator('div.start-time input')).toHaveValue(ctx.startTime);
-        await expect(page.locator('div.end-time input')).toHaveValue(ctx.endTime);
-        await expect(page.getByRole('button', { name: 'Grote Zaal' })).toBeVisible();
-        await expect(page.getByRole('combobox')).toHaveText(ctx.status);
+        const canvas = await editorCanvas(page);
+        await expect(canvas.getByLabel('Add title')).toContainText(ctx.title);
+        await expect(canvas.locator('div.start-date input')).toHaveValue(ctx.formattedEditor);
+        await expect(canvas.locator('div.start-time input')).toHaveValue(ctx.startTime);
+        await expect(canvas.locator('div.end-time input')).toHaveValue(ctx.endTime);
+        await expect(canvas.getByRole('button', { name: 'Grote Zaal' })).toBeVisible();
+        await expect(canvas.getByRole('combobox')).toHaveText(ctx.status);
     });
 
     test('Single event shows correct data on frontend', async ({ admin, page }) => {
@@ -78,7 +82,7 @@ test.describe('Event Tests',  () => {
         // of events accumulated by concurrent tests (avoids list pagination).
         await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
         const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
-        await eventRow.locator('td.column-title a.row-title').click();
+        await eventRow.locator('.column-title a.row-title').click();
 
         const page2Promise = page.waitForEvent('popup');
         await page.getByRole('link', { name: 'View Event' }).click();
@@ -119,7 +123,7 @@ test.describe('Event Tests',  () => {
 
         await admin.visitAdminPage(`/edit.php?post_type=soli_event&s=${encodeURIComponent(ctx.title)}`);
         const eventRow = page.locator('tr.type-soli_event').filter({ hasText: ctx.title });
-        await eventRow.locator('td.column-title a.row-title').click();
+        await eventRow.locator('.column-title a.row-title').click();
 
         const page2Promise = page.waitForEvent('popup');
         await page.getByRole('link', { name: 'View Event' }).click();
@@ -214,7 +218,7 @@ test.describe('Event Tests',  () => {
         await expect.poll(isDirty).toBe(false);
 
         // Editing an event field alone must mark the post dirty...
-        await page.getByRole('textbox', { name: 'hh:mm' }).first().fill('14:14');
+        await (await editorCanvas(page)).getByRole('textbox', { name: 'hh:mm' }).first().fill('14:14');
         await expect.poll(isDirty).toBe(true);
 
         // ...and updating must clear it again.

@@ -181,9 +181,46 @@ Gotchas:
 - The run env activates a **block theme** (`twentytwentyfive`) so the FSE single-event template renders, and
   sets `posts_per_page=100` for deterministic archive/search. Env locale is `en_US`, so specs assert English
   msgids for UI strings (room/location names are data and stay Dutch).
+- The admin list table renders its primary column as a `<th>` from WP 7.1 and a `<td>` before it. Select
+  it as `.column-title`, never `td.column-title`.
 - The block bundle is **not** rebuilt by the test run. After editing anything under a block's `src/`, run
   `npm run build --workspace=<block>` first or the spec drives the previous bundle.
 - `e2e/invoice.spec.ts` asserts the generated `.docx` by unzipping `word/document.xml` with the dependency-
   free reader in `e2e/docx-utils.ts`.
+
+### WordPress 7.1: the iframed editor
+
+From WP 7.1 the post editor renders block content inside the `editor-canvas`
+iframe unconditionally; 6.9 renders it in the admin document. Three consequences,
+all of them live in this repo.
+
+- **Block styling.** MUI injects its runtime styles through Emotion, which
+  defaults to the parent `wp-admin` document, so a block in the canvas rendered
+  unstyled. `events/inc/editor-style-scope.js` resolves the document it is
+  mounted in and pins both the Emotion cache and MUI's portal containers
+  (`MuiPopper` / `MuiPopover` / `MuiModal` / `MuiDialog`) to it. Wrap any new
+  MUI-rendering surface in it — including inside a `@wordpress/components`
+  `Modal`, which portals into the *parent* document on every version.
+
+- **Test locators.** `editorCanvas(page)` in `e2e/helpers.ts` returns the
+  `frameLocator` on 7.1 and the `page` on 6.9. Block content and the post title
+  go through it; editor chrome (header, sidebar, snackbars, WP `Modal`s) stays on
+  `page`. It memoises per worker, so call it only with an editor open.
+
+- **MUI date fields do not accept typing in the canvas.**
+  `@mui/x-date-pickers` 7.x resolves focus with `getActiveElement(document)`
+  against the *global* document
+  (`internals/hooks/useField/useFieldV7TextField.js`). Inside the iframe the
+  parent document's `activeElement` is the `<iframe>`, so the field decides it is
+  not focused and drops every keystroke — keydown/beforeinput/input all fire and
+  are ignored. **This is a live editor-facing defect on WP 7.1, not just a test
+  problem.** Picking a date from the calendar popup works, so `pickDate()` in
+  `e2e/helpers.ts` drives that path on both versions. The upstream fix is
+  x-date-pickers v9, whose `getActiveElement(node)` goes through
+  `ownerDocument(node)` — it needs `@mui/material` v7+, and this repo is on v5,
+  so that upgrade is its own piece of work.
+
+  Fields inside a WP `Modal` (the wizard, the time generator, the invoice
+  dialog) are in the parent document and still accept typing.
 
 Run: `npm run test:playwright`.

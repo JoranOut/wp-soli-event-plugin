@@ -6,7 +6,7 @@
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import { apiFor } from './fixtures/roles';
-import { uniqueTitle, BLOCK_LOAD_TIMEOUT } from './helpers';
+import { editorCanvas, uniqueTitle, BLOCK_LOAD_TIMEOUT } from './helpers';
 
 test.describe('Location editing (create-event picker)', () => {
     test('edit opens a warning modal and saves the shared location', async ({ admin, page }) => {
@@ -24,7 +24,8 @@ test.describe('Location editing (create-event picker)', () => {
         // Same block-load dance as helpers.createSingleEvent: the guide may
         // cover the editor, and the first-event wizard covers the block.
         const guide = page.locator('.components-guide');
-        const eventBlock = page.getByLabel('Block: Create Event');
+        const canvas = await editorCanvas(page);
+        const eventBlock = canvas.getByLabel('Block: Create Event');
         const winner = await Promise.race([
             guide.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'guide'),
             eventBlock.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT }).then(() => 'block'),
@@ -40,7 +41,7 @@ test.describe('Location editing (create-event picker)', () => {
         await expect(wizard).toBeHidden();
 
         // Open the picker, search the seeded venue, and edit it.
-        await page.getByRole('button', { name: 'Choose a location' }).click();
+        await canvas.getByRole('button', { name: 'Choose a location' }).click();
         await page.locator('.location-picker-modal').getByRole('searchbox').fill(name);
         const row = page.locator('.location', { hasText: name });
         await row.getByRole('button', { name: 'edit' }).click();
