@@ -1,8 +1,8 @@
 import "./notes-editor.scss"
-import EditorStyleScope from "../../../../../inc/editor-style-scope";
+import SoliModal from "../../../../../inc/soli-modal";
 import { __ } from '@wordpress/i18n';
 import {useState, useEffect} from '@wordpress/element';
-import {Modal, Button} from "@wordpress/components"
+import {Button} from "@wordpress/components"
 import documentSVG from "../../../../../../inc/assets/img/icons/document_editing.svg";
 import editSVG from "../../../../../../inc/assets/img/icons/edit.svg";
 import {TextField} from "@mui/material";
@@ -47,7 +47,7 @@ export default function NotesEditor({notes, onChange, buttonSize = 'small', hide
     }
 
     const ModalContent = (
-        <Modal
+        <SoliModal
             title={__("Notepad", "soli-event")}
             onRequestClose={closeModal}
             focusOnMount={true}
@@ -57,25 +57,23 @@ export default function NotesEditor({notes, onChange, buttonSize = 'small', hide
             shouldCloseOnClickOutside={true}
             __experimentalHideHeader={false}
         >
-            <EditorStyleScope>
-                <p className="notes-hint">{__("These notes will only be visible in the admin area.", "soli-event")}</p>
-                <TextField
-                    type="text"
-                    name="name"
-                    maxLength="65535"
-                    className="notes-textfield"
-                    value={_notes}
-                    multiline
-                    onChange={(n) => handleChange(n)}
-                />
-                {_notes?.length > 65535 && <span className={"error"}>{__("Too many characters", "soli-event")}</span>}
-                <Button
-                    type="submit"
-                    className="submit-button"
-                    variant="secondary"
-                    onClick={() => submit()}>{__("Close", "soli-event")}</Button>
-            </EditorStyleScope>
-        </Modal>
+            <p className="notes-hint">{__("These notes will only be visible in the admin area.", "soli-event")}</p>
+            <TextField
+                type="text"
+                name="name"
+                maxLength="65535"
+                className="notes-textfield"
+                value={_notes}
+                multiline
+                onChange={(n) => handleChange(n)}
+            />
+            {_notes?.length > 65535 && <span className={"error"}>{__("Too many characters", "soli-event")}</span>}
+            <Button
+                type="submit"
+                className="submit-button"
+                variant="secondary"
+                onClick={() => submit()}>{__("Close", "soli-event")}</Button>
+        </SoliModal>
     );
 
     if(buttonSize === "line" && !hideNotes){
