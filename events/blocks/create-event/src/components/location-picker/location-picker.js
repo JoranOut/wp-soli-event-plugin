@@ -1,6 +1,7 @@
 import "./location-picker.scss"
+import SoliModal from "../../../../../inc/soli-modal";
 import { __ } from '@wordpress/i18n';
-import {Modal, Button, ToggleControl} from "@wordpress/components"
+import {Button, ToggleControl} from "@wordpress/components"
 import {useState, useEffect} from '@wordpress/element';
 import LocationSearcher from "../location-searcher/location-searcher";
 import LocationCreator from "../location-creator/location-creator";
@@ -47,7 +48,7 @@ function LocationPicker({location, rooms, onChange}) {
                 }
             </Button>
             {isOpen && (
-                <Modal
+                <SoliModal
                     title={__("Choose a location", "soli-event")}
                     onRequestClose={closeModal}
                     size={"medium"}
@@ -85,7 +86,7 @@ function LocationPicker({location, rooms, onChange}) {
                             </>
                         }
                     </div>
-                </Modal>
+                </SoliModal>
             )}
         </div>);
 }

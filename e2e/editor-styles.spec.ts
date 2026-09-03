@@ -18,7 +18,7 @@
  * `inline` default proves the rules reached the element.
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
-import { BLOCK_LOAD_TIMEOUT, uniqueTitle } from './helpers';
+import { BLOCK_LOAD_TIMEOUT, editorCanvas, uniqueTitle } from './helpers';
 
 test.describe('Editor MUI styles', () => {
     test.describe.configure({ mode: 'parallel' });
@@ -82,5 +82,37 @@ test.describe('Editor MUI styles', () => {
         const field = wizard.locator('.MuiInputBase-root').first();
         await expect(field).toBeVisible();
         await expect(field).toHaveCSS('display', 'flex');
+    });
+
+    test('styles MUI reached through a Modal opened from the canvas', async ({ admin, page }) => {
+        await admin.createNewPost({ postType: 'soli_event', title: uniqueTitle('Editor Styles Location') });
+
+        const canvas = await editorCanvas(page);
+        await canvas
+            .getByLabel('Block: Create Event')
+            .waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
+
+        const wizard = page.locator('.first-event-wizard');
+        await wizard.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
+        await wizard.getByRole('button', { name: 'Skip' }).click();
+        await expect(wizard).toBeHidden();
+
+        // The location picker is the case a per-Modal wrapper is easy to miss:
+        // the Modal itself renders no MUI, but the rooms picker inside it does.
+        // React context crosses a portal unchanged, so without SoliModal the
+        // Modal inherits the block's canvas-bound cache while rendering in the
+        // parent document, and MUI's rules never reach it.
+        await canvas.getByRole('button', { name: 'Choose a location' }).click();
+        await page.getByRole('checkbox', { name: 'Muziekcentrum' }).check();
+
+        // MUI hides a Checkbox's native input behind its icon. Unstyled it is a
+        // visible browser checkbox sitting next to the icon - exactly what the
+        // broken dialog showed.
+        const nativeInput = page
+            .locator('.location-picker-modal .MuiCheckbox-root input[type="checkbox"]')
+            .first();
+        await expect(nativeInput).toHaveCount(1);
+        await expect(nativeInput).toHaveCSS('opacity', '0');
+        await expect(nativeInput).toHaveCSS('position', 'absolute');
     });
 });

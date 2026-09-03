@@ -1,7 +1,8 @@
 import "./location-creator.scss"
+import SoliModal from "../../../../../inc/soli-modal";
 import { __ } from '@wordpress/i18n';
 import {useState, useEffect} from '@wordpress/element';
-import {Modal, Button} from "@wordpress/components"
+import {Button} from "@wordpress/components"
 import apiFetch from '@wordpress/api-fetch';
 
 function LocationCreator({onCreated}) {
@@ -67,7 +68,7 @@ function LocationCreator({onCreated}) {
             </Button>
 
             {isOpen && (
-                <Modal
+                <SoliModal
                     title={__("Create a location", "soli-event")}
                     onRequestClose={closeModal}
                     focusOnMount={true}
@@ -101,7 +102,7 @@ function LocationCreator({onCreated}) {
                         className="submit-button"
                         variant="secondary"
                         onClick={() => postAPI()}>{__("Save and select", "soli-event")}</Button>
-                </Modal>)}
+                </SoliModal>)}
         </div>);
 }
 

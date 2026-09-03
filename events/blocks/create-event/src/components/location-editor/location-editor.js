@@ -1,7 +1,8 @@
 import "./location-editor.scss"
+import SoliModal from "../../../../../inc/soli-modal";
 import { __ } from '@wordpress/i18n';
 import {useState} from '@wordpress/element';
-import {Modal, Button, Notice} from "@wordpress/components"
+import {Button, Notice} from "@wordpress/components"
 import apiFetch from '@wordpress/api-fetch';
 
 // Edits an existing location. A location is shared between every event date
@@ -46,7 +47,7 @@ function LocationEditor({location, onSaved, onClose}) {
     }
 
     return (
-        <Modal
+        <SoliModal
             title={__("Edit location", "soli-event")}
             onRequestClose={onClose}
             focusOnMount={true}
@@ -86,7 +87,7 @@ function LocationEditor({location, onSaved, onClose}) {
                     isBusy={isLoading}
                     onClick={() => postAPI()}>{__("Save changes", "soli-event")}</Button>
             </div>
-        </Modal>
+        </SoliModal>
     );
 }
 

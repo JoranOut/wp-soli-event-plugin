@@ -1,8 +1,8 @@
 import "./admin-notes-editor.scss"
-import EditorStyleScope from "../../../../../inc/editor-style-scope";
+import SoliModal from "../../../../../inc/soli-modal";
 import { __ } from '@wordpress/i18n';
 import {useState, useEffect} from '@wordpress/element';
-import {Modal, Button} from "@wordpress/components"
+import {Button} from "@wordpress/components"
 import lockSVG from "../../../../../../inc/assets/img/icons/lock.svg";
 import editSVG from "../../../../../../inc/assets/img/icons/edit.svg";
 import {TextField} from "@mui/material";
@@ -46,7 +46,7 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
     }
 
     const ModalContent = (
-        <Modal
+        <SoliModal
             title={__("Admin Notes", "soli-event")}
             onRequestClose={closeModal}
             focusOnMount={true}
@@ -56,25 +56,23 @@ export default function AdminNotesEditor({adminNotes, onChange, buttonSize = 'sm
             shouldCloseOnClickOutside={true}
             __experimentalHideHeader={false}
         >
-            <EditorStyleScope>
-                <p className="notes-hint">{__("These notes will only be visible in the admin area and only to people with high access level.", "soli-event")}</p>
-                <TextField
-                    type="text"
-                    name="name"
-                    maxLength="65535"
-                    className="notes-textfield"
-                    value={_adminNotes}
-                    multiline
-                    onChange={(n) => handleChange(n)}
-                />
-                {_adminNotes?.length > 65535 && <span className={"error"}>{__("Too many characters", "soli-event")}</span>}
-                <Button
-                    type="submit"
-                    className="submit-button"
-                    variant="secondary"
-                    onClick={() => submit()}>{__("Close", "soli-event")}</Button>
-            </EditorStyleScope>
-        </Modal>
+            <p className="notes-hint">{__("These notes will only be visible in the admin area and only to people with high access level.", "soli-event")}</p>
+            <TextField
+                type="text"
+                name="name"
+                maxLength="65535"
+                className="notes-textfield"
+                value={_adminNotes}
+                multiline
+                onChange={(n) => handleChange(n)}
+            />
+            {_adminNotes?.length > 65535 && <span className={"error"}>{__("Too many characters", "soli-event")}</span>}
+            <Button
+                type="submit"
+                className="submit-button"
+                variant="secondary"
+                onClick={() => submit()}>{__("Close", "soli-event")}</Button>
+        </SoliModal>
     );
 
     if(buttonSize === "line" && !hideNotes){
