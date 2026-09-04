@@ -71,6 +71,11 @@
         align-items: center;
         gap: 16px;
 
+        // Wide enough that "21%" never wraps against the select's arrow.
+        .invoice-vat {
+            min-width: 96px;
+        }
+
         .invoice-selected-count {
             flex: 1;
             text-align: right;

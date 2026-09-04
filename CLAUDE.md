@@ -129,27 +129,47 @@ measured **between whole minutes** (`durationInHours()`) because stored dates ca
 ### Invoice document (`invoice-docx.js`)
 
 Generating produces a `.docx` **client-side** (the `docx` npm package in the create-event workspace; no
-server round-trip, no PHP dependency, so nothing is stored or exposed): sender block, invoice number /
-date / due date, recipient and subject lines, one table, and payment terms with IBAN/KvK/VAT fill-in
-blanks. Values the repo does not know are left blank on purpose rather than invented.
+server round-trip, no PHP dependency, so nothing is stored or exposed). Layout follows the Soli invoice
+design: a magenta "Factuur" heading (the right-hand header cell is reserved for the logo, empty while no
+logo asset exists in the repo), an AAN / VAN address block, a Factuurnummer / Datum / Vervaldatum meta
+block, the line table, and the totals. Values the repo does not know - the recipient, IBAN, KvK and VAT
+numbers - are left as placeholders or fill-in blanks on purpose rather than invented.
 
-Everything numeric lives in **one table** - date lines plus the total-hours, hourly-rate, subtotal,
-VAT-percentage, VAT and total rows - wired together with **same-table cell reference fields**
-(`=D2*E7`, `=SUM(D2:D4)*E7`), so changing the hourly rate or VAT percentage in Word and pressing F9
-recalculates every amount. Three rules keep that working, all learned by rendering the output:
+Palette and type live at the top of the file: accent `EC008C`, body `3F4A5A`, muted `8A94A6`, placeholder
+`AEB6C4`, hairline `D8DCE4`. The face is **Trebuchet MS**, not the design's Nunito: Word silently
+substitutes a font it cannot find, and only Office-bundled families are safe.
+
+Everything numeric lives in **one table** - OMSCHRIJVING / AANTAL / PRIJS / BTW / BEDRAG plus the
+Subtotaal, Btw and Totaal rows - wired together with **same-table cell reference fields** (`=B2*C2`,
+`=(B2*C2+B3*C3)*D2/100`), so changing a price or the VAT percentage in Word and pressing F9 recalculates
+every amount. Four rules keep that working, all learned by rendering the output:
 
 - **Cell references only.** `SUM(ABOVE)` and bookmark references silently evaluate to **0** outside Word,
-  so the totals must reference cells, and never a cell that itself holds a field (subtotal/VAT/total each
-  recompute from the hours and rate cells instead).
+  so the totals reference cells, and never a cell that itself holds a field - subtotal, VAT and total are
+  each rebuilt from the quantity and price cells rather than summing the amount column.
 - **No merged cells in the table.** A merged label renumbers the row for formula purposes, so the value
-  cell stops being addressable as column E ("Expression is faulty"). Summary rows keep all five cells.
-- **Bare numbers in referenced cells.** A "€" in the cell makes it unparseable, so the currency sits in the
-  column header (`Amount (€)`).
+  cell stops being addressable ("Expression is faulty"). The totals rows keep all five cells; the three
+  leading ones are simply empty and borderless, which reads as the design's right-aligned totals block.
+- **Bare numbers in referenced cells.** A "€" or "%" makes the cell unparseable, so AANTAL, PRIJS and BTW
+  hold plain numbers and the unit sits in the column header (`PRIJS (€)`, `BTW (%)`). Only the BEDRAG cells
+  and the totals - which nothing references - carry a "€", through the field's numeric picture.
+- **`SimpleField` takes no run options.** The totals amounts therefore keep the document default weight;
+  only the "Totaal" label is bold.
 
 Widths are explicit **twips** (`WidthType.DXA`, A4 minus 2 cm margins): a percentage width serialises as
 `w:w="100%"`, which Word falls back to a near-zero auto width. The document also pins its language to
 **nl-NL** (`docDefaults`) because the comma decimals in those fields are parsed by run language - with an
 English default `50,00` recalculates as 5000.
+
+**The document is written in Dutch literals, not msgids.** An invoice is an outgoing artefact for a Dutch
+counterparty: it must not flip to English because the editor who generated it has an English profile. The
+*dialog* around it stays translatable in the normal way - only `invoice-docx.js` opts out, and it imports
+no `__()` at all so the boundary stays obvious.
+
+The VAT rate is chosen in the dialog from `VAT_PERCENTAGES` (0 / 9 / 21), exported by `invoice-docx.js` so
+the dialog and the document cannot drift apart; `DEFAULT_VAT_PERCENTAGE` is 21, the Dutch standard rate,
+and it is the default on both sides so a caller that omits the rate cannot silently produce a 0% invoice.
+0% covers exempt and reverse-charge work, 9% the reduced rate.
 
 ### Editing / admin surfaces (role-aware exception)
 

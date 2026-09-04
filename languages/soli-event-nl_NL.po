@@ -1238,6 +1238,9 @@ msgstr "Geen data in de gekozen periode."
 msgid "Hourly rate (€)"
 msgstr "Uurtarief (€)"
 
+msgid "VAT"
+msgstr "Btw"
+
 #. translators: %d: number of selected dates
 #: events/blocks/create-event/src/components/invoice-button/invoice-button.js:247
 msgid "%d date selected"

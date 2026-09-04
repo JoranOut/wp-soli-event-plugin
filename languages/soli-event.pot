@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-07T22:10:10+00:00\n"
+"POT-Creation-Date: 2026-09-04T13:55:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: soli-event\n"
@@ -109,24 +109,23 @@ msgstr ""
 msgid "No upcoming concert found. Flag an event date as a concert to populate this hero."
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:136
+#: events/blocks/concert-hero/index.php:146
 msgid "Concert programme"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:140
-#: events/blocks/event-view-calendar/src/index.js:33
-msgid "Day"
+#: events/blocks/concert-hero/index.php:151
+msgid "Orchestra"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:142
+#: events/blocks/concert-hero/index.php:154
 msgid "Start"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:143
+#: events/blocks/concert-hero/index.php:155
 msgid "hrs"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:145
+#: events/blocks/concert-hero/index.php:157
 #: events/blocks/event-location-map/index.php:34
 #: events/blocks/event-location-map/index.php:75
 #: events/lib/events_admin_table.php:7
@@ -134,11 +133,16 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:153
+#: events/blocks/concert-hero/index.php:161
+#: events/blocks/event-location-map/src/index.js:61
+msgid "Address"
+msgstr ""
+
+#: events/blocks/concert-hero/index.php:166
 msgid "About this concert →"
 msgstr ""
 
-#: events/blocks/concert-hero/index.php:155
+#: events/blocks/concert-hero/index.php:168
 msgid "Full agenda →"
 msgstr ""
 
@@ -186,20 +190,20 @@ msgstr ""
 msgid "Shown to logged-in members only: this panel lists the groups from their Soli account."
 msgstr ""
 
-#: events/blocks/my-groups/index.php:59
+#: events/blocks/my-groups/index.php:60
 msgid "Your account has no group assignments from the Soli administration (they sync at SSO login). Members see their own groups here."
 msgstr ""
 
-#: events/blocks/my-groups/index.php:64
-msgid "None of your groups are linked to a category yet. Set the Soli administration group ID on each group's category."
+#: events/blocks/my-groups/index.php:65
+msgid "None of your groups are linked to a category yet. Give the category the same slug as the group in the Soli administration, or set the group ID on the category."
 msgstr ""
 
-#: events/blocks/my-groups/index.php:104
+#: events/blocks/my-groups/index.php:105
 msgid "no upcoming events"
 msgstr ""
 
 #. translators: 1: date (e.g. "Tue 12 Aug"), 2: time (e.g. "19:30").
-#: events/blocks/my-groups/index.php:107
+#: events/blocks/my-groups/index.php:108
 #, php-format
 msgctxt "group next event: date · time"
 msgid "%1$s · %2$s"
@@ -253,13 +257,13 @@ msgstr ""
 msgid "pending approval"
 msgstr ""
 
-#: events/lib/category_onderdeel.php:46
-#: events/lib/category_onderdeel.php:57
+#: events/lib/category_onderdeel.php:47
+#: events/lib/category_onderdeel.php:58
 msgid "Soli administration group ID"
 msgstr ""
 
-#: events/lib/category_onderdeel.php:48
-#: events/lib/category_onderdeel.php:60
+#: events/lib/category_onderdeel.php:49
+#: events/lib/category_onderdeel.php:61
 msgid "The onderdeel-ID of this orchestra/group in the Soli administration. Links SSO group memberships to this category, e.g. for the \"My orchestras\" block. Leave empty for categories that are not a group."
 msgstr ""
 
@@ -279,7 +283,7 @@ msgstr ""
 
 #: events/lib/events_admin_log_page.php:38
 #: events/lib/post_type.php:7
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:124
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:134
 msgid "Event"
 msgstr ""
 
@@ -404,7 +408,7 @@ msgid "Status"
 msgstr ""
 
 #: events/lib/events_admin_table.php:9
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:178
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:179
 msgid "Notes"
 msgstr ""
 
@@ -466,7 +470,7 @@ msgid "Start Migration"
 msgstr ""
 
 #: events/lib/plugin_settings_page.php:46
-#: events/blocks/event-view-calendar/src/index.js:26
+#: events/blocks/event-view-calendar/src/index.js:27
 #: events/blocks/event-view-list/src/index.js:30
 msgid "Settings"
 msgstr ""
@@ -642,26 +646,26 @@ msgstr ""
 msgid "Select image"
 msgstr ""
 
-#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:49
+#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:50
 msgid "Admin Notes"
 msgstr ""
 
-#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:58
+#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:59
 msgid "These notes will only be visible in the admin area and only to people with high access level."
 msgstr ""
 
-#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:68
-#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:69
+#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:69
+#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:70
 msgid "Too many characters"
 msgstr ""
 
-#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:73
-#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:74
-#: events/blocks/event-reservation-popup/src/components/reservation-tool/reservation-tool.js:35
+#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:74
+#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:75
+#: events/blocks/event-reservation-popup/src/components/reservation-tool/reservation-tool.js:36
 msgid "Close"
 msgstr ""
 
-#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:99
+#: events/blocks/create-event/src/components/admin-notes-editor/admin-notes-editor.js:100
 msgid "Admin notes"
 msgstr ""
 
@@ -722,289 +726,210 @@ msgstr ""
 msgid "Loading…"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:105
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:106
 msgid "When does it take place?"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:106
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:107
 msgid "Where does it take place?"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:107
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:108
 msgid "Details"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:108
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:109
 msgid "Does it repeat?"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:119
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:120
 msgid "Plan your first date"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:162
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:163
 msgid "You can leave this empty and pick a location later."
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:179
-#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:59
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:180
+#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:60
 msgid "These notes will only be visible in the admin area."
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:195
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:342
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:196
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:343
 msgid "Choose a repeat frequency"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:199
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:200
 msgid "Does not repeat"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:200
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:362
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:201
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:363
 msgid "Weekly"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:201
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:364
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:202
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:365
 msgid "Every other week"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:202
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:366
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:203
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:367
 msgid "Monthly"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:217
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:91
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:218
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:92
 msgid "Until date"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:223
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:97
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:224
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:98
 msgid "Number"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:232
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:416
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:233
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:417
 msgid "Repeat until and including:"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:250
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:251
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:411
 msgid "weeks"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:251
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:252
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:411
 msgid "times every other week"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:252
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:410
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:253
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:411
 msgid "months"
 msgstr ""
 
 #. translators: %d is the number of repeated dates that will be added.
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:261
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:262
 #, js-format
 msgid "%d extra dates will be added:"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:279
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:280
 msgid "Skip"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:284
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:285
 msgid "Back"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:289
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:290
 msgid "Next"
 msgstr ""
 
-#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:294
+#: events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js:295
 msgid "Finish"
 msgstr ""
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:149
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:169
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:176
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:160
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:180
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:187
 msgid "Invoice this event"
 msgstr ""
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:162
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:276
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:302
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:173
 msgid "Invoice"
 msgstr ""
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:183
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:194
 msgid "Choose the period and the dates to invoice, then download the invoice as a Word document."
 msgstr ""
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:190
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:149
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:201
 msgid "From"
 msgstr ""
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:196
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:150
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:207
 msgid "Until"
 msgstr ""
 
 #. translators: %s: number of hours, e.g. 2,50
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:222
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:233
 #, js-format
 msgid "%s hours"
 msgstr ""
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:231
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:242
 msgid "No dates in the chosen period."
 msgstr ""
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:238
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:241
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:249
 msgid "Hourly rate (€)"
 msgstr ""
 
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:258
+msgid "VAT"
+msgstr ""
+
 #. translators: %d: number of selected dates
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:247
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:272
 #, js-format
 msgid "%d date selected"
 msgid_plural "%d dates selected"
 msgstr[0] ""
 msgstr[1] ""
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:257
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:282
 msgid "Download invoice"
 msgstr ""
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:63
-msgid "invoice"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:97
-msgid "Invoice number"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:98
-msgid "Invoice date"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:100
-msgid "Due date"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:148
-msgid "Date"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:151
-msgid "Hours"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:157
-msgid "Amount (€)"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:235
-msgid "Total hours"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:244
-msgid "Subtotal (€)"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:247
-msgid "VAT percentage"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:250
-msgid "VAT (€)"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:257
-msgid "Total (€)"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:306
-msgid "To"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:313
-msgid "Subject"
-msgstr ""
-
-#. translators: %d: number of days
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:323
-#, js-format
-msgid "Please pay within %d days, quoting the invoice number, to IBAN"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:328
-msgid "in the name of"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:331
-msgid "Chamber of Commerce"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:332
-msgid "VAT number"
-msgstr ""
-
-#: events/blocks/create-event/src/components/invoice-button/invoice-docx.js:339
-msgid "Tip: change the hourly rate or the VAT percentage in the table, then select everything (Ctrl+A) and press F9 to recalculate all amounts."
-msgstr ""
-
-#: events/blocks/create-event/src/components/location-creator/location-creator.js:66
+#: events/blocks/create-event/src/components/location-creator/location-creator.js:67
 msgid "New location"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-creator/location-creator.js:71
+#: events/blocks/create-event/src/components/location-creator/location-creator.js:72
 msgid "Create a location"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-creator/location-creator.js:81
-#: events/blocks/create-event/src/components/location-editor/location-editor.js:64
+#: events/blocks/create-event/src/components/location-creator/location-creator.js:82
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:65
 msgid "Location name*"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-creator/location-creator.js:88
-#: events/blocks/create-event/src/components/location-creator/location-creator.js:97
-#: events/blocks/create-event/src/components/location-editor/location-editor.js:71
-#: events/blocks/create-event/src/components/location-editor/location-editor.js:80
+#: events/blocks/create-event/src/components/location-creator/location-creator.js:89
+#: events/blocks/create-event/src/components/location-creator/location-creator.js:98
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:72
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:81
 msgid "required"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-creator/location-creator.js:90
-#: events/blocks/create-event/src/components/location-editor/location-editor.js:73
+#: events/blocks/create-event/src/components/location-creator/location-creator.js:91
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:74
 msgid "Location address*"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-creator/location-creator.js:103
+#: events/blocks/create-event/src/components/location-creator/location-creator.js:104
 msgid "Save and select"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-editor/location-editor.js:50
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:51
 msgid "Edit location"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-editor/location-editor.js:61
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:62
 msgid "This location is shared: changes apply to every event date it is assigned to."
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-editor/location-editor.js:87
+#: events/blocks/create-event/src/components/location-editor/location-editor.js:88
 msgid "Save changes"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-picker/location-picker.js:46
-#: events/blocks/create-event/src/components/location-picker/location-picker.js:51
+#: events/blocks/create-event/src/components/location-picker/location-picker.js:47
+#: events/blocks/create-event/src/components/location-picker/location-picker.js:52
 msgid "Choose a location"
 msgstr ""
 
-#: events/blocks/create-event/src/components/location-picker/location-picker.js:63
+#: events/blocks/create-event/src/components/location-picker/location-picker.js:64
 msgid "Muziekcentrum"
 msgstr ""
 
@@ -1025,15 +950,15 @@ msgstr ""
 msgid "Nothing found…"
 msgstr ""
 
-#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:50
+#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:51
 msgid "Notepad"
 msgstr ""
 
-#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:100
+#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:101
 msgid "Edit notes"
 msgstr ""
 
-#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:100
+#: events/blocks/create-event/src/components/notes-editor/notes-editor.js:101
 msgid "Add notes"
 msgstr ""
 
@@ -1049,55 +974,55 @@ msgstr ""
 msgid "No location known"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:55
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:56
 msgid "Generated dates:"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:67
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:68
 msgid "Show all dates"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:67
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:68
 msgid "Hide"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:167
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:168
 msgid "Enter a frequency, method and date to see a result"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:171
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:172
 msgid "End date must be after the start date"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:211
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:212
 msgid "Use a larger time span to generate dates. "
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:235
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:236
 msgid "Repeat"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:241
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:242
 msgid "Generate dates"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:334
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:335
 msgid "copy notes"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:341
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:342
 msgid "Select how the event repeats"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:360
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:361
 msgid "Select an option"
 msgstr ""
 
-#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:451
+#: events/blocks/create-event/src/components/time-generator-modal-button/time-generator-modal-button.js:452
 msgid "Use"
 msgstr ""
 
-#: events/blocks/create-event/src/index.js:17
+#: events/blocks/create-event/src/index.js:18
 msgid "Create Event"
 msgstr ""
 
@@ -1152,10 +1077,6 @@ msgstr ""
 
 #: events/blocks/event-location-map/src/index.js:56
 msgid "Shown for dates at the internal venue (rooms, no external location)."
-msgstr ""
-
-#: events/blocks/event-location-map/src/index.js:61
-msgid "Address"
 msgstr ""
 
 #: events/blocks/event-reservation-popup/src/components/calendar-preview/calendar-preview.js:37
@@ -1232,7 +1153,7 @@ msgstr ""
 msgid "Reserve"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/components/reservation-tool/reservation-tool.js:15
+#: events/blocks/event-reservation-popup/src/components/reservation-tool/reservation-tool.js:16
 msgid "Reserve time slot(s)"
 msgstr ""
 
@@ -1245,19 +1166,19 @@ msgstr ""
 msgid "Copy text"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/index.js:8
+#: events/blocks/event-reservation-popup/src/index.js:9
 msgid "Event Reservation Popup"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/index.js:21
+#: events/blocks/event-reservation-popup/src/index.js:22
 msgid "Reservation e-mail"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/index.js:23
+#: events/blocks/event-reservation-popup/src/index.js:24
 msgid "Recipient e-mail address"
 msgstr ""
 
-#: events/blocks/event-reservation-popup/src/index.js:24
+#: events/blocks/event-reservation-popup/src/index.js:25
 msgid "The generated reservation e-mail is addressed to this public address. Leave empty to let the visitor fill in the recipient themselves."
 msgstr ""
 
@@ -1277,32 +1198,36 @@ msgstr ""
 msgid "View event →"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:8
+#: events/blocks/event-view-calendar/src/index.js:9
 msgid "Event View Calendar"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:28
+#: events/blocks/event-view-calendar/src/index.js:29
 msgid "Default view"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:31
+#: events/blocks/event-view-calendar/src/index.js:32
 msgid "Month"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:32
+#: events/blocks/event-view-calendar/src/index.js:33
 msgid "Week"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:38
+#: events/blocks/event-view-calendar/src/index.js:34
+msgid "Day"
+msgstr ""
+
+#: events/blocks/event-view-calendar/src/index.js:39
 msgid "Allow switching views"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:43
+#: events/blocks/event-view-calendar/src/index.js:44
 #: events/blocks/next-concert/src/index.js:52
 msgid "Only concerts"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:48
+#: events/blocks/event-view-calendar/src/index.js:49
 msgid "Show rooms filter"
 msgstr ""
 
