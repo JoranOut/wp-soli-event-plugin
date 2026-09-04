@@ -134,6 +134,12 @@ test.describe('Invoice this event (create-event block)', () => {
         // 21% is the default the dialog offers, so it reaches the document
         // without anyone touching the selector.
         expect(xml).toContain('Btw 21%');
+
+        // The Soli logo is embedded in the header, and the editor-facing F9
+        // tip is not part of an outgoing invoice.
+        expect(xml).toContain('<w:drawing>');
+        expect(xml).toContain('Muziekvereniging Soli');
+        expect(xml).not.toContain('Tip:');
         expect(xml).toContain('2,50');
         expect(xml).toContain('125,00'); // 2,50 h x € 50
         // The unchecked 2030 date is excluded.
@@ -155,11 +161,11 @@ test.describe('Invoice this event (create-event block)', () => {
         // Explicit twip widths - percentage widths collapse the table in Word.
         expect(xml).toContain('w:type="dxa"');
 
-        // Styling that carries meaning: the magenta accent on the "Factuur"
+        // Styling that carries meaning: the accent colour on the "Factuur"
         // heading, the rule under the table header and the VAT percentage.
-        expect(xml).toContain('w:val="EC008C"'); // accent-coloured runs
-        expect(xml).toContain('<w:bottom w:val="single" w:color="EC008C" w:sz="16"/>'); // rule under the header
-        expect(xml).toContain('<w:top w:val="single" w:color="EC008C" w:sz="16"/>'); // rule above Total
+        expect(xml).toContain('w:val="AA2A2A"'); // accent-coloured runs
+        expect(xml).toContain('<w:bottom w:val="single" w:color="AA2A2A" w:sz="16"/>'); // rule under the header
+        expect(xml).toContain('<w:top w:val="single" w:color="AA2A2A" w:sz="16"/>'); // rule above Total
 
         // The dialog closes after a successful download.
         await expect(modal).toBeHidden();

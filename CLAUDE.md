@@ -130,12 +130,16 @@ measured **between whole minutes** (`durationInHours()`) because stored dates ca
 
 Generating produces a `.docx` **client-side** (the `docx` npm package in the create-event workspace; no
 server round-trip, no PHP dependency, so nothing is stored or exposed). Layout follows the Soli invoice
-design: a magenta "Factuur" heading (the right-hand header cell is reserved for the logo, empty while no
-logo asset exists in the repo), an AAN / VAN address block, a Factuurnummer / Datum / Vervaldatum meta
+design: a deep-red "Factuur" heading with the Soli logo opposite it, an AAN / VAN address block, a Factuurnummer / Datum / Vervaldatum meta
 block, the line table, and the totals. Values the repo does not know - the recipient, IBAN, KvK and VAT
 numbers - are left as placeholders or fill-in blanks on purpose rather than invented.
 
-Palette and type live at the top of the file: accent `EC008C`, body `3F4A5A`, muted `8A94A6`, placeholder
+The logo is inlined as base64 in `events/inc/assets/invoice-logo.js` (600x214 PNG, downscaled from the
+8095x2892 original) rather than kept as an image file: `docx`'s `ImageRun` takes a base64 string directly,
+so generating a document needs no network fetch and no webpack asset rule. The file's header comment
+records how to regenerate it.
+
+Palette and type live at the top of the file: accent `AA2A2A`, body `3F4A5A`, muted `8A94A6`, placeholder
 `AEB6C4`, hairline `D8DCE4`. The face is **Trebuchet MS**, not the design's Nunito: Word silently
 substitutes a font it cannot find, and only Office-bundled families are safe.
 
