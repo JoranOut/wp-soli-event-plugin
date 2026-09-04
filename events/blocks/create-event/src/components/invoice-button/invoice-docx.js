@@ -2,6 +2,7 @@ import {
     AlignmentType,
     BorderStyle,
     Document,
+    ImageRun,
     Packer,
     Paragraph,
     SimpleField,
@@ -13,6 +14,7 @@ import {
     WidthType,
 } from "docx";
 import dayjs from "dayjs";
+import { INVOICE_LOGO_PNG_BASE64 } from "../../../../../inc/assets/invoice-logo";
 import "dayjs/locale/nl";
 
 // Sender details. Everything the repo does not know (postal code, bank and tax
@@ -30,10 +32,11 @@ const PAGE_MARGIN = 1134;
 const CONTENT_WIDTH = 9638;
 // OMSCHRIJVING | AANTAL | PRIJS | BTW | BEDRAG - explicit twips, because a
 // percentage width serialises as w:w="100%" and Word collapses the table.
-const LINE_COLUMNS = [4038, 1200, 1400, 1000, 2000];
+const LINE_COLUMNS = [3538, 1150, 1350, 1000, 2600];
 
-// Palette: magenta accent, slate body text, muted labels, lighter placeholders.
-const ACCENT = "EC008C";
+// Palette: the deep red of the Soli logo, slate body text, muted labels,
+// lighter placeholders.
+const ACCENT = "AA2A2A";
 const BODY = "3F4A5A";
 const MUTED = "8A94A6";
 const PLACEHOLDER = "AEB6C4";
@@ -144,9 +147,8 @@ function textCell(text, { width, align, color = BODY, bold = false, borders, siz
 /** --------------------------------------------------------------- header */
 
 /**
- * "Factuur" left, logo right. There is no Soli logo asset anywhere in this
- * repository, so the right-hand cell is deliberately left empty rather than
- * filled with an invented mark; drop the image in here when one exists.
+ * "Factuur" left, the Soli logo right. The logo is inlined as base64
+ * ([[invoice-logo.js]]) so generating a document needs no network fetch.
  */
 function headerBlock() {
     return new Table({
@@ -169,10 +171,28 @@ function headerBlock() {
                         }),
                         { width: 5638, verticalAlign: VerticalAlign.TOP }
                     ),
-                    cell(new Paragraph({ alignment: AlignmentType.RIGHT, children: [] }), {
-                        width: 4000,
-                        verticalAlign: VerticalAlign.TOP,
-                    }),
+                    cell(
+                        new Paragraph({
+                            alignment: AlignmentType.RIGHT,
+                            children: [
+                                new ImageRun({
+                                    type: "png",
+                                    data: INVOICE_LOGO_PNG_BASE64,
+                                    // 600x214 source, kept in proportion.
+                                    transformation: { width: 210, height: 75 },
+                                    altText: {
+                                        name: "Soli",
+                                        title: "Muziekvereniging Soli",
+                                        description: "Logo van Muziekvereniging Soli",
+                                    },
+                                }),
+                            ],
+                        }),
+                        {
+                            width: 4000,
+                            verticalAlign: VerticalAlign.TOP,
+                        }
+                    ),
                 ],
             }),
         ],
@@ -462,17 +482,6 @@ export function generateInvoiceDocx({ title, dates, hourlyRate, vatPercentage = 
                     new Paragraph({ spacing: { after: 360 }, children: [] }),
                     invoiceTable(title, sorted, hourlyRate, vatPercentage),
                     new Paragraph({ spacing: { after: 240 }, children: [] }),
-                    new Paragraph({
-                        children: [
-                            new TextRun({
-                                italics: true,
-                                size: 17,
-                                color: MUTED,
-                                text:
-                                    "Tip: pas de prijs of het btw-percentage in de tabel aan, selecteer daarna alles (Ctrl+A) en druk op F9 om alle bedragen opnieuw te berekenen.",
-                            }),
-                        ],
-                    }),
                 ],
             },
         ],
