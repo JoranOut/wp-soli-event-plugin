@@ -1,12 +1,9 @@
-import { __, sprintf } from "@wordpress/i18n";
 import {
     AlignmentType,
     BorderStyle,
     Document,
-    HeadingLevel,
     Packer,
     Paragraph,
-    ShadingType,
     SimpleField,
     Table,
     TableCell,
@@ -31,19 +28,55 @@ const PAYMENT_TERM_DAYS = 14;
 // A4 with 2 cm margins: 11906 - 2 x 1134 twips of usable width.
 const PAGE_MARGIN = 1134;
 const CONTENT_WIDTH = 9638;
-const LINE_COLUMNS = [3238, 1400, 1400, 1600, 2000];
+// OMSCHRIJVING | AANTAL | PRIJS | BTW | BEDRAG - explicit twips, because a
+// percentage width serialises as w:w="100%" and Word collapses the table.
+const LINE_COLUMNS = [4038, 1200, 1400, 1000, 2000];
+
+// Palette: magenta accent, slate body text, muted labels, lighter placeholders.
+const ACCENT = "EC008C";
+const BODY = "3F4A5A";
+const MUTED = "8A94A6";
+const PLACEHOLDER = "AEB6C4";
+const HAIRLINE = "D8DCE4";
+
+// Nunito is the design's typeface, but a font Word cannot find is silently
+// substituted, and Nunito is not installed with Office on either platform.
+// Trebuchet MS ships with Office everywhere and is the nearest humanist sans
+// that actually renders.
+const FONT = "Trebuchet MS";
 
 const NO_BORDER = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
-const NO_BORDERS = { top: NO_BORDER, bottom: NO_BORDER, left: NO_BORDER, right: NO_BORDER, insideHorizontal: NO_BORDER, insideVertical: NO_BORDER };
-const HEADER_FILL = "EFEFEF";
+const NO_BORDERS = {
+    top: NO_BORDER,
+    bottom: NO_BORDER,
+    left: NO_BORDER,
+    right: NO_BORDER,
+    insideHorizontal: NO_BORDER,
+    insideVertical: NO_BORDER,
+};
+const ACCENT_RULE = { style: BorderStyle.SINGLE, size: 16, color: ACCENT }; // 2pt
+const HAIRLINE_RULE = { style: BorderStyle.SINGLE, size: 2, color: HAIRLINE };
+const CELL_PLAIN = { top: NO_BORDER, left: NO_BORDER, right: NO_BORDER, bottom: NO_BORDER };
+const CELL_BODY = { top: NO_BORDER, left: NO_BORDER, right: NO_BORDER, bottom: HAIRLINE_RULE };
+const CELL_TOP_RULE = { top: ACCENT_RULE, left: NO_BORDER, right: NO_BORDER, bottom: NO_BORDER };
+const CELL_HEADER = { top: NO_BORDER, left: NO_BORDER, right: NO_BORDER, bottom: ACCENT_RULE };
 
 const nlNumber = new Intl.NumberFormat("nl-NL", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
 });
+// Percentages read as "21", not "21,00" - still a bare number, so the VAT and
+// total formulas keep parsing it.
+const nlPercent = new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 2 });
 
 // Measured between whole minutes: stored dates can carry stray seconds, which
 // would otherwise turn a clean 12:00-14:30 into 2,48 hours on the invoice.
+// The VAT rates a Dutch invoice can carry: 0% (exempt / reverse charge), the
+// 9% reduced rate and the 21% standard rate. Exported so the dialog and the
+// document cannot drift apart.
+export const VAT_PERCENTAGES = [0, 9, 21];
+export const DEFAULT_VAT_PERCENTAGE = 21;
+
 export function durationInHours(date) {
     const minutes = dayjs(date.endDate)
         .startOf("minute")
@@ -60,73 +93,129 @@ export function invoiceFileName(title) {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
-    return [__("invoice", "soli-event"), slug || "event", dayjs().format("YYYY-MM-DD")].join("-") + ".docx";
+    return ["factuur", slug || "event", dayjs().format("YYYY-MM-DD")].join("-") + ".docx";
 }
 
-function line(text, options = {}) {
-    return new Paragraph({ children: [new TextRun({ text, ...options })] });
+function line(text, { color = BODY, alignment, ...rest } = {}) {
+    return new Paragraph({
+        alignment,
+        children: [new TextRun({ text, color, ...rest })],
+    });
 }
 
-function cell(children, { width, align, shading, bold, columnSpan, verticalAlign } = {}) {
+/** Small uppercase, letter-spaced label: "AAN", "VAN", the column headers. */
+function label(text, { alignment, color = MUTED } = {}) {
+    return new Paragraph({
+        alignment,
+        spacing: { after: 60 },
+        children: [
+            new TextRun({
+                text,
+                bold: true,
+                allCaps: true,
+                size: 15,
+                characterSpacing: 30,
+                color,
+            }),
+        ],
+    });
+}
+
+function cell(children, { width, borders, verticalAlign, margins } = {}) {
     return new TableCell({
-        columnSpan,
         verticalAlign: verticalAlign ?? VerticalAlign.CENTER,
         width: width ? { size: width, type: WidthType.DXA } : undefined,
-        shading: shading ? { type: ShadingType.CLEAR, fill: shading, color: "auto" } : undefined,
-        margins: { top: 60, bottom: 60, left: 108, right: 108 },
-        children: Array.isArray(children)
-            ? children
-            : [new Paragraph({ alignment: align, children: [new TextRun({ text: children, bold })] })],
+        borders,
+        margins: margins ?? { top: 90, bottom: 90, left: 0, right: 108 },
+        children: Array.isArray(children) ? children : [children],
     });
 }
 
-function fieldCell(children, { width, align = AlignmentType.RIGHT, shading, columnSpan } = {}) {
-    return new TableCell({
-        columnSpan,
-        verticalAlign: VerticalAlign.CENTER,
-        width: width ? { size: width, type: WidthType.DXA } : undefined,
-        shading: shading ? { type: ShadingType.CLEAR, fill: shading, color: "auto" } : undefined,
-        margins: { top: 60, bottom: 60, left: 108, right: 108 },
-        children: [new Paragraph({ alignment: align, children })],
-    });
+function textCell(text, { width, align, color = BODY, bold = false, borders, size } = {}) {
+    return cell(
+        new Paragraph({
+            alignment: align,
+            children: [new TextRun({ text, color, bold, size })],
+        }),
+        { width, borders }
+    );
 }
 
-/** Sender block on the left, invoice meta on the right, both borderless. */
-function letterHead(invoiceDate) {
-    const meta = [
-        [__("Invoice number", "soli-event"), BLANK],
-        [__("Invoice date", "soli-event"), invoiceDate.format("D MMMM YYYY")],
-        [
-            __("Due date", "soli-event"),
-            invoiceDate.add(PAYMENT_TERM_DAYS, "day").format("D MMMM YYYY"),
+/** --------------------------------------------------------------- header */
+
+/**
+ * "Factuur" left, logo right. There is no Soli logo asset anywhere in this
+ * repository, so the right-hand cell is deliberately left empty rather than
+ * filled with an invented mark; drop the image in here when one exists.
+ */
+function headerBlock() {
+    return new Table({
+        width: { size: CONTENT_WIDTH, type: WidthType.DXA },
+        columnWidths: [5638, 4000],
+        borders: NO_BORDERS,
+        rows: [
+            new TableRow({
+                children: [
+                    cell(
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: "Factuur",
+                                    bold: true,
+                                    size: 60, // 30pt
+                                    color: ACCENT,
+                                }),
+                            ],
+                        }),
+                        { width: 5638, verticalAlign: VerticalAlign.TOP }
+                    ),
+                    cell(new Paragraph({ alignment: AlignmentType.RIGHT, children: [] }), {
+                        width: 4000,
+                        verticalAlign: VerticalAlign.TOP,
+                    }),
+                ],
+            }),
         ],
+    });
+}
+
+/** AAN (placeholder recipient) left, VAN (sender) right. */
+function addressBlock() {
+    // The repo does not know the recipient, so these stay placeholders rather
+    // than invented details - same principle as the blank IBAN/KvK/VAT lines.
+    const recipient = [
+        "Naam",
+        "Straat huisnummer",
+        "Postcode + plaatsnaam",
+    ];
+
+    const sender = [
+        SENDER.name,
+        ...SENDER.lines,
+        `KvK ${BLANK} · Btw ${BLANK}`,
+        `IBAN ${BLANK}`,
     ];
 
     return new Table({
         width: { size: CONTENT_WIDTH, type: WidthType.DXA },
-        columnWidths: [5138, 4500],
+        columnWidths: [4819, 4819],
         borders: NO_BORDERS,
         rows: [
             new TableRow({
                 children: [
                     cell(
                         [
-                            line(SENDER.name, { bold: true }),
-                            ...SENDER.lines.map((text) => line(text)),
+                            label("AAN"),
+                            ...recipient.map((text) => line(text, { color: PLACEHOLDER })),
                         ],
-                        { width: 5138, verticalAlign: VerticalAlign.TOP }
+                        { width: 4819, verticalAlign: VerticalAlign.TOP }
                     ),
                     cell(
-                        meta.map(
-                            ([label, value]) =>
-                                new Paragraph({
-                                    children: [
-                                        new TextRun({ text: `${label}: `, bold: true }),
-                                        new TextRun(value),
-                                    ],
-                                })
-                        ),
-                        { width: 4500, verticalAlign: VerticalAlign.TOP }
+                        [
+                            label("VAN", { alignment: AlignmentType.RIGHT }),
+                            ...sender.map((text) => line(text, { alignment: AlignmentType.RIGHT })),
+                        ],
+                        { width: 4819, verticalAlign: VerticalAlign.TOP }
                     ),
                 ],
             }),
@@ -134,152 +223,220 @@ function letterHead(invoiceDate) {
     });
 }
 
+/** Factuurnummer / Datum / Vervaldatum: bold label, lighter value, aligned. */
+function metaBlock(invoiceDate) {
+    const rows = [
+        ["Factuurnummer", BLANK],
+        ["Datum", invoiceDate.format("D-M-YYYY")],
+        [
+            "Vervaldatum",
+            invoiceDate.add(PAYMENT_TERM_DAYS, "day").format("D-M-YYYY"),
+        ],
+    ];
+
+    return new Table({
+        width: { size: 5000, type: WidthType.DXA },
+        columnWidths: [2400, 2600],
+        borders: NO_BORDERS,
+        rows: rows.map(
+            ([name, value]) =>
+                new TableRow({
+                    children: [
+                        cell(
+                            new Paragraph({
+                                children: [new TextRun({ text: name, color: BODY, bold: true })],
+                            }),
+                            { width: 2400, borders: CELL_PLAIN, margins: { top: 30, bottom: 30, left: 0, right: 108 } }
+                        ),
+                        cell(
+                            new Paragraph({
+                                children: [new TextRun({ text: value, color: MUTED })],
+                            }),
+                            { width: 2600, borders: CELL_PLAIN, margins: { top: 30, bottom: 30, left: 0, right: 108 } }
+                        ),
+                    ],
+                })
+        ),
+    });
+}
+
+/** ---------------------------------------------------------------- table */
+
 /**
- * One table holds the lines *and* the totals, because only same-table cell
- * references (=D2*E7) recalculate reliably - Word's SUM(ABOVE) and bookmark
- * references silently evaluate to 0 in other word processors. For the same
- * reason every referenced cell holds a bare number: a "€" in the cell makes it
- * unparseable, so the currency lives in the column header instead.
+ * Lines and totals live in ONE table, because only same-table cell references
+ * (=B2*C2) recalculate reliably - SUM(ABOVE) and bookmark references silently
+ * evaluate to 0 outside Word. Three rules follow, all learned by rendering:
+ *
+ * - No merged cells. Merging renumbers a row for formula purposes and the value
+ *   cell stops being addressable, so every totals row keeps all five cells even
+ *   though the design shows the label floating to the right of an empty span.
+ * - Referenced cells hold a bare number. AANTAL, PRIJS and BTW are read by the
+ *   formulas, so their unit lives in the column header; only the BEDRAG cells
+ *   and the totals - which nothing references - carry a "€".
+ * - The totals never reference a cell that itself holds a field, so they are
+ *   rebuilt from the hours and price cells.
  */
-function invoiceTable(dates, hourlyRate, vatPercentage) {
+function invoiceTable(title, dates, hourlyRate, vatPercentage) {
+    const headerCell = (text, align) =>
+        new TableCell({
+            verticalAlign: VerticalAlign.BOTTOM,
+            borders: CELL_HEADER,
+            margins: { top: 60, bottom: 90, left: 0, right: 108 },
+            children: [label(text, { alignment: align })],
+        });
+
     const header = new TableRow({
         tableHeader: true,
         children: [
-            cell(__("Date", "soli-event"), { width: LINE_COLUMNS[0], bold: true, shading: HEADER_FILL }),
-            cell(__("From", "soli-event"), { width: LINE_COLUMNS[1], bold: true, shading: HEADER_FILL }),
-            cell(__("Until", "soli-event"), { width: LINE_COLUMNS[2], bold: true, shading: HEADER_FILL }),
-            cell(__("Hours", "soli-event"), {
-                width: LINE_COLUMNS[3],
-                bold: true,
-                shading: HEADER_FILL,
-                align: AlignmentType.RIGHT,
-            }),
-            cell(__("Amount (€)", "soli-event"), {
-                width: LINE_COLUMNS[4],
-                bold: true,
-                shading: HEADER_FILL,
-                align: AlignmentType.RIGHT,
-            }),
+            headerCell("OMSCHRIJVING"),
+            headerCell("AANTAL", AlignmentType.RIGHT),
+            headerCell("PRIJS (€)", AlignmentType.RIGHT),
+            headerCell("BTW (%)", AlignmentType.RIGHT),
+            headerCell("BEDRAG (EXCL. BTW)", AlignmentType.RIGHT),
         ],
     });
 
-    // Row 1 is the header, so the dates occupy rows 2..N+1 and the summary rows
-    // follow underneath - all addressed by their 1-based row number.
+    // Row 1 is the header, so the dates occupy rows 2..N+1.
     const firstDateRow = 2;
-    const lastDateRow = dates.length + 1;
-    const rowOf = {
-        totalHours: lastDateRow + 1,
-        rate: lastDateRow + 2,
-        subtotal: lastDateRow + 3,
-        vatRate: lastDateRow + 4,
-        vat: lastDateRow + 5,
-    };
-
-    // Reused by subtotal, VAT and total so none of them has to reference a
-    // cell that holds a field - only plain numbers are ever read.
-    const SUBTOTAL_EXPR = `SUM(D${firstDateRow}:D${lastDateRow})*E${rowOf.rate}`;
 
     const totalHours = dates.reduce((sum, date) => sum + durationInHours(date), 0);
     const subtotal = totalHours * hourlyRate;
     const vat = (subtotal * vatPercentage) / 100;
 
+    const SUBTOTAL_EXPR = dates
+        .map((_, index) => `B${firstDateRow + index}*C${firstDateRow + index}`)
+        .join("+");
+    const VAT_CELL = `D${firstDateRow}`;
+
     const dateRows = dates.map((date, index) => {
+        const row = firstDateRow + index;
         const start = dayjs(date.startDate).locale("nl");
         const end = dayjs(date.endDate).locale("nl");
         const sameDay = start.isSame(end, "day");
         const hours = durationInHours(date);
+        const when =
+            `${start.format("dddd D MMMM YYYY")} · ${start.format("HH:mm")}-` +
+            (sameDay ? end.format("HH:mm") : end.format("D MMM HH:mm"));
+
         return new TableRow({
             children: [
-                cell(start.format("dddd D MMMM YYYY"), { width: LINE_COLUMNS[0] }),
-                cell(start.format("HH:mm"), { width: LINE_COLUMNS[1] }),
-                cell(sameDay ? end.format("HH:mm") : end.format("D MMM HH:mm"), { width: LINE_COLUMNS[2] }),
-                cell(formatHours(hours), { width: LINE_COLUMNS[3], align: AlignmentType.RIGHT }),
-                fieldCell(
+                cell(
                     [
-                        new SimpleField(
-                            `=D${firstDateRow + index}*E${rowOf.rate} \\# "#.##0,00"`,
-                            nlNumber.format(hours * hourlyRate)
-                        ),
+                        new Paragraph({ children: [new TextRun({ text: title, color: BODY })] }),
+                        new Paragraph({
+                            children: [new TextRun({ text: when, color: MUTED, size: 17 })],
+                        }),
                     ],
-                    { width: LINE_COLUMNS[4] }
+                    { width: LINE_COLUMNS[0], borders: CELL_BODY }
+                ),
+                textCell(formatHours(hours), {
+                    width: LINE_COLUMNS[1],
+                    align: AlignmentType.RIGHT,
+                    borders: CELL_BODY,
+                }),
+                textCell(nlNumber.format(hourlyRate), {
+                    width: LINE_COLUMNS[2],
+                    align: AlignmentType.RIGHT,
+                    borders: CELL_BODY,
+                }),
+                // Accent-coloured as in the design, but a bare number: the VAT
+                // and total rows read this cell, and a "%" makes it unparseable.
+                textCell(nlPercent.format(vatPercentage), {
+                    width: LINE_COLUMNS[3],
+                    align: AlignmentType.RIGHT,
+                    color: ACCENT,
+                    borders: CELL_BODY,
+                }),
+                cell(
+                    new Paragraph({
+                        alignment: AlignmentType.RIGHT,
+                        children: [
+                            new SimpleField(
+                                `=B${row}*C${row} \\# "€ #.##0,00"`,
+                                `€ ${nlNumber.format(hours * hourlyRate)}`
+                            ),
+                        ],
+                    }),
+                    { width: LINE_COLUMNS[4], borders: CELL_BODY }
                 ),
             ],
         });
     });
 
-    // Every summary row keeps all five cells: merging them would renumber the
-    // row for formula purposes, so the value would no longer be addressable as
-    // column E. The label sits in column A, the value stays in column E.
-    const summaryRow = (label, valueChildren, { bold = false, shading } = {}) =>
-        new TableRow({
+    // Totals bottom-right. The three leading cells stay in place (unmerged) and
+    // simply carry no borders, which reads as the design's floating block.
+    const totalsRow = (name, valueChildren, { bold = false, rule = false } = {}) => {
+        const borders = rule ? CELL_TOP_RULE : CELL_PLAIN;
+        const blank = () =>
+            cell(new Paragraph({ children: [] }), { borders: CELL_PLAIN, width: undefined });
+        return new TableRow({
             children: [
-                cell(label, {
-                    width: LINE_COLUMNS[0],
-                    bold,
-                    shading,
-                    align: AlignmentType.RIGHT,
+                blank(),
+                blank(),
+                blank(),
+                cell(
+                    new Paragraph({
+                        alignment: AlignmentType.RIGHT,
+                        children: [
+                            new TextRun({ text: name, color: BODY, bold, size: bold ? 22 : 20 }),
+                        ],
+                    }),
+                    { width: LINE_COLUMNS[3], borders }
+                ),
+                cell(new Paragraph({ alignment: AlignmentType.RIGHT, children: valueChildren }), {
+                    width: LINE_COLUMNS[4],
+                    borders,
                 }),
-                cell("", { width: LINE_COLUMNS[1], shading }),
-                cell("", { width: LINE_COLUMNS[2], shading }),
-                cell("", { width: LINE_COLUMNS[3], shading }),
-                fieldCell(valueChildren, { width: LINE_COLUMNS[4], shading, bold }),
             ],
         });
+    };
+
+    // docx's SimpleField takes no run options, so the amounts keep the document
+    // default weight; only the "Totaal" label can be emphasised.
+    const money = (expression, cached) => [
+        new SimpleField(`=${expression} \\# "€ #.##0,00"`, `€ ${nlNumber.format(cached)}`),
+    ];
 
     return new Table({
         width: { size: CONTENT_WIDTH, type: WidthType.DXA },
         columnWidths: LINE_COLUMNS,
+        borders: NO_BORDERS,
         rows: [
             header,
             ...dateRows,
-            summaryRow(__("Total hours", "soli-event"), [
-                new SimpleField(
-                    `=SUM(D${firstDateRow}:D${lastDateRow}) \\# "0,00"`,
-                    formatHours(totalHours)
-                ),
-            ]),
-            summaryRow(__("Hourly rate (€)", "soli-event"), [
-                new TextRun(nlNumber.format(hourlyRate)),
-            ]),
-            summaryRow(__("Subtotal (€)", "soli-event"), [
-                new SimpleField(`=${SUBTOTAL_EXPR} \\# "#.##0,00"`, nlNumber.format(subtotal)),
-            ]),
-            summaryRow(__("VAT percentage", "soli-event"), [
-                new TextRun(nlNumber.format(vatPercentage)),
-            ]),
-            summaryRow(__("VAT (€)", "soli-event"), [
-                new SimpleField(
-                    `=${SUBTOTAL_EXPR}*E${rowOf.vatRate}/100 \\# "#.##0,00"`,
-                    nlNumber.format(vat)
-                ),
-            ]),
-            summaryRow(
-                __("Total (€)", "soli-event"),
-                [
-                    new SimpleField(
-                        `=${SUBTOTAL_EXPR}*(1+E${rowOf.vatRate}/100) \\# "#.##0,00"`,
-                        nlNumber.format(subtotal + vat)
-                    ),
-                ],
-                { bold: true, shading: HEADER_FILL }
+            totalsRow("Subtotaal", money(SUBTOTAL_EXPR, subtotal)),
+            totalsRow(
+                `Btw ${nlPercent.format(vatPercentage)}%`,
+                money(`(${SUBTOTAL_EXPR})*${VAT_CELL}/100`, vat)
+            ),
+            totalsRow(
+                "Totaal",
+                money(`(${SUBTOTAL_EXPR})*(1+${VAT_CELL}/100)`, subtotal + vat),
+                { bold: true, rule: true }
             ),
         ],
     });
 }
 
-export function generateInvoiceDocx({ title, dates, hourlyRate, vatPercentage = 0 }) {
+export function generateInvoiceDocx({ title, dates, hourlyRate, vatPercentage = DEFAULT_VAT_PERCENTAGE }) {
     const sorted = [...dates].sort((a, b) => dayjs(a.startDate).valueOf() - dayjs(b.startDate).valueOf());
     const invoiceDate = dayjs().locale("nl");
 
     const doc = new Document({
         creator: SENDER.name,
-        title: `${__("Invoice", "soli-event")} - ${title}`,
+        title: `Factuur - ${title}`,
         // Word parses the numbers inside the formula fields by run language, so
         // pin it: with an English default, "50,00" would recalculate as 5000.
         styles: {
             default: {
                 document: {
-                    run: { language: { value: "nl-NL" }, size: 20 },
+                    run: {
+                        language: { value: "nl-NL" },
+                        size: 20,
+                        font: FONT,
+                        color: BODY,
+                    },
+                    paragraph: { spacing: { line: 280 } },
                 },
             },
         },
@@ -297,49 +454,22 @@ export function generateInvoiceDocx({ title, dates, hourlyRate, vatPercentage = 
                     },
                 },
                 children: [
-                    new Paragraph({
-                        heading: HeadingLevel.HEADING_1,
-                        children: [new TextRun(__("Invoice", "soli-event"))],
-                    }),
-                    letterHead(invoiceDate),
-                    new Paragraph({}),
-                    line(__("To", "soli-event"), { bold: true }),
-                    line(BLANK),
-                    line(BLANK),
-                    line(BLANK),
-                    new Paragraph({}),
-                    new Paragraph({
-                        children: [
-                            new TextRun({ text: `${__("Subject", "soli-event")}: `, bold: true }),
-                            new TextRun(title),
-                        ],
-                    }),
-                    new Paragraph({}),
-                    invoiceTable(sorted, hourlyRate, vatPercentage),
-                    new Paragraph({}),
-                    line(
-                        sprintf(
-                            /* translators: %d: number of days */
-                            __(
-                                "Please pay within %d days, quoting the invoice number, to IBAN",
-                                "soli-event"
-                            ),
-                            PAYMENT_TERM_DAYS
-                        ) + ` ${BLANK} ${__("in the name of", "soli-event")} ${SENDER.name}.`
-                    ),
-                    line(
-                        `${__("Chamber of Commerce", "soli-event")} ${BLANK}   ` +
-                            `${__("VAT number", "soli-event")} ${BLANK}`
-                    ),
-                    new Paragraph({}),
+                    headerBlock(),
+                    new Paragraph({ spacing: { after: 240 }, children: [] }),
+                    addressBlock(),
+                    new Paragraph({ spacing: { after: 240 }, children: [] }),
+                    metaBlock(invoiceDate),
+                    new Paragraph({ spacing: { after: 360 }, children: [] }),
+                    invoiceTable(title, sorted, hourlyRate, vatPercentage),
+                    new Paragraph({ spacing: { after: 240 }, children: [] }),
                     new Paragraph({
                         children: [
                             new TextRun({
                                 italics: true,
-                                text: __(
-                                    "Tip: change the hourly rate or the VAT percentage in the table, then select everything (Ctrl+A) and press F9 to recalculate all amounts.",
-                                    "soli-event"
-                                ),
+                                size: 17,
+                                color: MUTED,
+                                text:
+                                    "Tip: pas de prijs of het btw-percentage in de tabel aan, selecteer daarna alles (Ctrl+A) en druk op F9 om alle bedragen opnieuw te berekenen.",
                             }),
                         ],
                     }),

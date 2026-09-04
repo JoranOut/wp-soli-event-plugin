@@ -10,12 +10,20 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import dayjs from "dayjs";
 import "dayjs/locale/nl";
 
 import receiptSVG from "../../../../../../inc/assets/img/icons/receipt.svg";
 import { useEventState } from "../events-context";
-import { durationInHours, formatHours, generateInvoiceDocx, invoiceFileName } from "./invoice-docx";
+import {
+    DEFAULT_VAT_PERCENTAGE,
+    VAT_PERCENTAGES,
+    durationInHours,
+    formatHours,
+    generateInvoiceDocx,
+    invoiceFileName,
+} from "./invoice-docx";
 
 /**
  * The editor header has no public slot for a plain button (PinnedItems is only
@@ -75,6 +83,7 @@ function InvoiceButton() {
     const [toDate, setToDate] = useState(null);
     const [excluded, setExcluded] = useState(new Set());
     const [rate, setRate] = useState("0");
+    const [vat, setVat] = useState(DEFAULT_VAT_PERCENTAGE);
     const [busy, setBusy] = useState(false);
     const headerSlot = useEditorHeaderSlot();
 
@@ -125,6 +134,7 @@ function InvoiceButton() {
                 title: postTitle || __("Event", "soli-event"),
                 dates: selectedRows,
                 hourlyRate: parseFloat(String(rate).replace(",", ".")) || 0,
+                vatPercentage: vat,
             });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -242,6 +252,20 @@ function InvoiceButton() {
                                 onChange={(event) => setRate(event.target.value)}
                                 inputProps={{ inputMode: "decimal" }}
                             />
+                            <TextField
+                                className="invoice-vat"
+                                select
+                                label={__("VAT", "soli-event")}
+                                size="small"
+                                value={vat}
+                                onChange={(event) => setVat(Number(event.target.value))}
+                            >
+                                {VAT_PERCENTAGES.map((percentage) => (
+                                    <MenuItem key={percentage} value={percentage}>
+                                        {`${percentage}%`}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                             <span className="invoice-selected-count">
                                 {sprintf(
                                     /* translators: %d: number of selected dates */

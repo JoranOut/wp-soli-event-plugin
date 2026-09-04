@@ -109,36 +109,103 @@ test.describe('Invoice this event (create-event block)', () => {
             page.waitForEvent('download'),
             modal.getByRole('button', { name: 'Download invoice' }).click(),
         ]);
-        expect(download.suggestedFilename()).toMatch(/^invoice-.+\.docx$/);
+        expect(download.suggestedFilename()).toMatch(/^factuur-.+\.docx$/);
 
         const filePath = await download.path();
         const buf = require('fs').readFileSync(filePath!);
         const xml = readZipEntry(buf, 'word/document.xml');
         expect(xml).not.toBeNull();
 
-        // Invoice basics: the usual header fields, the subject and the totals.
+        // Invoice basics: the header fields, the line description and the totals.
         expect(xml).toContain(title);
-        expect(xml).toContain('Invoice number');
-        expect(xml).toContain('Due date');
-        expect(xml).toContain('Subject');
-        expect(xml).toContain('Subtotal');
+        expect(xml).toContain('Factuur');
+        expect(xml).toContain('Factuurnummer');
+        expect(xml).toContain('AAN');
+        expect(xml).toContain('VAN');
+        // The run env is en_US: the document must be Dutch anyway, so no msgid
+        // may leak through.
+        expect(xml).not.toContain('Invoice number');
+        expect(xml).not.toContain('Subtotal<');
+        expect(xml).not.toContain('Due date');
+        expect(xml).toContain('Vervaldatum');
+        expect(xml).toContain('OMSCHRIJVING');
+        expect(xml).toContain('Subtotaal');
+        expect(xml).toContain('Totaal');
+        // 21% is the default the dialog offers, so it reaches the document
+        // without anyone touching the selector.
+        expect(xml).toContain('Btw 21%');
         expect(xml).toContain('2,50');
         expect(xml).toContain('125,00'); // 2,50 h x € 50
         // The unchecked 2030 date is excluded.
         expect(xml).not.toContain('2030');
 
         // Editable-rate mechanics. Only same-table cell references recalculate
-        // reliably, so the amount multiplies the hours cell by the rate cell,
-        // and the totals never reference a cell that itself holds a field.
-        expect(xml).toMatch(/=D2\*E\d+/);
-        expect(xml).toMatch(/=SUM\(D2:D2\)\*E\d+/);
+        // reliably, so the amount multiplies the quantity cell by the price
+        // cell, and the totals are rebuilt from those same cells rather than
+        // referencing the amount cells, which themselves hold fields.
+        expect(xml).toMatch(/=B2\*C2/);
+        expect(xml).toMatch(/=\(B2\*C2\)\*D2\/100/);
+        expect(xml).toMatch(/=\(B2\*C2\)\*\(1\+D2\/100\)/);
         expect(xml).not.toContain('SUM(ABOVE)');
         expect(xml).not.toContain('bookmarkStart');
+        // No merged cells anywhere: merging renumbers a row for formula
+        // purposes and the column references stop resolving.
+        expect(xml).not.toContain('gridSpan');
+        expect(xml).not.toContain('vMerge');
         // Explicit twip widths - percentage widths collapse the table in Word.
         expect(xml).toContain('w:type="dxa"');
 
+        // Styling that carries meaning: the magenta accent on the "Factuur"
+        // heading, the rule under the table header and the VAT percentage.
+        expect(xml).toContain('w:val="EC008C"'); // accent-coloured runs
+        expect(xml).toContain('<w:bottom w:val="single" w:color="EC008C" w:sz="16"/>'); // rule under the header
+        expect(xml).toContain('<w:top w:val="single" w:color="EC008C" w:sz="16"/>'); // rule above Total
+
         // The dialog closes after a successful download.
         await expect(modal).toBeHidden();
+    });
+
+    test('VAT is selectable in the dialog and reaches the document', async ({ admin, page }) => {
+        const title = uniqueTitle('Invoice VAT');
+        await createSingleEvent(
+            { admin, page },
+            { title, date: addDays(new Date(), 7), startTime: '12:00', endTime: '14:30', keepDefaultStatus: true }
+        );
+
+        // Reload the editor: the post-publish panel createSingleEvent leaves
+        // open otherwise intercepts the header button's clicks.
+        const postId = Number(new URL(page.url()).searchParams.get('post'));
+        await admin.visitAdminPage(`post.php?post=${postId}&action=edit`);
+
+        const invoiceButton = page
+            .locator('.editor-header')
+            .getByRole('button', { name: 'Invoice this event' });
+        await invoiceButton.waitFor({ state: 'visible', timeout: BLOCK_LOAD_TIMEOUT });
+        await invoiceButton.click();
+
+        const modal = page.locator('.invoice-event-modal');
+        await expect(modal).toBeVisible();
+
+        // 21% is the standard Dutch rate and the dialog's default; 0% and 9%
+        // are the other two a Dutch invoice may carry.
+        const vat = modal.getByRole('combobox', { name: 'VAT' });
+        await expect(vat).toHaveText('21%');
+        await vat.click();
+        await expect(page.getByRole('option')).toHaveText(['0%', '9%', '21%']);
+        await page.getByRole('option', { name: '9%', exact: true }).click();
+        await expect(vat).toHaveText('9%');
+
+        await modal.getByLabel('Hourly rate (€)').fill('50');
+
+        const [download] = await Promise.all([
+            page.waitForEvent('download'),
+            modal.getByRole('button', { name: 'Download invoice' }).click(),
+        ]);
+
+        const buf = require('fs').readFileSync((await download.path())!);
+        const xml = readZipEntry(buf, 'word/document.xml');
+        expect(xml).toContain('Btw 9%');
+        expect(xml).not.toContain('Btw 21%');
     });
 
     test('date-range filter narrows the pre-selected list', async ({ admin, page }) => {
