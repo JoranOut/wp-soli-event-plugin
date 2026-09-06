@@ -12,7 +12,7 @@
  * specs locate rows by title; concurrent UI-created events use random titles
  * and never collide with the "VIZ:" prefix.
  *
- * Also ensures role users exist: viz_subscriber / viz_editor (password "password").
+ * Also ensures role users exist: viz_subscriber / viz_editor / viz_author (password "password").
  *
  * Prints a JSON map {key: {id, title, slug}} on the last line for the TS side.
  */
@@ -284,7 +284,7 @@ if ( ! is_wp_error( $internal_post_id ) ) {
 }
 
 /* ---- 4. Role users -------------------------------------------------- */
-foreach ( array( 'viz_subscriber' => 'subscriber', 'viz_editor' => 'editor' ) as $login => $role ) {
+foreach ( array( 'viz_subscriber' => 'subscriber', 'viz_editor' => 'editor', 'viz_author' => 'author' ) as $login => $role ) {
 	if ( ! username_exists( $login ) ) {
 		wp_insert_user(
 			array(

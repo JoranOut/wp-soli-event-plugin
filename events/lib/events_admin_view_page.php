@@ -8,7 +8,10 @@ function soli_events_add_admin_view_page() {
     'edit.php?post_type=soli_event', // Parent slug (links to Events menu)
     __('Calendar View', 'soli-event'),                   // Page title
     __('Calendar View', 'soli-event'),                   // Menu title
-    'manage_options',               // Capability required to access
+    // Read-only view of events the holder can already reach, so it is gated on
+    // edit_posts rather than manage_options: authors and editors manage events
+    // and need the calendar, subscribers do not.
+    'edit_posts',                   // Capability required to access
     'soli_event_admin_view',        // Menu slug
     'Soli\Events\soli_events_render_admin_view_page', // Callback function to render the page
     2

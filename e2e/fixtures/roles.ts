@@ -10,7 +10,7 @@ import {
     type Page,
 } from '@playwright/test';
 import * as fs from 'fs';
-import { type Role, storageStateFor } from './catalogue';
+import { type AuthedUser, type Role, storageStateFor } from './catalogue';
 
 export const BASE_URL = process.env.BASE_URL || 'http://localhost:8901';
 
@@ -34,7 +34,7 @@ const EMPTY_STATE = { cookies: [], origins: [] };
 
 export async function pageFor(
     browser: Browser,
-    role: Role
+    role: Role | AuthedUser
 ): Promise<{ context: BrowserContext; page: Page }> {
     const storageState = storageStateFor(role);
     const context = await browser.newContext({ storageState: storageState ?? EMPTY_STATE });
@@ -42,7 +42,7 @@ export async function pageFor(
     return { context, page };
 }
 
-export async function apiFor(role: Role): Promise<APIRequestContext> {
+export async function apiFor(role: Role | AuthedUser): Promise<APIRequestContext> {
     const storageState = storageStateFor(role);
     if (!storageState) {
         return request.newContext({ baseURL: BASE_URL, storageState: EMPTY_STATE });

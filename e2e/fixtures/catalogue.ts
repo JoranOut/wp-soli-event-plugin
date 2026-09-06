@@ -20,13 +20,20 @@ export const slug = (key: CatalogueKey) => `viz-${key}`;
 
 export type Role = 'anonymous' | 'subscriber' | 'editor' | 'admin';
 
+// Users we can log in as. Deliberately wider than `Role`: `author` exists only
+// to prove capability gating on the admin pages, and adding it to `Role` would
+// demand an author column in every visibility matrix below - which the public
+// feeds do not distinguish (they key off logged-in, not role).
+export type AuthedUser = Exclude<Role, 'anonymous' | 'admin'> | 'author';
+
 // storageState file per role. `anonymous` -> undefined (fresh context, no auth).
 const AUTH_DIR = path.join(__dirname, '..', '.auth');
-export const ROLE_USERS: Record<Exclude<Role, 'anonymous' | 'admin'>, { username: string; password: string }> = {
+export const ROLE_USERS: Record<AuthedUser, { username: string; password: string }> = {
     subscriber: { username: 'viz_subscriber', password: 'password' },
     editor: { username: 'viz_editor', password: 'password' },
+    author: { username: 'viz_author', password: 'password' },
 };
-export function storageStateFor(role: Role): string | undefined {
+export function storageStateFor(role: Role | AuthedUser): string | undefined {
     if (role === 'anonymous') return undefined;
     if (role === 'admin') return process.env.STORAGE_STATE_PATH;
     return path.join(AUTH_DIR, `${role}.json`);
