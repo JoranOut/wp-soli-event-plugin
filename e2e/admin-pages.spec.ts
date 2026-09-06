@@ -3,8 +3,10 @@
  *
  * Log View and Settings are administrative surfaces and stay on
  * `manage_options`. Calendar View is a read-only view of events the viewer can
- * already reach, so it is gated on `edit_posts` instead: the people who manage
- * events - authors and editors - need the calendar, and subscribers do not.
+ * already reach, so it is gated on `publish_posts` instead: the people who
+ * publish events - authors and editors - need the calendar. `publish_posts`
+ * rather than `edit_posts` draws the line just below contributors, who may
+ * draft an event but not publish one.
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import { pageFor } from './fixtures/roles';
@@ -39,7 +41,7 @@ test.describe('Admin plugin pages — manage_options gating', () => {
     }
 });
 
-test.describe('Calendar View (A2) — edit_posts gating', () => {
+test.describe('Calendar View (A2) — publish_posts gating', () => {
     // The author is the case this gate exists for: an author manages events but
     // has none of the administrative capabilities.
     test('author may open it', async ({ browser }) => {
@@ -51,7 +53,10 @@ test.describe('Calendar View (A2) — edit_posts gating', () => {
         await expectAccess(browser, 'admin', CALENDAR_VIEW, true);
     });
 
-    test('subscriber is denied', async ({ browser }) => {
+    // The contributor is the reason this is publish_posts and not edit_posts:
+    // a contributor holds edit_posts, so edit_posts would have let them in.
+    test('contributor and subscriber are denied', async ({ browser }) => {
+        await expectAccess(browser, 'contributor', CALENDAR_VIEW, false);
         await expectAccess(browser, 'subscriber' as Role, CALENDAR_VIEW, false);
     });
 });
