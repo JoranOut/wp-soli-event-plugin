@@ -185,11 +185,13 @@ and it is the default on both sides so a caller that omits the rate cannot silen
   dropdown is a convenience filter (bypassed when a search term is active).
 - **Admin page capabilities differ on purpose.** Log View (`soli_event_admin_log`) and Settings
   (`soli_event_settings`) are administrative and require `manage_options`. Calendar View
-  (`soli_event_admin_view`) requires only **`edit_posts`**: it is a read-only view of events the holder can
-  already reach, and the people who manage events - authors and editors - need it. `soli_event` registers
-  with `capability_type => 'post'` and no `map_meta_cap`, so `edit_posts` is the standard post capability;
-  note it also admits contributors. There is no `create_posts` primitive to gate on - for a
-  `capability_type => 'post'` type it is a meta capability that maps back to `edit_posts`.
+  (`soli_event_admin_view`) requires only **`publish_posts`**: it is a read-only view of events the holder
+  can already reach, and the people who publish events - authors and editors - need it. `soli_event`
+  registers with `capability_type => 'post'` and no `map_meta_cap`, so these are the standard post
+  capabilities. `publish_posts` rather than `edit_posts` deliberately draws the line just below
+  contributors, who hold `edit_posts` and may draft an event but not publish one. There is no
+  `create_posts` primitive to gate on - for a `capability_type => 'post'` type it is a meta capability that
+  maps back to `edit_posts`.
 
 ### Quick matrix (public list/calendar)
 
@@ -208,7 +210,8 @@ and one spec per surface. `e2e/global-setup.ts` seeds and mints storage states.
 
 Gotchas:
 - Role fixtures cover `anonymous` / `subscriber` / `editor` / `admin`, plus an `author` used only by the
-  admin-page gating spec. `author` is deliberately **not** part of the `Role` union: the public feeds key
+  admin-page gating spec (`author` and `contributor` - the two sides of `publish_posts`). They are
+  deliberately **not** part of the `Role` union: the public feeds key
   off logged-in rather than role, so adding it would demand an author column in every visibility matrix
   that means nothing. It lives in `AuthedUser` (`e2e/fixtures/catalogue.ts`) instead.
 - Anonymous contexts **must** use an explicit empty storage state — manual `newContext()` calls otherwise
