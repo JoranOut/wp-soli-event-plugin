@@ -10,6 +10,16 @@ if (!defined('ABSPATH')) exit;
  */
 const SOLI_EVENT_ADMIN_NOTES_CAP = 'soli_event_admin_notes';
 
+/**
+ * Capability for managing locations (the Locations admin screen and the REST
+ * update route). A location is shared by every event date that uses it, across
+ * events written by other people, so changing or deleting one edits other
+ * people's events: that is edit_others_posts, which editors and administrators
+ * hold and authors do not. Creating a location stays on edit_posts because it
+ * is part of scheduling a date.
+ */
+const SOLI_EVENT_LOCATIONS_CAP = 'edit_others_posts';
+
 // Roles that receive the capability on activation.
 const SOLI_EVENT_ADMIN_NOTES_ROLES = array('administrator');
 

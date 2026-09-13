@@ -5,15 +5,12 @@ import {useState, useEffect, useRef} from '@wordpress/element';
 import {Button, SearchControl} from "@wordpress/components"
 import {addQueryArgs} from '@wordpress/url';
 import trashcan from "../../../../../../inc/assets/img/icons/delete.svg";
-import editSVG from "../../../../../../inc/assets/img/icons/edit.svg";
-import LocationEditor from "../location-editor/location-editor";
 
 function LocationSearcher({location, onSelected}) {
     const [locations, setLocations] = useState([]);
     const [error, setError] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
     const [searchInput, setSearchInput] = useState('');
-    const [editing, setEditing] = useState(null);
     const abortControllerRef = useRef(null);
 
     const onLocationsChanged = (locations) => {
@@ -22,15 +19,6 @@ function LocationSearcher({location, onSelected}) {
 
     const clearLocation = () => {
         onSelected(null)
-    };
-
-    const onEdited = (saved) => {
-        setEditing(null);
-        // Refresh the list, and keep an edited selection in sync.
-        searchLocations(searchInput);
-        if (location && String(location.id) === String(saved.id)) {
-            onSelected(saved);
-        }
     };
 
     const searchLocations = (queryElem) => {
@@ -83,7 +71,6 @@ function LocationSearcher({location, onSelected}) {
                     <p className="name">{location.name} <span>{__('(selected)', 'soli-event')}</span></p>
                     <p className="address">{location.address}</p>
                     <div className="actions">
-                        <Button className="edit-button" title={__('edit', 'soli-event')} onClick={() => setEditing(location)}><img src={editSVG}/></Button>
                         <Button className="delete-button" title={__('delete', 'soli-event')} onClick={loc => clearLocation()}><img src={trashcan}/></Button>
                     </div>
                 </div>}
@@ -94,7 +81,6 @@ function LocationSearcher({location, onSelected}) {
                             <p className="name">{l.name}</p>
                             <p className="address">{l.address}</p>
                             <div className="actions">
-                                <Button className="edit-button" title={__('edit', 'soli-event')} onClick={() => setEditing(l)}><img src={editSVG}/></Button>
                                 <Button
                                     className="submit-button"
                                     variant="secondary"
@@ -106,14 +92,6 @@ function LocationSearcher({location, onSelected}) {
                 {!isLoading && !locations && <div>{__('Nothing found…', 'soli-event')}</div>}
                 {isLoading && <div>{__('Loading…', 'soli-event')}</div>}
             </div>
-
-            {editing && (
-                <LocationEditor
-                    location={editing}
-                    onSaved={onEdited}
-                    onClose={() => setEditing(null)}
-                />
-            )}
         </div>);
 }
 

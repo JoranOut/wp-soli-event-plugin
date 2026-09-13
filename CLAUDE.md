@@ -180,9 +180,19 @@ and it is the default on both sides so a caller that omits the rate cannot silen
 - `GET /events/{id}` (used by the create-event block) returns rows filtered by viewer via
   `EventVisibility::filterVisibleRows()`: **editors see every status**, others see PUBLIC + PRIVATE only.
 - `admin_notes` is returned/writable only with the `soli_event_admin_notes` capability (admins).
-- Write endpoints `POST /events/{id}` and `POST /location*`, and `/location/search`, require `edit_posts`.
+- Write endpoints `POST /events/{id}` and `POST /location` (create), and `/location/search`, require `edit_posts`;
+  `POST /location/{id}` (update) requires `edit_others_posts` - see the Locations bullet below.
 - The admin events list (`edit.php?post_type=soli_event`) shows all statuses to editors; its Future/All
   dropdown is a convenience filter (bypassed when a search term is active).
+- **Locations are managed in wp-admin, not in the create-event block.** The block's location picker only
+  *searches and creates* venues; editing and deleting happen on **Events > Locations**
+  (`soli_event_locations`, `events/lib/locations_admin_page.php`): a classic admin-post form (nonced) with an
+  add/edit panel and a list showing each venue's event-date count. Deleting is refused while any event date
+  still points at the venue (no delete link is rendered, and the handler re-checks). The screen and the REST
+  *update* route `POST /location/{id}` are gated on `SOLI_EVENT_LOCATIONS_CAP` = **`edit_others_posts`**
+  (`event_capability.php`): a location is shared across other people's events, so changing one edits their
+  events. Editors and administrators hold it; authors, who may still create a location via `POST /location`
+  while scheduling, do not.
 - **Admin page capabilities differ on purpose.** Log View (`soli_event_admin_log`) and Settings
   (`soli_event_settings`) are administrative and require `manage_options`. Calendar View
   (`soli_event_admin_view`) requires only **`publish_posts`**: it is a read-only view of events the holder
