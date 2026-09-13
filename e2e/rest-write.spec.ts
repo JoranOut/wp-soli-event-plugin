@@ -1,7 +1,8 @@
 /**
  * REST write paths + admin_notes gating.
  *   R4  POST /events/{id}     — requires edit_posts
- *   R6  POST /location        — requires edit_posts
+ *   R6  POST /location        — requires edit_posts (updating an existing one
+ *       needs edit_others_posts; see location-admin.spec.ts)
  *   W1  write persists (round-trips through soli_event_apply_dates)
  *   W2  admin_notes read/write gated by cap soli_event_admin_notes (admin only)
  *

@@ -101,6 +101,7 @@ test.describe('PHP diagnostics', () => {
             '/wp-admin/edit.php?post_type=soli_event',
             '/wp-admin/edit.php?post_type=soli_event&page=soli_event_admin_view',
             '/wp-admin/edit.php?post_type=soli_event&page=soli_event_admin_log',
+            '/wp-admin/edit.php?post_type=soli_event&page=soli_event_locations',
             '/wp-admin/options-general.php?page=soli_event_settings',
         ];
 

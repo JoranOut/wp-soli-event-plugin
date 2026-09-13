@@ -84,6 +84,39 @@ class LocationTableHandler {
     );
   }
 
+  // Every location with the number of event dates that point at it, for the
+  // Locations admin screen. Sorted by name so the list is stable.
+  function getAllLocationsWithUsage() {
+    return $this->wpdb->get_results("
+                SELECT l.id, l.name, l.address, COUNT(d.id) AS usage_count
+                FROM $this->event_location_table l
+                LEFT JOIN $this->event_dates_table d
+                ON l.id = d.location
+                GROUP BY l.id, l.name, l.address
+                ORDER BY l.name ASC", ARRAY_A);
+  }
+
+  // Number of event dates assigned to a location. A location in use must not
+  // be deleted: the dates would silently lose their venue.
+  function countUsage($location_id) {
+    $location_id = absint($location_id);
+    if (!$location_id) {
+      return 0;
+    }
+    return (int) $this->wpdb->get_var($this->wpdb->prepare("
+                SELECT COUNT(*) FROM $this->event_dates_table WHERE location = %d", $location_id));
+  }
+
+  // Deletes a location. Returns false, and deletes nothing, when any event
+  // date still points at it.
+  function deleteLocation($location_id) {
+    $location_id = absint($location_id);
+    if (!$location_id || $this->countUsage($location_id) > 0) {
+      return false;
+    }
+    return (bool) $this->wpdb->delete($this->event_location_table, array('id' => $location_id));
+  }
+
   function searchLocation($search_query, $limit) {
     if (empty($search_query)) {
       return $this->searchLastUsedLocations($limit);

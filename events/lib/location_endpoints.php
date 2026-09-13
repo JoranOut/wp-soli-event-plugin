@@ -48,9 +48,17 @@ function buildGETSearchLocation() {
 function buildPOSTCreateLocation() {
   register_rest_route('soli_event/v1', '/location(?:/(?P<id>\d+))?', array(
     'methods' => 'POST',
-    'permission_callback' => function () {
+    // Creating a location is part of scheduling a date, so any event editor
+    // may do it. Changing an existing one alters the venue of every event date
+    // that shares it, other people's events included, so that follows the
+    // Locations admin screen and needs edit_others_posts (see
+    // locations_admin_page.php).
+    'permission_callback' => function ($request) {
+      if (!empty($request['id'])) {
+        return current_user_can(\Soli\Events\SOLI_EVENT_LOCATIONS_CAP);
+      }
       return current_user_can('edit_posts');
-    }, // *always set a permission callback
+    },
     'callback' => function ($request) {
       $eventHandler = new \Soli\Events\LocationTableHandler();
       $body = json_decode($request->get_body());
