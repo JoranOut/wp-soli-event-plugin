@@ -28,7 +28,7 @@ async function globalSetup(config: FullConfig) {
 
     // 2. Seed the catalogue into the tests instance (idempotent). Runs in the
     //    tests-cli container, which backs baseURL :8901.
-    execSync(`npx wp-env run tests-cli wp eval-file ${PLUGIN_PATH}`, {
+    execSync(`npx @wordpress/env run tests-cli wp eval-file ${PLUGIN_PATH}`, {
         stdio: 'inherit',
     });
 
