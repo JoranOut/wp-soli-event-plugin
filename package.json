@@ -42,7 +42,7 @@
   "devDependencies": {
     "@wordpress/env": "^12.1.0",
     "@wordpress/scripts": "^31.8.0",
-    "archiver": "^7.0.1",
+    "archiver": "^8.0.0",
     "date-fns": "^4.1.0",
     "express": "^4.19.2"
   },
