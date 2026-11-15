@@ -137,7 +137,7 @@ jobs:
       # Always collect reports (helpful on failures)
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-${{ matrix.channel }}
           path: playwright-report
@@ -146,7 +146,7 @@ jobs:
 
       - name: Upload Playwright traces/videos
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-test-results-${{ matrix.channel }}
           path: test-results
