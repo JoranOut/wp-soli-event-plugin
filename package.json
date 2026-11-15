@@ -18,7 +18,7 @@
     "test:playwright:headed": "wp-scripts test-playwright --headed"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13"
   },
   "wordpress": {
     "_comment": "Oldest supported WordPress branch. The e2e suite runs against the newest patch of this branch as well as the newest release, and the release workflows stamp it into the plugin's 'requires'. Raise it when production no longer runs it.",
@@ -40,8 +40,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wordpress/env": "^10.31.0",
-    "@wordpress/scripts": "^30.24.0",
+    "@wordpress/env": "^12.1.0",
+    "@wordpress/scripts": "^31.8.0",
     "archiver": "^7.0.1",
     "date-fns": "^4.1.0",
     "express": "^4.19.2"
