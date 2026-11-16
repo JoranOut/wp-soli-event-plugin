@@ -65,7 +65,7 @@ test.describe('event-view-calendar block (S2) — DOM smoke', () => {
         });
         // At least one event pill is rendered (fullcalendar event or a "more" link).
         await expect(
-            anon.locator('.fc-event, .fc-daygrid-event, .fc-daygrid-more-link').first()
+            anon.locator('.soli-cal-event, .soli-cal-more-link').first()
         ).toBeVisible({ timeout: 30000 });
         await context.close();
     });

@@ -2,14 +2,45 @@ import "./calendar-wrapper.scss";
 import {useState, useRef} from '@wordpress/element';
 import EventsProvider from "../events-provider/events-provider";
 import EventDetailPopUp from "../event-detail-pop-up/event-detail-pop-up";
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import listPlugin from '@fullcalendar/list'
-import nlLocale from '@fullcalendar/core/locales/nl';
+import FullCalendar, {joinClassNames} from '@fullcalendar/react'
+import classicThemePlugin from '@fullcalendar/react/themes/classic'
+import dayGridPlugin from '@fullcalendar/react/daygrid'
+import timeGridPlugin from '@fullcalendar/react/timegrid'
+import listPlugin from '@fullcalendar/react/list'
+import nlLocale from '@fullcalendar/react/locales/nl';
+import '@fullcalendar/react/skeleton.css';
+import '@fullcalendar/react/themes/classic/theme.css';
+import '@fullcalendar/react/themes/classic/palette.css';
 
 import CalendarFilter from "../calendar-filter/calendar-filter";
 import {ROOM_SLUGS} from "../../../../../inc/values";
+
+// FullCalendar 7 no longer renders semantic fc-* classes, so the agenda skin
+// in calendar-wrapper.scss hooks onto these soli-cal-* classes instead.
+const SOLI_CLASS_HOOKS = {
+    toolbarClass: 'soli-cal-toolbar',
+    toolbarTitleClass: 'soli-cal-title',
+    buttonClass: ({name, isSelected}) => joinClassNames(
+        'soli-cal-button',
+        `soli-cal-button-${name}`,
+        isSelected && 'soli-cal-button-active',
+    ),
+    viewClass: 'soli-cal-view',
+    dayHeaderClass: 'soli-cal-day-header',
+    dayHeaderInnerClass: 'soli-cal-day-header-inner',
+    dayHeaderAlign: 'start',
+    dayCellClass: ({isToday, isOther}) => joinClassNames(
+        'soli-cal-day',
+        isToday && 'soli-cal-day-today',
+        isOther && 'soli-cal-day-other',
+    ),
+    dayCellTopClass: 'soli-cal-day-top',
+    dayCellTopInnerClass: 'soli-cal-day-number',
+    eventClass: 'soli-cal-event',
+    rowEventClass: 'soli-cal-row-event',
+    eventTitleClass: 'soli-cal-event-title',
+    moreLinkClass: 'soli-cal-more-link',
+};
 
 const setDefaultFilters = (onlyConcerts, onlyInternal) => {
     const concertFilter = onlyConcerts ? ["only-concerts"] : [];
@@ -54,7 +85,7 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
 
             <FullCalendar
                 ref={calendarRef}
-                plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+                plugins={[classicThemePlugin, dayGridPlugin, timeGridPlugin, listPlugin]}
                 initialView={initialView}
                 headerToolbar={{
                     left: 'prev,next today',
@@ -73,11 +104,11 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
                 weekends={true}
                 events={events}
                 locale={nlLocale}
-                titleRangeSeparator=" - "
                 dayMaxEvents={3}
                 // Block-style pills everywhere (never dot events), matching
                 // the agenda design.
                 eventDisplay="block"
+                {...SOLI_CLASS_HOOKS}
                 views={{
                     dayGrid: {
                         // Title-only pills, matching the agenda design.

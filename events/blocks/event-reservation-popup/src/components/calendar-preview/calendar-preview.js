@@ -2,11 +2,13 @@ import './calendar-preview.scss';
 
 import {__} from '@wordpress/i18n';
 import FullCalendar from "@fullcalendar/react";
-import timeGridPlugin from '@fullcalendar/timegrid'
-import nlLocale from '@fullcalendar/core/locales/nl';
+import timeGridPlugin from '@fullcalendar/react/timegrid'
+import nlLocale from '@fullcalendar/react/locales/nl';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import bootstrap5Plugin from '@fullcalendar/bootstrap5';
+import '@fullcalendar/react/skeleton.css';
+import '@fullcalendar/bootstrap5/theme.css';
 import {useSelector} from "react-redux";
 import {selectViewDate} from "../../redux/calendar-slice";
 import {useEffect, useRef, useState} from "react";
@@ -82,10 +84,9 @@ export default function CalendarPreview() {
                 plugins={[timeGridPlugin, bootstrap5Plugin]}
                 initialDate={selectedDate}
                 initialView={"timeGridDay"}
-                themeSystem="bootstrap5"
                 scrollTime={"10:00:00"}
                 slotDuration={"00:30:00"}
-                slotLabelInterval={"01:00"}
+                slotHeaderInterval={"01:00"}
                 headerToolbar={{
                     left: 'title',
                 }}
@@ -93,6 +94,8 @@ export default function CalendarPreview() {
                 weekends={true}
                 locale={nlLocale}
                 height={"100%"}
+                toolbarTitleClass="soli-cal-title"
+                eventClass="soli-cal-event"
                 events={[...events, ...processedReservations]}
                 views={{
                     dayGrid: {

@@ -14,13 +14,14 @@ function fromDateDto(dateDto) {
         start: startDate,
         end: endDate,
         url: dateDto.guid,
-        color: dateDto.color,
+        // FullCalendar 7 renders an undefined color as a literal "undefined" CSS value.
+        ...(dateDto.color ? {color: dateDto.color} : {}),
         className: [
             "soli-event",
             dateDto.status === "PRIVATE" ? "private-event" : "",
             dateDto.is_concert ? "concert-event" : "",
             ...getRoomClassList(dateDto)
-        ],
+        ].filter(Boolean).join(" "),
         extendedProps: {
             postId: dateDto.post_id,
             isConcert: dateDto.is_concert,

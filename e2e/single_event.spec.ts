@@ -7,6 +7,11 @@ import {
     DEFAULT_EVENT_STATUS,
 } from './helpers';
 
+// FullCalendar 7 formats time ranges through Intl, which joins them with an
+// unspaced en dash (12:12–13:13); v6 printed a spaced hyphen.
+const timeRange = (start: string, end: string) =>
+    new RegExp(`${start}\\s*[–-]\\s*${end}`);
+
 test.describe('Event Tests',  () => {
     // Tests share one WordPress instance; each isolates itself with a unique
     // event title (see uniqueTitle) rather than wiping global state, so they
@@ -167,7 +172,7 @@ test.describe('Event Tests',  () => {
         // agenda design), so with events accumulated by other test runs ours
         // may sit behind today's "+N meer" link - open it in that case.
         const eventLink = page.getByRole('link', { name: eventCtx.title });
-        const moreLink = page.locator('.fc-day-today .fc-daygrid-more-link');
+        const moreLink = page.locator('.soli-cal-day-today .soli-cal-more-link');
         await expect(eventLink.or(moreLink).first()).toBeVisible({ timeout: 30000 });
         if (!(await eventLink.isVisible())) {
             await moreLink.click();
@@ -197,7 +202,7 @@ test.describe('Event Tests',  () => {
             { timeout: 30000 }
         );
         await expect(detail).toContainText(
-            `${eventCtx.startTime} - ${eventCtx.endTime}`
+            timeRange(eventCtx.startTime, eventCtx.endTime)
         );
     });
 
@@ -257,7 +262,7 @@ test.describe('Event Tests',  () => {
         const calendarEventLink = page.getByRole('link', { name: eventCtx.title });
 
         await expect(calendarEventLink).toContainText(
-            `${eventCtx.startTime} - ${eventCtx.endTime}`,
+            timeRange(eventCtx.startTime, eventCtx.endTime),
             { timeout: 30000 }
         );
         // Room name is now shown as its display label, not the raw slug.
