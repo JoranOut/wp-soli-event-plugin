@@ -30,12 +30,12 @@ export default function NumberedInput(props) {
             size="small"
             value={value ?? 0}
             onChange={handleChange}
-            inputProps={{ min, max }}
-            InputProps={
-                endAdornment
+            slotProps={{
+                htmlInput: { min, max },
+                input: endAdornment
                     ? { endAdornment: <InputAdornment position="end">{endAdornment}</InputAdornment> }
-                    : undefined
-            }
+                    : undefined,
+            }}
         />
     );
 }

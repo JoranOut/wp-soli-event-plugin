@@ -15,7 +15,7 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import { addDays } from 'date-fns';
 import { apiFor } from './fixtures/roles';
-import { createSingleEvent, uniqueTitle, BLOCK_LOAD_TIMEOUT } from './helpers';
+import { createSingleEvent, typeInPickerField, uniqueTitle, BLOCK_LOAD_TIMEOUT } from './helpers';
 import { readZipEntry } from './docx-utils';
 
 const EXTRA_DATE = { start: '2030-01-05 20:00:00', end: '2030-01-05 22:00:00' };
@@ -233,14 +233,7 @@ test.describe('Invoice this event (create-event block)', () => {
         await expect(modal.locator('.invoice-date-row')).toHaveCount(2);
 
         // Move "From" past the first date: only the 2030 date remains listed.
-        const fromInput = modal.getByRole('textbox').first();
-        await fromInput.click();
-        await fromInput.press('ArrowLeft');
-        await fromInput.press('ArrowLeft');
-        await fromInput.press('ArrowLeft');
-        await page.keyboard.type('01', { delay: 100 });
-        await page.keyboard.type('01', { delay: 100 });
-        await page.keyboard.type('2030', { delay: 100 });
+        await typeInPickerField(modal.locator('.invoice-range .MuiPickersTextField-root').first(), '01012030');
 
         await expect(modal.locator('.invoice-date-row')).toHaveCount(1);
         await expect(modal.locator('.invoice-date-row')).toContainText('05-01-2030');

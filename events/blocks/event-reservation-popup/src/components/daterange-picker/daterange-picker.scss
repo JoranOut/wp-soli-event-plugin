@@ -91,42 +91,42 @@
 
 :root {
   .date-range-picker {
-    .MuiOutlinedInput-notchedOutline {
+    .MuiPickersOutlinedInput-notchedOutline {
       border: none;
+      outline: none;
     }
 
-    .MuiInputBase-root {
+    .MuiPickersInputBase-root {
       align-self: center;
-      //width: fit-content;
+      padding-left: 0;
     }
 
-    .MuiInputBase-input {
-      background: none;
-      border: none;
+    // MUI gives the section list a fixed 182px; size it to its content instead.
+    .MuiPickersInputBase-sectionsContainer {
+      width: auto;
       padding: 0;
     }
 
-    .invalid .MuiInputBase-input {
+    .invalid .MuiPickersInputBase-sectionsContainer {
       color: red;
     }
 
-    :not(.time) > div > .MuiInputBase-input {
-      text-transform: capitalize;
-      font-weight: bolder;
-      font-size: 18px;
-      padding: 0;
+    .start-date,
+    .end-date {
+      .MuiPickersInputBase-sectionsContainer {
+        text-transform: capitalize;
+        font-weight: bolder;
+        font-size: 18px;
+      }
     }
 
-    .end-date:not(.time) > div > .MuiInputBase-input {
-      font-size: 18px;
-    }
-
-    &.line > div > div > .MuiInputBase-input {
-      font-size: 16px;
-    }
-
-    .time > div > .MuiInputBase-input {
-      width: 40px;
+    &.line {
+      .start-date,
+      .end-date {
+        .MuiPickersInputBase-sectionsContainer {
+          font-size: 16px;
+        }
+      }
     }
 
     .MuiInputAdornment-root.MuiInputAdornment-positionEnd {
@@ -135,10 +135,6 @@
 
     .MuiButtonBase-root.MuiIconButton-root.MuiIconButton-edgeEnd {
       padding: 0;
-    }
-
-    .MuiOutlinedInput-notchedOutline {
-      outline: none;
     }
   }
 }

@@ -49,7 +49,7 @@ test.describe('Reservation popup — full flow', () => {
         await expect(modal.locator('.soli-cal-event').getByText('Reservation')).toBeVisible();
 
         // Pick a room (room names are data and stay Dutch).
-        await modal.getByRole('combobox', { name: 'Select rooms' }).click();
+        await modal.locator('.room-filter').getByRole('combobox').click();
         await anon.getByRole('option', { name: 'Grote zaal' }).click();
         // Close the MUI dropdown via its backdrop: while the menu is open MUI
         // marks the wp modal aria-hidden, which hides it from role queries.

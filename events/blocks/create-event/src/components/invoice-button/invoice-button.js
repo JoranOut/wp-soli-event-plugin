@@ -250,7 +250,7 @@ function InvoiceButton() {
                                 size="small"
                                 value={rate}
                                 onChange={(event) => setRate(event.target.value)}
-                                inputProps={{ inputMode: "decimal" }}
+                                slotProps={{ htmlInput: { inputMode: "decimal" } }}
                             />
                             <TextField
                                 className="invoice-vat"

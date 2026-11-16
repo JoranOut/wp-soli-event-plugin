@@ -57,7 +57,7 @@
       grid-area: submit-button;
     }
 
-    .MuiPickersPopper-root {
+    .MuiPickerPopper-root {
       z-index: 100000 !important;
     }
 
@@ -136,6 +136,24 @@
 
     .MuiOutlinedInput-notchedOutline {
       outline: none;
+    }
+
+    .MuiPickersOutlinedInput-notchedOutline {
+      border: none;
+    }
+
+    .MuiPickersInputBase-root {
+      align-self: center;
+      width: fit-content;
+      padding-left: 0;
+    }
+
+    .MuiPickersInputBase-sectionsContainer {
+      width: auto;
+      padding: 0;
+      text-transform: capitalize;
+      font-weight: bolder;
+      font-size: 18px;
     }
   }
 }

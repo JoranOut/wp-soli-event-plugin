@@ -37,16 +37,18 @@ export async function editorCanvas(page: Page): Promise<Page | FrameLocator> {
     return editorIsIframed ? page.frameLocator('iframe[name="editor-canvas"]') : page;
 }
 
-// Set a MUI date field through its calendar popup rather than by typing into
-// the field.
-//
-// Typing is not an option inside the editor canvas: @mui/x-date-pickers 7.x
-// resolves the focused element with `getActiveElement(document)` against the
-// *global* document (internals/hooks/useField/useFieldV7TextField.js). From WP
-// 7.1 the block renders in the editor-canvas iframe, where the parent
-// document's activeElement is the <iframe> itself, so the field concludes it is
-// not focused and drops every keystroke. Clicking through the calendar works on
-// both versions, and it is the path a real editor has on WP 7.1.
+// Type into a MUI X picker field. Since v8 the field is a list of
+// contentEditable `spinbutton` sections next to a hidden <input>, so Playwright's
+// fill() has nothing to fill: select the first section and type digits, which
+// auto-advance through the sections. `digits` holds the sections' digits in
+// order without separators, e.g. '1930' for 19:30 or '05012030' for D MMMM YYYY.
+export async function typeInPickerField(field: Locator, digits: string) {
+    await field.getByRole('spinbutton').first().click();
+    await field.page().keyboard.type(digits, { delay: 50 });
+    await field.page().keyboard.press('Tab');
+}
+
+// Set a MUI date field through its calendar popup, the path a real editor takes.
 //
 // The popup lands in the same document as the field because the blocks pin
 // their MUI portal containers there (events/inc/editor-style-scope.js).
@@ -146,8 +148,8 @@ export async function createSingleEvent(
 
     await pickDate(canvas, canvas.locator('div.start-date'), date);
 
-    await canvas.getByRole('textbox', { name: 'hh:mm' }).first().fill(startTime);
-    await canvas.getByRole('textbox', { name: 'hh:mm' }).nth(1).fill(endTime);
+    await typeInPickerField(canvas.locator('.start-time').first(), startTime.replace(':', ''));
+    await typeInPickerField(canvas.locator('.end-time').first(), endTime.replace(':', ''));
 
     await canvas.getByRole('button', { name: 'Choose a location' }).click();
     if (namedLocation) {
@@ -158,18 +160,14 @@ export async function createSingleEvent(
         await page.getByRole('button', { name: 'Save and select' }).click();
     } else {
         await page.getByRole('checkbox', { name: locationLabel }).check();
-        await page
-            .locator('label')
-            .filter({ hasText: roomLabel })
-            .getByTestId('CheckBoxOutlineBlankIcon')
-            .click();
+        await page.getByRole('checkbox', { name: roomLabel, exact: true }).check();
         await page.getByRole('button', { name: 'Save', exact: true }).click();
     }
 
     // Flag as a concert & publish
     await canvas.locator('.MuiButtonBase-root.MuiSwitch-switchBase').click();
     if (!keepDefaultStatus) {
-        await canvas.getByRole('combobox', { name: 'OPTION' }).click();
+        await canvas.locator('.event-status-selector').getByRole('combobox').click();
         await canvas.getByRole('option', { name: status }).click();
     }
     await page.getByRole('button', { name: 'Publish', exact: true }).click();

@@ -79,7 +79,7 @@ test.describe('Editor MUI styles', () => {
         );
         expect(emotionKeys).toContain('soli-event');
 
-        const field = wizard.locator('.MuiInputBase-root').first();
+        const field = wizard.locator('.MuiPickersInputBase-root').first();
         await expect(field).toBeVisible();
         await expect(field).toHaveCSS('display', 'flex');
     });

@@ -2,6 +2,7 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import {
     createSingleEvent,
     editorCanvas,
+    typeInPickerField,
     createCalendarPage,
     uniqueTitle,
     DEFAULT_EVENT_STATUS,
@@ -223,7 +224,7 @@ test.describe('Event Tests',  () => {
         await expect.poll(isDirty).toBe(false);
 
         // Editing an event field alone must mark the post dirty...
-        await (await editorCanvas(page)).getByRole('textbox', { name: 'hh:mm' }).first().fill('14:14');
+        await typeInPickerField((await editorCanvas(page)).locator('.start-time').first(), '1414');
         await expect.poll(isDirty).toBe(true);
 
         // ...and updating must clear it again.
