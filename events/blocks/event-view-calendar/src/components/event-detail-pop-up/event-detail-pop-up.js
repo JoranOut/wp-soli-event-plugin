@@ -25,7 +25,7 @@ export default function EventDetailPopUp(props) {
     useOutsideClick(ref, (e) => {
         // Clicking another calendar event should switch the popup, not close it;
         // any other click outside the popup dismisses it on the first try.
-        if (e.target.closest && e.target.closest('.fc-event')) {
+        if (e.target.closest && e.target.closest('.soli-cal-event')) {
             return;
         }
         props.clearEvent();

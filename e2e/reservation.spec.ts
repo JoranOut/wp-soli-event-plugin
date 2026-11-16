@@ -46,7 +46,7 @@ test.describe('Reservation popup — full flow', () => {
         await modal.getByRole('button', { name: 'new' }).click();
 
         // The new slot shows up as a reservation in the day calendar.
-        await expect(modal.locator('.fc-event').getByText('Reservation')).toBeVisible();
+        await expect(modal.locator('.soli-cal-event').getByText('Reservation')).toBeVisible();
 
         // Pick a room (room names are data and stay Dutch).
         await modal.getByRole('combobox', { name: 'Select rooms' }).click();

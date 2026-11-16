@@ -19,15 +19,11 @@
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@fullcalendar/bootstrap5": "^7.0.0",
-    "@fullcalendar/core": "^7.0.0",
-    "@fullcalendar/daygrid": "^6.1.15",
-    "@fullcalendar/list": "^6.1.15",
     "@fullcalendar/react": "^7.0.0",
-    "@fullcalendar/timegrid": "^6.1.15",
     "@mui/material": "^5.15.17",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
-    "dayjs": "^1.11.6"
+    "dayjs": "^1.11.6",
+    "temporal-polyfill": "^1.0.8"
   }
 }
