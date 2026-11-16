@@ -13,7 +13,7 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import { addDays, format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { editorCanvas, uniqueTitle, BLOCK_LOAD_TIMEOUT } from './helpers';
+import { editorCanvas, typeInPickerField, uniqueTitle, BLOCK_LOAD_TIMEOUT } from './helpers';
 
 test.describe('First-event wizard', () => {
     test.describe.configure({ mode: 'parallel' });
@@ -31,21 +31,14 @@ test.describe('First-event wizard', () => {
         // --- Step 1: date & time ---------------------------------------
         await expect(wizard.getByRole('heading', { name: 'When does it take place?' })).toBeVisible();
 
-        // Enter the date into the MUI masked field (D MMMM, YYYY): land on the
-        // leftmost (day) section and let section auto-advance carry across
-        // day -> month -> year (same technique as createSingleEvent).
-        const dateInput = wizard.getByRole('textbox', { name: 'DD MMMM, YYYY' }).first();
-        await dateInput.click();
-        await dateInput.press('ArrowLeft');
-        await dateInput.press('ArrowLeft');
-        await dateInput.press('ArrowLeft');
-        await page.keyboard.type(format(eventDate, 'dd', { locale: enUS }), { delay: 100 });
-        await page.keyboard.type(format(eventDate, 'MM', { locale: enUS }), { delay: 100 });
-        await page.keyboard.type(format(eventDate, 'yyyy', { locale: enUS }), { delay: 100 });
-        await dateInput.press('Tab');
+        // Day, month and year sections of the D MMMM, YYYY field.
+        await typeInPickerField(
+            wizard.locator('.start-date').first(),
+            format(eventDate, 'ddMMyyyy', { locale: enUS })
+        );
 
-        await wizard.getByRole('textbox', { name: 'hh:mm' }).first().fill('19:00');
-        await wizard.getByRole('textbox', { name: 'hh:mm' }).nth(1).fill('21:30');
+        await typeInPickerField(wizard.locator('.start-time').first(), '1900');
+        await typeInPickerField(wizard.locator('.end-time').first(), '2130');
 
         await wizard.getByRole('button', { name: 'Next' }).click();
 
@@ -54,11 +47,7 @@ test.describe('First-event wizard', () => {
 
         await wizard.getByRole('button', { name: 'Choose a location' }).click();
         await page.getByRole('checkbox', { name: 'Muziekcentrum' }).check();
-        await page
-            .locator('label')
-            .filter({ hasText: 'Grote zaal' })
-            .getByTestId('CheckBoxOutlineBlankIcon')
-            .click();
+        await page.getByRole('checkbox', { name: 'Grote zaal', exact: true }).check();
         await page.getByRole('button', { name: 'Save', exact: true }).click();
 
         await wizard.getByRole('button', { name: 'Next' }).click();
@@ -66,7 +55,7 @@ test.describe('First-event wizard', () => {
         // --- Step 3: details --------------------------------------------
         await expect(wizard.getByRole('heading', { name: 'Details' })).toBeVisible();
 
-        await wizard.getByRole('combobox', { name: 'OPTION' }).click();
+        await wizard.locator('.event-status-selector').getByRole('combobox').click();
         await page.getByRole('option', { name: 'PUBLIC' }).click();
         await wizard.locator('.concert-status-switch input[type="checkbox"]').check();
         await wizard.locator('.wizard-notes textarea').first().fill(note);
@@ -91,7 +80,7 @@ test.describe('First-event wizard', () => {
         const rows = canvas.locator('.date-list-item');
         await expect(rows).toHaveCount(3);
         await expect(canvas.locator('.date-list-item .concert-status-switch input:checked')).toHaveCount(3);
-        await expect(canvas.getByRole('combobox', { name: 'PUBLIC' })).toHaveCount(3);
+        await expect(canvas.locator('.event-status-selector').getByRole('combobox').filter({ hasText: 'PUBLIC' })).toHaveCount(3);
         await expect(rows.first()).toContainText(note);
         await expect(rows.first()).toContainText('Grote zaal');
 

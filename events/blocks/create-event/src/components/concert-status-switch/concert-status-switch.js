@@ -24,7 +24,7 @@ export default function ConcertStatusSwitch({concertStatus, onChange}) {
                 <Switch
                     checked={_concertStatus}
                     onChange={handleChange}
-                    inputProps={{ 'aria-label': __('Toggle concert status', 'soli-event') }}
+                    slotProps={{ input: { 'aria-label': __('Toggle concert status', 'soli-event') } }}
                 />}
               label={__("Concert", "soli-event")}
             />

@@ -19,8 +19,8 @@
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@mui/material": "^5.15.17",
-    "@mui/x-date-pickers": "^7.4.0",
+    "@mui/material": "^9.0.0",
+    "@mui/x-date-pickers": "^9.0.0",
     "dayjs": "^1.11.6",
     "docx": "^9.5.0",
     "react-simple-timefield": "^3.2.5"

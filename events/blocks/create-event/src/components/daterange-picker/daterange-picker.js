@@ -10,6 +10,26 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {renderTimeViewClock} from '@mui/x-date-pickers/timeViewRenderers';
 
+// MUI X 8+ keeps a half-typed field only while its `value` prop follows every
+// onChange, invalid dates included. The range below ignores invalid dates, so
+// each picker holds its own input value and resyncs when the range changes.
+function BufferedPicker({picker: Picker, value, onChange, ...props}) {
+    const [input, setInput] = useState(value);
+
+    useEffect(() => {
+        setInput(value);
+    }, [value]);
+
+    return <Picker
+        {...props}
+        value={input}
+        onChange={(newValue, context) => {
+            setInput(newValue);
+            onChange(newValue, context);
+        }}
+    />;
+}
+
 function DateRangePicker(props) {
     const [id, setId] = useState(props.date ? props.date.id : null)
     const [startDate, setStartDate] = useState(dayjs(props.date ? props.date.startDate : getDefaultDate()))
@@ -34,17 +54,10 @@ function DateRangePicker(props) {
             startDate.year() === endDate.year();
     }
 
-    const resizeInput = (ref) => {
-        if (ref.current) {
-            const input = ref.current.querySelector('input');
-            input.style.width = input.value?.length + "ch";
-        }
-    }
-
     const isDateInValid = (date) => {
         // MUI passes null when a field is cleared and an invalid dayjs while the
         // user is mid-typing; both must be treated as invalid without throwing.
-        return !date || isNaN(date.year());
+        return !date || !date.isValid();
     }
 
     useEffect(() => {
@@ -52,14 +65,6 @@ function DateRangePicker(props) {
         setStartDate(dayjs(props.date ? props.date.startDate : getDefaultDate()))
         setEndDate(dayjs(props.date ? props.date.endDate : getDefaultDate(1)))
     }, [props.date])
-
-    useEffect(() => {
-        resizeInput(dateInput1);
-    }, [startDate, props.date])
-
-    useEffect(() => {
-        resizeInput(dateInput2);
-    }, [endDate, props.date])
 
     return (
         <>
@@ -71,11 +76,11 @@ function DateRangePicker(props) {
                     <div className={["start-date", validStartDate ? "" : "invalid"].join(" ")}>
                         <span className="weekday"
                               onClick={() => {
-                                  dateInput1.current.querySelector('input').focus()
+                                  dateInput1.current?.focus()
                               }}
                         >{startDate.locale("nl").format("dddd")}</span>
-                        <DatePicker
-                            ref={dateInput1}
+                        <BufferedPicker picker={DatePicker}
+                            inputRef={dateInput1}
                             value={startDate}
                             onChange={(newStartDate) => {
                                 if (isDateInValid(newStartDate)) {
@@ -98,7 +103,7 @@ function DateRangePicker(props) {
                             format="D MMMM, YYYY"
                         />
                     </div>
-                    <TimePicker
+                    <BufferedPicker picker={TimePicker}
                         className="start-time time"
                         value={startDate}
                         onChange={(newStartDate) => {
@@ -118,7 +123,7 @@ function DateRangePicker(props) {
                         }}
                     />
                     <div className="tot">{__('to', 'soli-event')}</div>
-                    {isSingleDay() && <DateTimePicker
+                    {isSingleDay() && <BufferedPicker picker={DateTimePicker}
                         className="end-time time"
                         value={endDate}
                         onChange={(newEndDate) => {
@@ -144,12 +149,12 @@ function DateRangePicker(props) {
                             <div className={["end-date", validEndDate ? "" : "invalid"].join(" ")}>
                                 <span className="weekday"
                                       onClick={() => {
-                                          dateInput2.current.querySelector('input').focus()
+                                          dateInput2.current?.focus()
                                       }}
                                 >{endDate.locale("nl").format("dddd")}</span>
-                                <DateTimePicker
+                                <BufferedPicker picker={DateTimePicker}
                                     value={endDate}
-                                    ref={dateInput2}
+                                    inputRef={dateInput2}
                                     onChange={(newEndDate) => {
                                         if (isDateInValid(newEndDate)) {
                                             setValidEndDate(false);
@@ -174,7 +179,7 @@ function DateRangePicker(props) {
                                     }}
                                 />
                             </div>
-                            <TimePicker
+                            <BufferedPicker picker={TimePicker}
                                 className="end-time time"
                                 value={endDate}
                                 onChange={(newEndDate) => {
