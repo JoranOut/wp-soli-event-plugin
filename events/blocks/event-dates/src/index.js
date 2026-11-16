@@ -6,6 +6,7 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, TextControl, TextareaControl, RangeControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/event-dates", {
+    apiVersion: 3,
     title: __("Event Upcoming Dates", "soli-event"),
     description: __("Lists the next upcoming dates of the current event.", "soli-event"),
     icon: "list-view",

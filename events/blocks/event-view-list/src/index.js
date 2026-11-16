@@ -1,10 +1,11 @@
 import "./index.scss"
 import { __ } from '@wordpress/i18n';
 import ListView from "./components/list-view/list-view"
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, RangeControl, ToggleControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/event-view-list", {
+    apiVersion: 3,
     title: __("Event View List", "soli-event"),
     icon: "list-view",
     category: "soli",
@@ -22,10 +23,11 @@ wp.blocks.registerBlockType("soli/event-view-list", {
 })
 
 function EditComponent({ attributes, setAttributes }) {
+    const blockProps = useBlockProps();
     const { events_per_page, show_navigation } = attributes;
 
     return (
-        <>
+        <div {...blockProps}>
             <InspectorControls>
                 <PanelBody title={__("Settings", "soli-event")} initialOpen={true}>
                     <RangeControl
@@ -45,7 +47,7 @@ function EditComponent({ attributes, setAttributes }) {
             </InspectorControls>
 
             <ListView eventsPerPage={events_per_page} showNavigation={show_navigation} />
-        </>
+        </div>
     )
 }
 

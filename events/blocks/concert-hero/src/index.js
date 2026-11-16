@@ -11,6 +11,7 @@ import {
 import { PanelBody, TextControl, BaseControl, Button } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/concert-hero", {
+    apiVersion: 3,
     title: __("Concert Hero", "soli-event"),
     description: __("Hero banner for the next upcoming concert.", "soli-event"),
     icon: "megaphone",

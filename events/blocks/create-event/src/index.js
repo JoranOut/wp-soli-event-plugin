@@ -1,4 +1,5 @@
 import "./index.scss"
+import {useBlockProps} from '@wordpress/block-editor';
 import EditorStyleScope from "../../../inc/editor-style-scope";
 import { __ } from '@wordpress/i18n';
 import EditableDateTable from "./components/editable-date-table/editable-date-table";
@@ -15,6 +16,7 @@ import InvoiceButton from "./components/invoice-button/invoice-button";
 import {useEventState, useEventActions} from "./components/events-context";
 
 wp.blocks.registerBlockType("soli/create-event", {
+    apiVersion: 3,
     title: __("Create Event", "soli-event"),
     icon: "smiley",
     category: "soli",
@@ -118,10 +120,11 @@ function InnerEdit({userCanAdminNote}) {
 
 function EditComponent({context}) {
     const {postId} = context;
+    const blockProps = useBlockProps({className: "soli-block-create-event"});
     const userCanAdminNote = window?.createEventPermissions?.canSeeAdminNotes ?? false;
 
     return (
-        <div className="soli-block-create-event">
+        <div {...blockProps}>
             <EditorStyleScope>
                 <AdminEventsProvider post_id={postId}>
                     <InnerEdit userCanAdminNote={userCanAdminNote}/>
