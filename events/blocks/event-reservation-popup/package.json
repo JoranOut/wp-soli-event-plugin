@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wordpress/scripts": "^31.8.0"
+    "@wordpress/scripts": "^37.0.0"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",

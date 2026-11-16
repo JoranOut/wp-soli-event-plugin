@@ -16,6 +16,6 @@
     "leaflet": "^1.9.4"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^24.2.0"
+    "@wordpress/scripts": "^37.0.0"
   }
 }

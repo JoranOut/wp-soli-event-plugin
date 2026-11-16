@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@wordpress/scripts": "^24.2.0"
+    "@wordpress/scripts": "^37.0.0"
   },
   "dependencies": {
     "@mui/x-date-pickers": "^9.0.0",
