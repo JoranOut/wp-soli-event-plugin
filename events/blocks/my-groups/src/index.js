@@ -8,6 +8,7 @@ import {
 import { PanelBody, TextControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/my-groups", {
+    apiVersion: 3,
     title: __("My Orchestras", "soli-event"),
     description: __("The logged-in member's groups (from their Soli account) with each group's next event.", "soli-event"),
     icon: "groups",

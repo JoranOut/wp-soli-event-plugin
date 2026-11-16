@@ -11,6 +11,7 @@ import { useSelect } from '@wordpress/data';
 import { store as coreStore } from '@wordpress/core-data';
 
 wp.blocks.registerBlockType("soli/next-concert", {
+    apiVersion: 3,
     title: __("Next Concert", "soli-event"),
     description: __("Compact card linking the next upcoming concert.", "soli-event"),
     icon: "calendar-alt",

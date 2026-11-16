@@ -6,6 +6,7 @@ import {PanelBody, TextControl} from '@wordpress/components';
 import ReservationPopup from "./components/reservation-popup/reservation-popup";
 
 wp.blocks.registerBlockType("soli/event-reservation-popup", {
+    apiVersion: 3,
     title: __("Event Reservation Popup", "soli-event"),
     icon: "tagcloud",
     category: "soli",

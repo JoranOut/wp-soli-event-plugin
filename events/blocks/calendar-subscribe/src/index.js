@@ -7,6 +7,7 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, TextControl, TextareaControl, FormTokenField, ToggleControl, Spinner } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/calendar-subscribe", {
+    apiVersion: 3,
     title: __("Calendar subscribe", "soli-event"),
     description: __("Let visitors build an iCal subscribe link for concerts and/or orchestras.", "soli-event"),
     icon: "calendar-alt",

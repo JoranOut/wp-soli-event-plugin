@@ -5,6 +5,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, RangeControl, ToggleControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/event-view-list", {
+    apiVersion: 3,
     title: __("Event View List", "soli-event"),
     icon: "list-view",
     category: "soli",

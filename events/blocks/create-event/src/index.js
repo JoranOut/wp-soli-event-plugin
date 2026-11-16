@@ -15,6 +15,7 @@ import InvoiceButton from "./components/invoice-button/invoice-button";
 import {useEventState, useEventActions} from "./components/events-context";
 
 wp.blocks.registerBlockType("soli/create-event", {
+    apiVersion: 3,
     title: __("Create Event", "soli-event"),
     icon: "smiley",
     category: "soli",

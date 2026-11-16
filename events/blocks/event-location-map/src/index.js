@@ -6,6 +6,7 @@ import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, TextControl, RangeControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/event-location-map", {
+    apiVersion: 3,
     title: __("Event Location Map", "soli-event"),
     description: __("Shows the location of the current event date on a map.", "soli-event"),
     icon: "location-alt",

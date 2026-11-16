@@ -6,6 +6,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, ToggleControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/event-view-calendar", {
+    apiVersion: 3,
     title: __("Event View Calendar", "soli-event"),
     icon: "calendar-alt",
     category: "soli",
