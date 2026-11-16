@@ -1,4 +1,5 @@
 import "./index.scss"
+import {useBlockProps} from '@wordpress/block-editor';
 import EditorStyleScope from "../../../inc/editor-style-scope";
 import { __ } from '@wordpress/i18n';
 import EditableDateTable from "./components/editable-date-table/editable-date-table";
@@ -119,10 +120,11 @@ function InnerEdit({userCanAdminNote}) {
 
 function EditComponent({context}) {
     const {postId} = context;
+    const blockProps = useBlockProps({className: "soli-block-create-event"});
     const userCanAdminNote = window?.createEventPermissions?.canSeeAdminNotes ?? false;
 
     return (
-        <div className="soli-block-create-event">
+        <div {...blockProps}>
             <EditorStyleScope>
                 <AdminEventsProvider post_id={postId}>
                     <InnerEdit userCanAdminNote={userCanAdminNote}/>

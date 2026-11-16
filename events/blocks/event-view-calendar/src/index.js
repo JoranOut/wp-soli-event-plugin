@@ -2,7 +2,7 @@ import "./index.scss"
 import EditorStyleScope from "../../../inc/editor-style-scope";
 import { __ } from '@wordpress/i18n';
 import CalendarWrapper from "./components/calendar-wrapper/calendar-wrapper";
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, ToggleControl } from '@wordpress/components';
 
 wp.blocks.registerBlockType("soli/event-view-calendar", {
@@ -20,10 +20,11 @@ wp.blocks.registerBlockType("soli/event-view-calendar", {
 })
 
 function EditComponent({ attributes, setAttributes }) {
+    const blockProps = useBlockProps();
     const { calendar_type, adjustable, only_concerts, show_rooms_filter } = attributes;
 
     return (
-        <>
+        <div {...blockProps}>
             <InspectorControls>
                 <PanelBody title={__("Settings", "soli-event")} initialOpen={true}>
                     <SelectControl
@@ -63,6 +64,6 @@ function EditComponent({ attributes, setAttributes }) {
                     showRoomsFilter={show_rooms_filter}
                 />
             </EditorStyleScope>
-        </>
+        </div>
     )
 }
