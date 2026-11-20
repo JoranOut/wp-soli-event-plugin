@@ -199,8 +199,107 @@
     color: var(--soli-cal-muted);
   }
 
+  /* --- list view (the phone view, and listMonth when adjustable) ---------- */
+  .soli-cal-list-day-header {
+    background: var(--soli-cal-paper);
+  }
+
+  .soli-cal-list-day-header-inner {
+    font-family: var(--soli-cal-font-sans);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--soli-cal-ink);
+    text-decoration: none;
+
+    &::first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  .soli-cal-list-event {
+    font-family: var(--soli-cal-font-sans);
+    font-size: 14px;
+    color: var(--soli-cal-ink);
+    text-decoration: none;
+
+    &:focus-visible {
+      outline: 0;
+      box-shadow: inset 0 0 0 2px rgba(122, 31, 43, 0.35);
+    }
+  }
+
+  .soli-cal-list-event-time {
+    color: var(--soli-cal-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .soli-cal-list-event-title {
+    font-weight: 600;
+  }
+
+  .soli-cal-no-events {
+    font-family: var(--soli-cal-font-sans);
+    color: var(--soli-cal-muted);
+  }
+
   /* --- small screens: hide pills, mark days with a maroon dot ------------- */
   @media (max-width: 640px) {
+    /* Title on its own row; prev / today / next as one full-width bar. */
+    .soli-cal-toolbar {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    .soli-cal-toolbar-start,
+    .soli-cal-toolbar-end {
+      display: flex;
+      width: 100%;
+    }
+
+    .soli-cal-toolbar-center:empty {
+      display: none;
+    }
+
+    .soli-cal-toolbar-end,
+    .soli-cal-toolbar-end .soli-cal-button-group {
+      flex: 1;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .soli-cal-toolbar-end {
+
+      .soli-cal-button {
+        margin: 0;
+        height: 44px;
+      }
+
+      .soli-cal-button-prev,
+      .soli-cal-button-next {
+        width: 44px;
+        flex: none;
+      }
+
+      .soli-cal-button-today {
+        flex: 1;
+      }
+    }
+
+    .soli-cal-title {
+      font-size: 26px;
+      white-space: nowrap;
+
+      &::first-letter {
+        text-transform: uppercase;
+      }
+    }
+
+    .soli-cal-list-event {
+      font-size: 15px;
+    }
+
     .soli-cal-day {
       min-height: 68px;
     }
