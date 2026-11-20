@@ -70,3 +70,57 @@ test.describe('event-view-calendar block (S2) — DOM smoke', () => {
         await context.close();
     });
 });
+
+test.describe('event-view-calendar block — phone width', () => {
+    test('shows a month list whose events link straight to the event page', async ({
+        admin,
+        page,
+        editor,
+        browser,
+    }) => {
+        await createCalendarPage({ admin, page, editor });
+        const permalink = page.url();
+
+        const { context, page: anon } = await pageFor(browser, 'anonymous');
+        await anon.setViewportSize({ width: 390, height: 844 });
+        await anon.goto(permalink);
+
+        const listEvent = anon.locator('.soli-cal-list-event').first();
+        await expect(listEvent).toBeVisible({ timeout: 30000 });
+        await expect(anon.locator('.soli-cal-day')).toHaveCount(0);
+
+        // The view switcher is never offered on a phone; prev/today/next are.
+        await expect(anon.locator('.soli-cal-button-prev')).toBeVisible();
+        await expect(anon.locator('.soli-cal-button-today')).toBeVisible();
+        await expect(anon.locator('.soli-cal-button-next')).toBeVisible();
+        await expect(anon.locator('.soli-cal-button-dayGridMonth')).toHaveCount(0);
+
+        const href = await listEvent.getAttribute('href');
+        expect(href).toContain('/evenement/');
+        await listEvent.click();
+        await anon.waitForURL((url) => url.href === href);
+        await expect(anon.locator('.event-detail-popup')).toHaveCount(0);
+        await context.close();
+    });
+
+    test('returns to the month grid with popup when widened', async ({
+        admin,
+        page,
+        editor,
+        browser,
+    }) => {
+        await createCalendarPage({ admin, page, editor });
+        const permalink = page.url();
+
+        const { context, page: anon } = await pageFor(browser, 'anonymous');
+        await anon.setViewportSize({ width: 390, height: 844 });
+        await anon.goto(permalink);
+        await expect(anon.locator('.soli-cal-list-event').first()).toBeVisible({ timeout: 30000 });
+
+        await anon.setViewportSize({ width: 1280, height: 900 });
+        await expect(anon.locator('.soli-cal-day').first()).toBeVisible();
+        await anon.locator('.soli-cal-row-event').first().click();
+        await expect(anon.locator('.event-detail-popup')).toBeVisible();
+        await context.close();
+    });
+});
