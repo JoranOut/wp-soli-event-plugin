@@ -56,6 +56,24 @@ Registered via a rewrite rule (`^ical/?$`), flushed on activation and once per `
 `/ical` 301-redirects to `/ical/` (WP trailing-slash canonical). Data via
 `EventsDatesTableHandler::getPublicFutureDatesForFeed($category_ids, $concerts_only)`.
 
+### Building feed — `/ical/gebouw?token=…`
+
+Second export in the same file, meant for heating control in the Muziekcentrum (e.g. Home Assistant's
+Remote Calendar). It is the one deliberate exception to "exports are PUBLIC only": it carries upcoming
+**PUBLIC and PRIVATE** dates with **real titles**, which is why it sits behind a secret token rather than
+being public. Workflow states (`PENDING_APPROVAL` / `PLANNED` / `OPTION`) stay out.
+
+- Only dates without an external `location` (internal dates). `LOCATION` reads `Muziekcentrum Soli - <rooms>`
+  in building order; an internal date without rooms reads plain `Muziekcentrum Soli`.
+- `?zaal=<room slug>[,…]` keeps dates booking any of those rooms (slugs from `SOLI_ROOM_SLUGS`); dates
+  without rooms then drop out. Only-unknown slugs return an empty calendar, like `?categorie=`.
+- The token is the option `soli_event_building_feed_token`, created on first view of **Settings > Soli Event
+  Settings**, which shows the full URL and a "Create new link" button (admin-post, nonced,
+  `manage_options`). A missing or wrong token gets a 403. No token stored yet means every request is refused.
+- Emits `REFRESH-INTERVAL`/`X-PUBLISHED-TTL` of 15 minutes and `X-Robots-Tag: noindex`.
+- Data via `EventsDatesTableHandler::getBuildingFutureDatesForFeed($room_slugs)`. The seeder fixes the token
+  to `viz-building-token`; spec in `e2e/ical-building-feed.spec.ts`.
+
 ### calendar-subscribe block (`soli/calendar-subscribe`)
 
 Interactive promo widget (`events/blocks/calendar-subscribe/`) that builds a live `/ical` subscribe URL. The

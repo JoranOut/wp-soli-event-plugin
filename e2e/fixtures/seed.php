@@ -284,6 +284,48 @@ if ( ! is_wp_error( $internal_post_id ) ) {
 	);
 }
 
+/* ---- 3e. Building-feed fixtures -------------------------------------- */
+// Internal dates for /ical/gebouw. map-internal (PUBLIC, grote-zaal) and
+// map-located (external venues) above complete the set.
+update_option( 'soli_event_building_feed_token', 'viz-building-token', false );
+
+$make_building = function ( $key, $status, $rooms, $days ) use ( $wpdb, $dates_table, $prefix, $nc_start, $nc_end ) {
+	$post_id = wp_insert_post(
+		array(
+			'post_type'    => 'soli_event',
+			'post_title'   => $prefix . $key,
+			'post_status'  => 'publish',
+			'post_content' => 'Seeded visibility fixture: ' . $key,
+			'post_name'    => 'viz-' . $key,
+		),
+		true
+	);
+	if ( is_wp_error( $post_id ) ) {
+		return null;
+	}
+	$wpdb->insert(
+		$dates_table,
+		array(
+			'post_id'    => $post_id,
+			'start_date' => $nc_start( $days ),
+			'end_date'   => $nc_end( $days ),
+			'rooms'      => $rooms,
+			'status'     => $status,
+			'is_concert' => 0,
+			'notes'      => '',
+		)
+	);
+	return array(
+		'id'    => (int) $post_id,
+		'title' => $prefix . $key,
+		'slug'  => 'viz-' . $key,
+	);
+};
+$catalogue['bld-private'] = $make_building( 'bld-private', 'PRIVATE', '["studio-1","spiegelzaal"]', 13 );
+$catalogue['bld-planned'] = $make_building( 'bld-planned', 'PLANNED', '["grote-zaal"]', 13 );
+$catalogue['bld-past']    = $make_building( 'bld-past', 'PRIVATE', '["grote-zaal"]', -3 );
+$catalogue['bld-norooms'] = $make_building( 'bld-norooms', 'PRIVATE', null, 14 );
+
 /* ---- 4. Role users -------------------------------------------------- */
 foreach ( array( 'viz_subscriber' => 'subscriber', 'viz_editor' => 'editor', 'viz_author' => 'author', 'viz_contributor' => 'contributor' ) as $login => $role ) {
 	if ( ! username_exists( $login ) ) {

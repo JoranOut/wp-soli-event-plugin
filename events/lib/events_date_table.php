@@ -209,6 +209,34 @@ class EventsDatesTableHandler {
     return $this->wpdb->get_results($this->wpdb->prepare($sql, $params), ARRAY_A);
   }
 
+  // Upcoming PUBLIC and PRIVATE dates in Soli's own building (no external
+  // location), for the token-protected building feed. $room_slugs narrows to
+  // dates booking any of those rooms; dates without rooms then drop out.
+  function getBuildingFutureDatesForFeed($room_slugs = array()) {
+    $where  = 'WHERE w.post_status = %s AND d.status IN (%s, %s) AND d.end_date >= %s AND d.location IS NULL';
+    $params = array('publish', EventVisibility::STATUS_PUBLIC, EventVisibility::STATUS_PRIVATE, current_time('Y-m-d H:i:s'));
+
+    if ($room_slugs) {
+      $or = array();
+      foreach ($room_slugs as $slug) {
+        $or[]     = 'd.rooms LIKE %s';
+        $params[] = '%' . $this->wpdb->esc_like('"' . $slug . '"') . '%';
+      }
+      $where .= ' AND (' . implode(' OR ', $or) . ')';
+    }
+
+    $sql = "
+        SELECT d.id, d.start_date, d.end_date, d.rooms, d.notes,
+           w.ID as post_id, w.post_title, w.post_content, w.post_excerpt, w.post_modified_gmt
+        FROM $this->event_dates_table d
+        INNER JOIN $this->post_table w
+            ON d.post_id = w.id
+        $where
+        ORDER BY d.start_date asc";
+
+    return $this->wpdb->get_results($this->wpdb->prepare($sql, $params), ARRAY_A);
+  }
+
   // Categories assigned to published events, for the calendar-subscribe block.
   // Returns [{term_id, name, slug}] ordered by name; only categories actually
   // used by a published soli_event appear (empty ones are hidden).
