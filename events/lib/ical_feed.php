@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
  * calendar apps to Soli's agenda.
  *
  * - Strictly PUBLIC data only: published events with a PUBLIC, upcoming date.
- *   PRIVATE and workflow-state dates (PENDING_APPROVAL/PLANNED/OPTION) are never
+ *   PRIVATE, workflow-state and cancelled dates (PENDING_APPROVAL/PLANNED/OPTION/CANCELLED) are never
  *   exported. There is no per-user/authenticated variant.
  * - Filter by category with ?categorie=<slug|id> (alias: ?category=). Accepts a
  *   comma-separated list (OR: an event matches if it is in any of them). Unknown

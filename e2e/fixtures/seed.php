@@ -106,6 +106,7 @@ $catalogue['date-private'] = $make( 'date-private', 'publish', array( array( 'PR
 $catalogue['date-pending'] = $make( 'date-pending', 'publish', array( array( 'PENDING_APPROVAL', 'future' ) ) );
 $catalogue['date-planned'] = $make( 'date-planned', 'publish', array( array( 'PLANNED', 'future' ) ) );
 $catalogue['date-option']  = $make( 'date-option', 'publish', array( array( 'OPTION', 'future' ) ) ); // F10 raw default
+$catalogue['date-cancelled'] = $make( 'date-cancelled', 'publish', array( array( 'CANCELLED', 'future' ) ) );
 
 // Time axis (publish post, PUBLIC date).
 $catalogue['time-future'] = $make( 'time-future', 'publish', array( array( 'PUBLIC', 'future' ) ) );
@@ -324,6 +325,7 @@ $make_building = function ( $key, $status, $rooms, $days ) use ( $wpdb, $dates_t
 $catalogue['bld-private'] = $make_building( 'bld-private', 'PRIVATE', '["studio-1","spiegelzaal"]', 13 );
 $catalogue['bld-planned'] = $make_building( 'bld-planned', 'PLANNED', '["grote-zaal"]', 13 );
 $catalogue['bld-past']    = $make_building( 'bld-past', 'PRIVATE', '["grote-zaal"]', -3 );
+$catalogue['bld-cancelled'] = $make_building( 'bld-cancelled', 'CANCELLED', '["grote-zaal"]', 13 );
 $catalogue['bld-norooms'] = $make_building( 'bld-norooms', 'PRIVATE', null, 14 );
 
 /* ---- 4. Role users -------------------------------------------------- */

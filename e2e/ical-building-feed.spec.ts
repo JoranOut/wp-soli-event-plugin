@@ -63,9 +63,10 @@ test.describe('Building iCal feed — content', () => {
         expect(present).not.toContain('private');
     });
 
-    test('leaves out workflow states, past dates and external venues', async () => {
+    test('leaves out workflow states, cancelled and past dates, and external venues', async () => {
         const present = summaries((await feed(`?token=${TOKEN}`)).body);
         expect(present).not.toContain(t('bld-planned'));
+        expect(present).not.toContain(t('bld-cancelled'));
         expect(present).not.toContain(t('bld-past'));
         expect(present).not.toContain(t('map-located'));
     });

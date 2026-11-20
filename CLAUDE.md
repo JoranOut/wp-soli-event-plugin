@@ -14,9 +14,11 @@ surfaced through REST, Gutenberg blocks, an FSE single-event template, and admin
 
 ### Event-date `status`
 
-`PUBLIC`, `PRIVATE`, `PENDING_APPROVAL`, `PLANNED`. Note the JS default in `inc/values.js` is historically
-`OPTION` (an alias for the "not-yet-scheduled" state); treat `OPTION` and `PLANNED` identically — both are
-non-public workflow states. Compare status values case-sensitively as UPPERCASE.
+`PUBLIC`, `PRIVATE`, `PENDING_APPROVAL`, `PLANNED`, `CANCELLED`. Note the JS default in `inc/values.js` is
+historically `OPTION` (an alias for the "not-yet-scheduled" state); treat `OPTION` and `PLANNED` identically —
+both are non-public workflow states. `CANCELLED` is handled the same way: editors still see the date in the
+create-event block, but it never appears on a public surface, in `/ical` or in the building feed. Compare
+status values case-sensitively as UPPERCASE.
 
 ## Event visibility policy (authoritative)
 
@@ -61,7 +63,7 @@ Registered via a rewrite rule (`^ical/?$`), flushed on activation and once per `
 Second export in the same file, meant for heating control in the Muziekcentrum (e.g. Home Assistant's
 Remote Calendar). It is the one deliberate exception to "exports are PUBLIC only": it carries upcoming
 **PUBLIC and PRIVATE** dates with **real titles**, which is why it sits behind a secret token rather than
-being public. Workflow states (`PENDING_APPROVAL` / `PLANNED` / `OPTION`) stay out.
+being public. Workflow states (`PENDING_APPROVAL` / `PLANNED` / `OPTION`) and `CANCELLED` stay out.
 
 - Only dates without an external `location` (internal dates). `LOCATION` reads `Muziekcentrum Soli - <rooms>`
   in building order; an internal date without rooms reads plain `Muziekcentrum Soli`.
@@ -227,7 +229,7 @@ and it is the default on both sides so a caller that omits the rate cannot silen
 |---|---|---|
 | PUBLIC | full | full |
 | PRIVATE | shown, title masked `private` | full title |
-| PENDING_APPROVAL / PLANNED / OPTION | hidden | hidden |
+| PENDING_APPROVAL / PLANNED / OPTION / CANCELLED | hidden | hidden |
 
 ## Testing
 
