@@ -106,6 +106,7 @@ $catalogue['date-private'] = $make( 'date-private', 'publish', array( array( 'PR
 $catalogue['date-pending'] = $make( 'date-pending', 'publish', array( array( 'PENDING_APPROVAL', 'future' ) ) );
 $catalogue['date-planned'] = $make( 'date-planned', 'publish', array( array( 'PLANNED', 'future' ) ) );
 $catalogue['date-option']  = $make( 'date-option', 'publish', array( array( 'OPTION', 'future' ) ) ); // F10 raw default
+$catalogue['date-cancelled'] = $make( 'date-cancelled', 'publish', array( array( 'CANCELLED', 'future' ) ) );
 
 // Time axis (publish post, PUBLIC date).
 $catalogue['time-future'] = $make( 'time-future', 'publish', array( array( 'PUBLIC', 'future' ) ) );
@@ -283,6 +284,49 @@ if ( ! is_wp_error( $internal_post_id ) ) {
 		'slug'  => 'viz-map-internal',
 	);
 }
+
+/* ---- 3e. Building-feed fixtures -------------------------------------- */
+// Internal dates for /ical/gebouw. map-internal (PUBLIC, grote-zaal) and
+// map-located (external venues) above complete the set.
+update_option( 'soli_event_building_feed_token', 'viz-building-token', false );
+
+$make_building = function ( $key, $status, $rooms, $days ) use ( $wpdb, $dates_table, $prefix, $nc_start, $nc_end ) {
+	$post_id = wp_insert_post(
+		array(
+			'post_type'    => 'soli_event',
+			'post_title'   => $prefix . $key,
+			'post_status'  => 'publish',
+			'post_content' => 'Seeded visibility fixture: ' . $key,
+			'post_name'    => 'viz-' . $key,
+		),
+		true
+	);
+	if ( is_wp_error( $post_id ) ) {
+		return null;
+	}
+	$wpdb->insert(
+		$dates_table,
+		array(
+			'post_id'    => $post_id,
+			'start_date' => $nc_start( $days ),
+			'end_date'   => $nc_end( $days ),
+			'rooms'      => $rooms,
+			'status'     => $status,
+			'is_concert' => 0,
+			'notes'      => '',
+		)
+	);
+	return array(
+		'id'    => (int) $post_id,
+		'title' => $prefix . $key,
+		'slug'  => 'viz-' . $key,
+	);
+};
+$catalogue['bld-private'] = $make_building( 'bld-private', 'PRIVATE', '["studio-1","spiegelzaal"]', 13 );
+$catalogue['bld-planned'] = $make_building( 'bld-planned', 'PLANNED', '["grote-zaal"]', 13 );
+$catalogue['bld-past']    = $make_building( 'bld-past', 'PRIVATE', '["grote-zaal"]', -3 );
+$catalogue['bld-cancelled'] = $make_building( 'bld-cancelled', 'CANCELLED', '["grote-zaal"]', 13 );
+$catalogue['bld-norooms'] = $make_building( 'bld-norooms', 'PRIVATE', null, 14 );
 
 /* ---- 4. Role users -------------------------------------------------- */
 foreach ( array( 'viz_subscriber' => 'subscriber', 'viz_editor' => 'editor', 'viz_author' => 'author', 'viz_contributor' => 'contributor' ) as $login => $role ) {

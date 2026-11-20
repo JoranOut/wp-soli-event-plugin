@@ -15,6 +15,10 @@ function soli_events_add_settings_page() {
 function soli_event_render_settings_page() {
     echo '<div class="wrap">';
     echo '<h1>' . esc_html__('Soli Event Plugin Settings', 'soli-event') . '</h1>';
+
+    soli_event_render_building_feed_section();
+
+    echo '<hr>';
     echo '<h2>' . esc_html__('Import from TheEventCalendarTool', 'soli-event') . '</h2>';
 
     echo '<form method="post" action="options.php">';
@@ -39,6 +43,39 @@ function soli_event_render_settings_page() {
         soli_event_handle_migration();
     }
     echo '</div>';
+}
+
+function soli_event_render_building_feed_section() {
+    echo '<h2>' . esc_html__('Building feed', 'soli-event') . '</h2>';
+    if (isset($_GET['soli_event_token_regenerated'])) {
+        echo '<div class="notice notice-success inline"><p>' . esc_html__('New link created. The old link no longer works.', 'soli-event') . '</p></div>';
+    }
+    echo '<p>' . esc_html__('All upcoming public and private dates in the Muziekcentrum, with real titles and booked rooms, for example for the heating system. Anyone with this link can read the schedule, so share it only with systems that need it.', 'soli-event') . '</p>';
+    echo '<p><input type="text" class="large-text code" readonly onfocus="this.select()" id="soli-event-building-feed-url" value="' . esc_attr(soli_events_building_feed_url()) . '"></p>';
+    echo '<p class="description">' . sprintf(
+        /* translators: %s: example query argument */
+        esc_html__('Limit to rooms with %s (comma-separated).', 'soli-event'),
+        '<code>&amp;zaal=' . esc_html(implode(',', SOLI_ROOM_SLUGS)) . '</code>'
+    ) . '</p>';
+    echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+    echo '<input type="hidden" name="action" value="soli_event_regenerate_building_token">';
+    wp_nonce_field('soli_event_regenerate_building_token');
+    submit_button(__('Create new link', 'soli-event'), 'secondary', 'submit', false);
+    echo '</form>';
+}
+
+add_action('admin_post_soli_event_regenerate_building_token', '\Soli\Events\soli_event_handle_regenerate_building_token');
+function soli_event_handle_regenerate_building_token() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('You are not allowed to do this.', 'soli-event'), 403);
+    }
+    check_admin_referer('soli_event_regenerate_building_token');
+    soli_events_regenerate_building_feed_token();
+    wp_safe_redirect(add_query_arg(
+        array('page' => 'soli_event_settings', 'soli_event_token_regenerated' => 1),
+        admin_url('options-general.php')
+    ));
+    exit;
 }
 
 add_filter('plugin_action_links_' . \SOLI_EVENT__PLUGIN_BASENAME, '\Soli\Events\soli_event_plugin_add_settings_link');

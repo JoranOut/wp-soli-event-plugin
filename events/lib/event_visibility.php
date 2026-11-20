@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) exit;
  * PRIVATE title masking so every surface (REST, blocks, archive) stays in sync.
  *
  * Date-status visibility by viewer:
- *   - editor (edit_posts): every status (PUBLIC, PRIVATE, PENDING_APPROVAL, PLANNED, OPTION)
+ *   - editor (edit_posts): every status (PUBLIC, PRIVATE, PENDING_APPROVAL, PLANNED, OPTION, CANCELLED)
  *   - everyone else:       PUBLIC + PRIVATE only
  * PRIVATE titles are masked to "private" for NOT-logged-in visitors; logged-in
  * users (any role) see the real title.
@@ -25,8 +25,9 @@ class EventVisibility {
   const PUBLIC_STATUSES = array(self::STATUS_PUBLIC, self::STATUS_PRIVATE);
 
   // Every stored status, incl. workflow states editors manage. OPTION is the
-  // JS default (see F10) and is treated as a non-public workflow state.
-  const ALL_STATUSES = array('PUBLIC', 'PRIVATE', 'PENDING_APPROVAL', 'PLANNED', 'OPTION');
+  // JS default (see F10) and is treated as a non-public workflow state, and so
+  // is CANCELLED: a cancelled date stays visible to editors only.
+  const ALL_STATUSES = array('PUBLIC', 'PRIVATE', 'PENDING_APPROVAL', 'PLANNED', 'OPTION', 'CANCELLED');
 
   /** Whether the current viewer may see internal workflow-state dates. */
   static function canSeeAllStatuses(): bool {

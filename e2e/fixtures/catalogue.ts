@@ -11,7 +11,7 @@ export const SEED_PREFIX = 'VIZ:';
 
 export type CatalogueKey =
     | 'post-publish' | 'post-draft' | 'post-pending' | 'post-private' | 'post-future'
-    | 'date-public' | 'date-private' | 'date-pending' | 'date-planned' | 'date-option'
+    | 'date-public' | 'date-private' | 'date-pending' | 'date-planned' | 'date-option' | 'date-cancelled'
     | 'time-future' | 'time-past'
     | 'private-only' | 'public-and-private' | 'concert' | 'recurring' | 'recurring-mixed' | 'no-public-date';
 
@@ -67,6 +67,7 @@ export const listMatrix: Record<CatalogueKey, Record<Role, Vis>> = {
     'date-pending':       { anonymous: 'hidden', subscriber: 'hidden', editor: 'hidden', admin: 'hidden' },
     'date-planned':       { anonymous: 'hidden', subscriber: 'hidden', editor: 'hidden', admin: 'hidden' },
     'date-option':        { anonymous: 'hidden', subscriber: 'hidden', editor: 'hidden', admin: 'hidden' },
+    'date-cancelled':     { anonymous: 'hidden', subscriber: 'hidden', editor: 'hidden', admin: 'hidden' },
     'time-future':        { anonymous: 'full',   subscriber: 'full',   editor: 'full',   admin: 'full' },
     'time-past':          { anonymous: 'hidden', subscriber: 'hidden', editor: 'hidden', admin: 'hidden' },
     'private-only':       { anonymous: 'masked', subscriber: 'full',   editor: 'full',   admin: 'full' },
@@ -87,7 +88,7 @@ export const calendarMatrix: Record<CatalogueKey, Record<Role, Vis>> = {
 // Archive / front-end search (S7/S8): list the EVENT only if it has >=1 PUBLIC date.
 export const archiveListable: Record<CatalogueKey, boolean> = {
     'post-publish': true, 'post-draft': false, 'post-pending': false, 'post-private': false, 'post-future': false,
-    'date-public': true, 'date-private': false, 'date-pending': false, 'date-planned': false, 'date-option': false,
+    'date-public': true, 'date-private': false, 'date-pending': false, 'date-planned': false, 'date-option': false, 'date-cancelled': false,
     'time-future': true, 'time-past': false,
     'private-only': false, 'public-and-private': true, 'concert': true, 'recurring': true,
     'recurring-mixed': true, 'no-public-date': false,

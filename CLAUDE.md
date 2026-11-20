@@ -14,9 +14,11 @@ surfaced through REST, Gutenberg blocks, an FSE single-event template, and admin
 
 ### Event-date `status`
 
-`PUBLIC`, `PRIVATE`, `PENDING_APPROVAL`, `PLANNED`. Note the JS default in `inc/values.js` is historically
-`OPTION` (an alias for the "not-yet-scheduled" state); treat `OPTION` and `PLANNED` identically — both are
-non-public workflow states. Compare status values case-sensitively as UPPERCASE.
+`PUBLIC`, `PRIVATE`, `PENDING_APPROVAL`, `PLANNED`, `CANCELLED`. Note the JS default in `inc/values.js` is
+historically `OPTION` (an alias for the "not-yet-scheduled" state); treat `OPTION` and `PLANNED` identically —
+both are non-public workflow states. `CANCELLED` is handled the same way: editors still see the date in the
+create-event block, but it never appears on a public surface, in `/ical` or in the building feed. Compare
+status values case-sensitively as UPPERCASE.
 
 ## Event visibility policy (authoritative)
 
@@ -55,6 +57,24 @@ always a valid condition, so it never triggers the empty-calendar case. No authe
 Registered via a rewrite rule (`^ical/?$`), flushed on activation and once per `ICAL_REWRITE_VERSION` bump.
 `/ical` 301-redirects to `/ical/` (WP trailing-slash canonical). Data via
 `EventsDatesTableHandler::getPublicFutureDatesForFeed($category_ids, $concerts_only)`.
+
+### Building feed — `/ical/gebouw?token=…`
+
+Second export in the same file, meant for heating control in the Muziekcentrum (e.g. Home Assistant's
+Remote Calendar). It is the one deliberate exception to "exports are PUBLIC only": it carries upcoming
+**PUBLIC and PRIVATE** dates with **real titles**, which is why it sits behind a secret token rather than
+being public. Workflow states (`PENDING_APPROVAL` / `PLANNED` / `OPTION`) and `CANCELLED` stay out.
+
+- Only dates without an external `location` (internal dates). `LOCATION` reads `Muziekcentrum Soli - <rooms>`
+  in building order; an internal date without rooms reads plain `Muziekcentrum Soli`.
+- `?zaal=<room slug>[,…]` keeps dates booking any of those rooms (slugs from `SOLI_ROOM_SLUGS`); dates
+  without rooms then drop out. Only-unknown slugs return an empty calendar, like `?categorie=`.
+- The token is the option `soli_event_building_feed_token`, created on first view of **Settings > Soli Event
+  Settings**, which shows the full URL and a "Create new link" button (admin-post, nonced,
+  `manage_options`). A missing or wrong token gets a 403. No token stored yet means every request is refused.
+- Emits `REFRESH-INTERVAL`/`X-PUBLISHED-TTL` of 15 minutes and `X-Robots-Tag: noindex`.
+- Data via `EventsDatesTableHandler::getBuildingFutureDatesForFeed($room_slugs)`. The seeder fixes the token
+  to `viz-building-token`; spec in `e2e/ical-building-feed.spec.ts`.
 
 ### calendar-subscribe block (`soli/calendar-subscribe`)
 
@@ -209,7 +229,7 @@ and it is the default on both sides so a caller that omits the rate cannot silen
 |---|---|---|
 | PUBLIC | full | full |
 | PRIVATE | shown, title masked `private` | full title |
-| PENDING_APPROVAL / PLANNED / OPTION | hidden | hidden |
+| PENDING_APPROVAL / PLANNED / OPTION / CANCELLED | hidden | hidden |
 
 ## Testing
 

@@ -36,13 +36,14 @@ export const showVenue = (itemLocation, itemRooms, fullLocation) => {
     return "geen locatie";
 }
 
-export const EVENT_STATUS = ["OPTION", "PENDING_APPROVAL", "PUBLIC", "PRIVATE"];
+export const EVENT_STATUS = ["OPTION", "PENDING_APPROVAL", "PUBLIC", "PRIVATE", "CANCELLED"];
 
 export const EVENT_STATUS_COLOR = {
     "OPTION": 'grey',
     "PENDING_APPROVAL": 'var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9))',
     "PUBLIC": 'green',
     "PRIVATE": 'purple',
+    "CANCELLED": '#b32d2e',
 }
 
 export const ROOM_COLORS = {

@@ -83,16 +83,19 @@ test.describe('REST /events/{id} — per-event dates (F2)', () => {
         expect(await statusesFor('editor', 'date-planned')).toContain('PLANNED');
         expect(await statusesFor('editor', 'date-pending')).toContain('PENDING_APPROVAL');
         expect(await statusesFor('editor', 'private-only')).toContain('PRIVATE');
+        expect(await statusesFor('editor', 'date-cancelled')).toContain('CANCELLED');
     });
 
     test('anonymous never receives workflow-state dates', async () => {
         expect(await statusesFor('anonymous', 'date-planned')).not.toContain('PLANNED');
         expect(await statusesFor('anonymous', 'date-pending')).not.toContain('PENDING_APPROVAL');
         expect(await statusesFor('anonymous', 'date-option')).not.toContain('OPTION');
+        expect(await statusesFor('anonymous', 'date-cancelled')).not.toContain('CANCELLED');
     });
 
     test('subscriber never receives workflow-state dates', async () => {
         expect(await statusesFor('subscriber', 'date-planned')).not.toContain('PLANNED');
         expect(await statusesFor('subscriber', 'date-pending')).not.toContain('PENDING_APPROVAL');
+        expect(await statusesFor('subscriber', 'date-cancelled')).not.toContain('CANCELLED');
     });
 });

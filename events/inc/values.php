@@ -52,6 +52,8 @@ function niceNameEventStatus($statusEnum){
       return __("private", 'soli-event');
     case "PLANNED":
       return __("planned", 'soli-event');
+    case "CANCELLED":
+      return __("cancelled", 'soli-event');
     case "PENDING_APPROVAL":
     default:
       return __("pending approval", 'soli-event');

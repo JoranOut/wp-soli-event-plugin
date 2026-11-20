@@ -217,7 +217,7 @@ function validateStatii($dates): bool {
 }
 
 function validateStatus($status): bool {
-  $statii = array("PLANNED", "PENDING_APPROVAL", "PUBLIC", "PRIVATE");
+  $statii = array("PLANNED", "OPTION", "PENDING_APPROVAL", "PUBLIC", "PRIVATE", "CANCELLED");
   return in_array($status, $statii);
 }
 
