@@ -334,7 +334,26 @@ class EventsDatesTableHandler {
       return null;
     }
 
-    return $this->loadAllBetweenDatesEventDatesFromDb($from, $to);
+    return $this->appendCategoryIds($this->loadAllBetweenDatesEventDatesFromDb($from, $to));
+  }
+
+  // Adds category_ids (int[]) per date row, for the calendar's category filter.
+  function appendCategoryIds($dates) {
+    if (empty($dates)) {
+      return $dates;
+    }
+    $post_ids = array_values(array_unique(array_map('intval', array_column($dates, 'ID'))));
+    $terms = wp_get_object_terms($post_ids, 'category', array('fields' => 'all_with_object_id'));
+    $by_post = array();
+    if (!is_wp_error($terms)) {
+      foreach ($terms as $term) {
+        $by_post[(int) $term->object_id][] = (int) $term->term_id;
+      }
+    }
+    return array_map(function ($date) use ($by_post) {
+      $date['category_ids'] = isset($by_post[(int) $date['ID']]) ? $by_post[(int) $date['ID']] : array();
+      return $date;
+    }, $dates);
   }
 
   function loadAllBetweenDatesEventDatesFromDb($from, $to) {

@@ -49,6 +49,7 @@
   "events/blocks/event-reservation-popup/src/redux/calendar-slice.js": "events/blocks/event-reservation-popup/build/frontend.js",
   "events/blocks/event-reservation-popup/src/redux/events-slice.js": "events/blocks/event-reservation-popup/build/frontend.js",
   "events/blocks/event-reservation-popup/src/redux/store.js": "events/blocks/event-reservation-popup/build/frontend.js",
+  "events/blocks/event-view-calendar/src/components/category-dropdown/category-dropdown.js": "events/blocks/event-view-calendar/build/frontend.js",
   "events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js": "events/blocks/event-view-calendar/build/frontend.js",
   "events/blocks/event-view-calendar/src/components/calendar-wrapper/calendar-wrapper.js": "events/blocks/event-view-calendar/build/frontend.js",
   "events/blocks/event-view-calendar/src/components/event-detail-pop-up/event-detail-pop-up.js": "events/blocks/event-view-calendar/build/frontend.js",

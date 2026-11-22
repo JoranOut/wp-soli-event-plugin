@@ -5,7 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import {fromEventDto} from "./event-mapper";
 import {ROOM_COLORS, ROOM_NAMES, ROOM_SLUGS} from "../../../../../inc/values";
 
-export default function EventsProvider({setEvents, range, filters, children}) {
+export default function EventsProvider({setEvents, range, filters, categoryIds = [], children}) {
     const [error, setError] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
     const [loadingBox, setLoadingBox] = useState();
@@ -45,7 +45,13 @@ export default function EventsProvider({setEvents, range, filters, children}) {
         })
     }
 
+    const inSelectedCategories = (event) => categoryIds.length === 0
+        || (event.category_ids || []).some(id => categoryIds.includes(id));
+
     const filterEvent = (event, filters) => {
+        if (!inSelectedCategories(event)) {
+            return false;
+        }
         if (!filters || filters.length === 0) {
             return true;
         }
@@ -66,13 +72,13 @@ export default function EventsProvider({setEvents, range, filters, children}) {
     }
 
     // Derive the visible events from the cached fetch result plus the active
-    // filters. Depending on [cache, filters] keeps the calendar in sync when
+    // filters. Depending on [cache, filters, categoryIds] keeps the calendar in sync when
     // either the data or the filter set changes - no stale-filter race.
     useEffect(() => {
         const events = splitEvents(filters) ? splitEventsOnRooms(cache) : cache;
         const filteredEvents = !events ? [] : events.filter(event => filterEvent(event, filters));
         setEvents(fromEventDto(filteredEvents));
-    }, [cache, filters]);
+    }, [cache, filters, categoryIds]);
 
     // Fetch the raw events for the visible range. Runs on every range change
     // (no isLoading/error dead-end); stale responses are dropped on cleanup.

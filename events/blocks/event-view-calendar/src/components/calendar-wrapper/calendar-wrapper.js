@@ -60,12 +60,13 @@ const setDefaultFilters = (onlyConcerts, onlyInternal) => {
     return [...concertFilter, ...internalFilter, ...ROOM_SLUGS];
 }
 
-export default function CalendarWrapper({calendarType, adjustable, onlyConcerts, showRoomsFilter}) {
+export default function CalendarWrapper({calendarType, adjustable, onlyConcerts, showRoomsFilter, showCategoryFilter = false}) {
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState();
     const [selectedEventBox, setSelectedEventBox] = useState();
     const [range, setRange] = useState();
     const [filters, setFilters] = useState(setDefaultFilters(onlyConcerts, showRoomsFilter));
+    const [categoryIds, setCategoryIds] = useState([]);
     const calendarRef = useRef();
     const isSmallScreen = useSmallScreen();
 
@@ -112,11 +113,15 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
             range={range}
             setEvents={setEvents}
             filters={filters}
+            categoryIds={categoryIds}
         >
             <CalendarFilter
                 filters={filters}
                 onChange={setFilters}
                 showRoomFilters={showRoomsFilter}
+                showCategoryFilter={showCategoryFilter}
+                categoryIds={categoryIds}
+                onCategoryChange={setCategoryIds}
             />
 
             <FullCalendar

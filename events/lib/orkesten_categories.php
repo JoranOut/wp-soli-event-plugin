@@ -29,6 +29,31 @@ class OrkestenCategories {
     return array_map('intval', $children);
   }
 
+  // Orchestra categories as [{id, name, slug}], ordered by name. Empty ones
+  // are included: the orchestra list is fixed, not derived from events.
+  public static function terms() {
+    $ids = self::ids();
+    if (empty($ids)) {
+      return array();
+    }
+    $terms = get_terms(array(
+      'taxonomy'   => 'category',
+      'include'    => $ids,
+      'hide_empty' => false,
+      'orderby'    => 'name',
+    ));
+    if (is_wp_error($terms)) {
+      return array();
+    }
+    return array_map(function ($term) {
+      return array(
+        'id'   => (int) $term->term_id,
+        'name' => $term->name,
+        'slug' => $term->slug,
+      );
+    }, $terms);
+  }
+
   // Keep only the orchestra categories from a list of WP_Term objects.
   public static function filterTerms($terms) {
     if (empty($terms) || !is_array($terms)) {

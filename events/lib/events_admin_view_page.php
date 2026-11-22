@@ -28,7 +28,7 @@ function soli_events_render_admin_view_page() {?>
         <p><?php echo esc_html__('This page displays various calendar views for managing your events.', 'soli-event'); ?></p>
 
         <!-- Block Container -->
-        <div class="block-event-view-calendar alignwide type-week adjustable show-rooms-filter"></div>
+        <div class="block-event-view-calendar alignwide type-week adjustable show-rooms-filter show-category-filter"></div>
     </div>
 <?php
 }
