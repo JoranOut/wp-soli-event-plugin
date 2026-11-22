@@ -128,6 +128,15 @@ with the *editing* user's assignments). Markup reuses the theme's `.soli-flat-pa
 class names so the theme restyles it; the block ships equivalent scoped fallback styles (calendar glyph
 inlined; the theme's `--soli-ic` wins when set).
 
+### Hide in calendar
+
+Per-event post meta `soli_event_hide_in_calendar` (boolean), set with the "Hide in calendar" checkbox in the
+"Calendar" document sidebar panel (`create-event/src/components/hide-in-calendar-panel/`, registered with
+`registerPlugin` so it shows even when the create-event block is missing). Meant for events with many dates,
+such as weekly rehearsals. `GET /events?start_date&end_date` returns `hide_in_calendar` per row, and the calendar
+block drops those dates in every view (month, week, day, list, phone list). The admin Calendar View passes `show-hidden-in-calendar` and shows everything. This is presentation only,
+not visibility: the dates stay in every other feed. Spec: `e2e/hide-in-calendar.spec.ts`.
+
 ### Invoice dialog ("Invoice this event")
 
 Editor-only surface belonging to the create-event block

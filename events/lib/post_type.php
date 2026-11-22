@@ -81,3 +81,19 @@ function modify_post_type_args( $args, $post_type ) {
 }
 add_filter( 'register_post_type_args', 'Soli\Events\modify_post_type_args', 10, 2 );
 
+
+const SOLI_EVENT_HIDE_IN_CALENDAR_META_KEY = 'soli_event_hide_in_calendar';
+
+// Keeps an event with many dates (weekly rehearsals) out of every view of the calendar block.
+add_action('init', 'Soli\Events\soli_event_register_hide_in_calendar_meta');
+function soli_event_register_hide_in_calendar_meta() {
+  register_post_meta('soli_event', SOLI_EVENT_HIDE_IN_CALENDAR_META_KEY, array(
+    'type' => 'boolean',
+    'single' => true,
+    'default' => false,
+    'show_in_rest' => true,
+    'auth_callback' => function ($allowed, $meta_key, $post_id) {
+      return current_user_can('edit_post', $post_id);
+    },
+  ));
+}

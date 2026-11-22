@@ -19,6 +19,7 @@
   "events/blocks/create-event/src/components/events-provider/event-mapper.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/events-provider/events-provider.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/first-event-wizard/first-event-wizard.js": "events/blocks/create-event/build/index.js",
+  "events/blocks/create-event/src/components/hide-in-calendar-panel/hide-in-calendar-panel.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/image-button/image-button.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/invoice-button/invoice-button.js": "events/blocks/create-event/build/index.js",
   "events/blocks/create-event/src/components/invoice-button/invoice-docx.js": "events/blocks/create-event/build/index.js",

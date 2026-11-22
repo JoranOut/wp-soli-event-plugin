@@ -13,6 +13,7 @@ import NotesEditor from "./components/notes-editor/notes-editor";
 import ConcertStatusSwitch from "./components/concert-status-switch/concert-status-switch";
 import AdminNotesEditor from "./components/admin-notes-editor/admin-notes-editor";
 import InvoiceButton from "./components/invoice-button/invoice-button";
+import HideInCalendarPanel from "./components/hide-in-calendar-panel/hide-in-calendar-panel";
 import {useEventState, useEventActions} from "./components/events-context";
 
 wp.blocks.registerBlockType("soli/create-event", {
@@ -29,6 +30,8 @@ wp.blocks.registerBlockType("soli/create-event", {
     },
     usesContext: ['postId']
 })
+
+wp.plugins.registerPlugin("soli-event-hide-in-calendar", {render: HideInCalendarPanel});
 
 function SingleEventEditor({userCanAdminNote}) {
     const {events} = useEventState();
