@@ -25,6 +25,7 @@ function fromDateDto(dateDto) {
         extendedProps: {
             postId: dateDto.post_id,
             isConcert: dateDto.is_concert,
+            hideInCalendar: !!dateDto.hide_in_calendar,
             postStatus: dateDto.status,
             rooms: getRoomNameList(dateDto),
             locationId: dateDto.location_id,
