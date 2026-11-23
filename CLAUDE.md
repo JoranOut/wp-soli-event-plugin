@@ -153,6 +153,59 @@ Block attributes, all optional and set in the editor sidebar: `recipient` (falls
 unconfigured block follows the site language. Styling takes the soli.nl block theme's presets with the
 same values as fallbacks. No MUI, FullCalendar or Bootstrap in this block. Spec: `e2e/reservation.spec.ts`.
 
+### Cancellation link (`soli/event-cancel-dates`)
+
+Lets someone without an account, such as a renter, cancel dates of one event, so the invoice crosses them
+out. Code in `events/lib/cancel_link.php` (`CancelLink`) and `events/blocks/event-cancel-dates/`.
+
+- **The secret travels in the link, not in a page.** One page holds the block, which has no attributes;
+  the visitor opens `<page>?token=<uuid>`. Storing the UUID as a block attribute was rejected: post content
+  reaches sitemaps, search and the REST API. `CancelLink::pageUrl()` picks the first published page
+  containing the block (filter `soli_event_cancel_page_url`).
+- **The token** is a UUID v4 from `random_bytes()` (not `wp_generate_uuid4()`, which uses `mt_rand`), in
+  protected post meta `_soli_event_cancel_token`: not registered for REST, hidden from Custom Fields. The
+  **"Cancellation link"** document sidebar panel (`create-event/src/components/cancel-link-panel/`, via
+  `registerPlugin`) turns it on, renews it and turns it off through `GET|POST /soli_event/v1/cancel-link/{id}`
+  (`edit_post` on a `soli_event`). Renewing or turning it off kills the old link at once.
+- **The page** is a FullCalendar month view (`src/components/cancel-calendar.js`) that looks like the
+  calendar block: it imports that block's class hooks (`calendar-wrapper/soli-class-hooks.js`) and agenda
+  skin (`calendar-wrapper.scss`) and wraps itself in `.soli-block-view-calendar`. Dates are `.soli-event`
+  pills; a cancelled one is outlined and struck through. FullCalendar 7 reads `className` on an event, not
+  `classNames`. One month at a time, limited to the event's first and last month. It opens on the first month from now with dates. Each date is a time chip that cancels or
+  restores it. "Cancel whole day" / "Undo day" acts on every open date of that day; it is an all-day event that
+  sorts first, because FullCalendar renders the day-number area `aria-hidden` and a button there would be
+  invisible to screen readers. Weekdays the event never uses are hidden (`hiddenDays`). Phones (640px, the
+  calendar block's breakpoint) get `listMonth`. PHP renders the dates and all strings into data
+  attributes, so the script has no `wp-i18n`. A toast in the bottom right confirms each change for 5 seconds.
+- **Texts:** the block attributes `intro`, `noLinkText` and `invalidText` (RichText, set in the editor)
+  replace the intro above the calendar and the two link messages. Empty means the translated default,
+  which `src/index.js` also shows as the placeholder; both sides use the same msgid.
+- **Writes** go to `POST /soli_event/v1/cancel` with `{token, date_ids, cancelled}` (1 to 100 ids, one log
+  entry per request). An id outside the event fails the whole request with 404; locked dates in a batch are
+  skipped, and a request with only locked dates to change answers 409. The token sits in the body so it
+  stays out of access logs; the front end sends no cookies. The response is `{dates: [...]}` with only id,
+  start, end, `cancelled` and `locked`, with no notes, rooms or workflow status.
+- **What the link holder may do:** cancel any date of the event, past or future, and restore a date they
+  cancelled. Restoring brings back the status from before (`status_before_cancel`). A date an editor set
+  to `CANCELLED` shows as a dashed chip ("Cancelled by Soli"), cannot be clicked and answers 409.
+- **Headers:** the page sends `Cache-Control: no-store`, `Referrer-Policy: no-referrer` and `X-Robots-Tag: noindex`
+  and defines `DONOTCACHEPAGE` whenever the queried post contains the block.
+- **Log:** changes land in the change log with user id 0, shown as "Cancellation link".
+
+**Stale editor saves.** The editor sends every row of the event on save, also rows it loaded before the
+link was used. Each external change bumps the row's `external_rev`; the editor round-trips it
+(`event-mapper.js`), and `saveDate()` keeps the stored status when the incoming `external_rev` differs.
+The rest of that row's edit still applies. A save that saw the latest change may set any status; a
+non-`CANCELLED` status clears `status_before_cancel`, so the date stops being the link holder's to restore.
+
+The two columns arrived with schema revision 2 (`SOLI_EVENT_SCHEMA_REVISION` in `migrations.php`), which
+runs the migrations without a version bump. Bump the revision with every later table change.
+
+**Invoice.** The dialog shows `CANCELLED` dates crossed out with a "Cancelled" label. The `.docx` keeps their
+row, crossed out and marked "Geannuleerd", and leaves it out of every formula, so only the other rows count.
+
+Spec: `e2e/cancel-link.spec.ts`.
+
 ### Hide in calendar
 
 Per-event post meta `soli_event_hide_in_calendar` (boolean), set with the "Hide in calendar" checkbox in the

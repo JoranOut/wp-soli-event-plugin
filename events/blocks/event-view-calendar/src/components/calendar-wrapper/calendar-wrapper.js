@@ -2,7 +2,8 @@ import "./calendar-wrapper.scss";
 import {useState, useRef, useEffect} from '@wordpress/element';
 import EventsProvider from "../events-provider/events-provider";
 import EventDetailPopUp from "../event-detail-pop-up/event-detail-pop-up";
-import FullCalendar, {joinClassNames} from '@fullcalendar/react'
+import FullCalendar from '@fullcalendar/react'
+import {SOLI_CLASS_HOOKS} from './soli-class-hooks';
 import classicThemePlugin from '@fullcalendar/react/themes/classic'
 import dayGridPlugin from '@fullcalendar/react/daygrid'
 import timeGridPlugin from '@fullcalendar/react/timegrid'
@@ -15,41 +16,6 @@ import '@fullcalendar/react/themes/classic/palette.css';
 import CalendarFilter from "../calendar-filter/calendar-filter";
 import useSmallScreen from "../use-small-screen/use-small-screen";
 import {ROOM_SLUGS} from "../../../../../inc/values";
-
-// FullCalendar 7 no longer renders semantic fc-* classes, so the agenda skin
-// in calendar-wrapper.scss hooks onto these soli-cal-* classes instead.
-const SOLI_CLASS_HOOKS = {
-    toolbarClass: 'soli-cal-toolbar',
-    toolbarSectionClass: ({name}) => `soli-cal-toolbar-${name}`,
-    toolbarTitleClass: 'soli-cal-title',
-    buttonGroupClass: 'soli-cal-button-group',
-    buttonClass: ({name, isSelected}) => joinClassNames(
-        'soli-cal-button',
-        `soli-cal-button-${name}`,
-        isSelected && 'soli-cal-button-active',
-    ),
-    viewClass: 'soli-cal-view',
-    dayHeaderClass: 'soli-cal-day-header',
-    dayHeaderInnerClass: 'soli-cal-day-header-inner',
-    dayHeaderAlign: 'start',
-    dayCellClass: ({isToday, isOther}) => joinClassNames(
-        'soli-cal-day',
-        isToday && 'soli-cal-day-today',
-        isOther && 'soli-cal-day-other',
-    ),
-    dayCellTopClass: 'soli-cal-day-top',
-    dayCellTopInnerClass: 'soli-cal-day-number',
-    eventClass: 'soli-cal-event',
-    rowEventClass: 'soli-cal-row-event',
-    eventTitleClass: 'soli-cal-event-title',
-    moreLinkClass: 'soli-cal-more-link',
-    listDayHeaderClass: 'soli-cal-list-day-header',
-    listDayHeaderInnerClass: 'soli-cal-list-day-header-inner',
-    listItemEventClass: 'soli-cal-list-event',
-    listItemEventTimeClass: 'soli-cal-list-event-time',
-    listItemEventTitleClass: 'soli-cal-list-event-title',
-    noEventsClass: 'soli-cal-no-events',
-};
 
 // Phones get a month list: a grid has no room for event titles there.
 const SMALL_SCREEN_VIEW = 'listMonth';

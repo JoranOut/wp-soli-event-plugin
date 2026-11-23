@@ -1,0 +1,11 @@
+.soli-event-cancel-link {
+  margin-top: 12px;
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-top: 8px;
+  }
+}

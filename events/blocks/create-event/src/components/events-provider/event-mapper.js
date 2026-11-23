@@ -15,6 +15,9 @@ function fromDateDto(dateDto) {
         concertStatus: dateDto.is_concert,
         notes: dateDto.notes?.length > 0 ? dateDto.notes : null,
         adminNotes: dateDto.admin_notes?.length > 0 ? dateDto.admin_notes : null,
+        // Round-tripped so the server can tell a stale save from one that saw the link's last change.
+        externalRev: dateDto.external_rev ?? 0,
+        cancelledExternally: !!dateDto.cancelled_externally,
     }
 }
 
@@ -54,7 +57,8 @@ function toDateDto(date) {
         status: date.status,
         is_concert: date.concertStatus,
         notes: date.notes?.length > 0 ? date.notes : null,
-        admin_notes: date.adminNotes?.length > 0 ? date.adminNotes : null
+        admin_notes: date.adminNotes?.length > 0 ? date.adminNotes : null,
+        external_rev: date.externalRev ?? 0,
     }
 }
 

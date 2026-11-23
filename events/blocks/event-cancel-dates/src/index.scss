@@ -1,0 +1,219 @@
+// Scoped to the block; takes the block theme's presets where they exist.
+.soli-cancel-dates {
+  --soli-cancel-accent: var(--wp--preset--color--primary, #aa2a2a);
+  --soli-cancel-muted: var(--wp--preset--color--contrast-2, #6b7280);
+  --soli-cancel-line: #d8dce4;
+  --soli-cancel-bg: var(--wp--preset--color--base, #fff);
+  --soli-cancel-text: var(--wp--preset--color--contrast, #1e1e1e);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &--placeholder {
+    padding: 16px;
+    border: 1px dashed var(--soli-cancel-line);
+    border-radius: 8px;
+  }
+
+  &--message.is-error p {
+    color: var(--soli-cancel-accent);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  &__calendar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__status:empty {
+    display: none;
+  }
+
+  // Toast, bottom right.
+  &__status {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 100000;
+    max-width: min(360px, calc(100vw - 32px));
+    padding: 10px 14px;
+    border-left: 3px solid var(--soli-cal-maroon, var(--soli-cancel-accent));
+    border-radius: 6px;
+    background: var(--soli-cancel-text);
+    color: var(--soli-cancel-bg);
+    font-size: 0.9rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    animation: soli-cancel-toast-in 0.2s ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+
+  &__summary {
+    color: var(--soli-cancel-muted);
+  }
+
+  &__day-toggle {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--soli-cal-maroon, var(--soli-cancel-accent));
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-decoration: underline;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: progress;
+    }
+  }
+
+  // The pill is the calendar block's (.soli-event); the chip inside is a bare button filling it.
+  &__chip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+    white-space: nowrap;
+
+    &:is(button) {
+      cursor: pointer;
+
+      &:disabled {
+        cursor: progress;
+      }
+    }
+
+    &.is-cancelled > :first-child {
+      text-decoration: line-through;
+    }
+  }
+
+  &__chip-icon {
+    font-size: 1.2em;
+    line-height: 1;
+    opacity: 0.55;
+
+    .soli-cancel-dates__chip:hover & {
+      opacity: 1;
+      color: var(--soli-cal-maroon, var(--soli-cancel-accent));
+    }
+  }
+
+  .soli-block-view-calendar {
+    .soli-cal-row-event.soli-event:hover {
+      box-shadow: inset 0 0 0 1px var(--soli-cal-maroon);
+    }
+
+    .soli-cal-row-event.soli-event.is-cancelled,
+    .soli-cal-list-event.soli-event.is-cancelled {
+      --fc-classic-event: transparent;
+      background: transparent;
+      box-shadow: inset 0 0 0 1px var(--soli-cal-line);
+      color: var(--soli-cal-muted);
+    }
+
+    .soli-cal-row-event.soli-event.is-locked {
+      box-shadow: inset 0 0 0 1px var(--soli-cal-muted);
+      border: 1px dashed var(--soli-cal-muted);
+    }
+
+    .soli-cancel-dates__day-event {
+      --fc-classic-event: transparent;
+      margin: 0 0.6rem 0.3rem;
+      padding: 0;
+      border: 0;
+      background: none;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    font-size: 0.85rem;
+    color: var(--soli-cancel-muted);
+  }
+
+  &__legend-pill {
+    padding: 0.18rem 0.4rem;
+    border-radius: 5px;
+    background: var(--color-sand, #e8dcc6);
+    color: var(--color-ink, #1a1a2e);
+    font-size: 11.5px;
+
+    &.is-cancelled {
+      background: transparent;
+      box-shadow: inset 0 0 0 1px var(--color-line, #e6e2da);
+      color: var(--color-muted, #5a5a5e);
+      text-decoration: line-through;
+    }
+
+    &.is-locked {
+      border: 1px dashed var(--color-muted, #5a5a5e);
+    }
+  }
+
+  .screen-reader-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@keyframes soli-cancel-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+// Editor: the editable texts.
+.soli-cancel-dates__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.soli-cancel-dates__field-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--soli-cancel-muted, #6b7280);
+}
+
+.soli-cancel-dates__field-input {
+  padding: 6px 8px;
+  border: 1px solid var(--soli-cancel-line, #d8dce4);
+  border-radius: 4px;
+}
+
+.soli-cancel-dates__field-hint {
+  font-size: 13px;
+  color: var(--soli-cancel-muted, #6b7280);
+}

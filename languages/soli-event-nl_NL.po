@@ -66,6 +66,7 @@ msgid "Add to calendar"
 msgstr "Toevoegen aan agenda"
 
 #: events/blocks/calendar-subscribe/index.php:164
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:89
 msgid "Copy link"
 msgstr "Kopieer link"
 
@@ -293,7 +294,7 @@ msgstr "Wijzigingen aan evenementdata, samengevoegd per bewerkingssessie: opeenv
 
 #: events/lib/events_admin_log_page.php:38
 #: events/lib/post_type.php:7
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:134
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:135
 msgid "Event"
 msgstr "Evenement"
 
@@ -321,87 +322,87 @@ msgstr "Er zijn nog geen wijzigingen vastgelegd."
 msgid "(deleted event)"
 msgstr "(verwijderd evenement)"
 
-#: events/lib/events_admin_log_page.php:56
+#: events/lib/events_admin_log_page.php:59
 msgid "(unknown user)"
 msgstr "(onbekende gebruiker)"
 
 #. translators: %s: date range of the added event date
-#: events/lib/events_admin_log_page.php:91
+#: events/lib/events_admin_log_page.php:95
 #, php-format
 msgid "Added: %s"
 msgstr "Toegevoegd: %s"
 
 #. translators: %s: date range of the removed event date
-#: events/lib/events_admin_log_page.php:101
+#: events/lib/events_admin_log_page.php:105
 #, php-format
 msgid "Removed: %s"
 msgstr "Verwijderd: %s"
 
 #. translators: 1: date range of the changed event date, 2: list of field changes
-#: events/lib/events_admin_log_page.php:115
+#: events/lib/events_admin_log_page.php:119
 #, php-format
 msgid "Changed %1$s: %2$s"
 msgstr "Gewijzigd %1$s: %2$s"
 
-#: events/lib/events_admin_log_page.php:123
+#: events/lib/events_admin_log_page.php:127
 msgid "No effective changes."
 msgstr "Geen effectieve wijzigingen."
 
-#: events/lib/events_admin_log_page.php:146
+#: events/lib/events_admin_log_page.php:150
 msgid "start"
 msgstr "start"
 
-#: events/lib/events_admin_log_page.php:147
+#: events/lib/events_admin_log_page.php:151
 msgid "end"
 msgstr "einde"
 
-#: events/lib/events_admin_log_page.php:148
+#: events/lib/events_admin_log_page.php:152
 msgid "location"
 msgstr "locatie"
 
-#: events/lib/events_admin_log_page.php:149
+#: events/lib/events_admin_log_page.php:153
 msgid "rooms"
 msgstr "ruimtes"
 
-#: events/lib/events_admin_log_page.php:150
+#: events/lib/events_admin_log_page.php:154
 msgid "status"
 msgstr "status"
 
-#: events/lib/events_admin_log_page.php:151
+#: events/lib/events_admin_log_page.php:155
 msgid "notes"
 msgstr "notities"
 
-#: events/lib/events_admin_log_page.php:152
+#: events/lib/events_admin_log_page.php:156
 msgid "admin notes"
 msgstr "beheerdersnotities"
 
-#: events/lib/events_admin_log_page.php:153
+#: events/lib/events_admin_log_page.php:157
 msgid "concert"
 msgstr "concert"
 
 #. translators: %s: field name
-#: events/lib/events_admin_log_page.php:167
+#: events/lib/events_admin_log_page.php:171
 #, php-format
 msgid "%s changed"
 msgstr "%s gewijzigd"
 
 #. translators: 1: field name, 2: old value, 3: new value
-#: events/lib/events_admin_log_page.php:172
+#: events/lib/events_admin_log_page.php:176
 #, php-format
 msgid "%1$s: %2$s → %3$s"
 msgstr "%1$s: %2$s → %3$s"
 
-#: events/lib/events_admin_log_page.php:184
+#: events/lib/events_admin_log_page.php:188
 msgid "(empty)"
 msgstr "(leeg)"
 
-#: events/lib/events_admin_log_page.php:187
-#: events/lib/events_admin_log_page.php:196
+#: events/lib/events_admin_log_page.php:191
+#: events/lib/events_admin_log_page.php:200
 msgid "yes"
 msgstr "ja"
 
-#: events/lib/events_admin_log_page.php:187
-#: events/lib/events_admin_log_page.php:196
+#: events/lib/events_admin_log_page.php:191
+#: events/lib/events_admin_log_page.php:200
 msgid "no"
 msgstr "nee"
 
@@ -755,6 +756,7 @@ msgid "Secondary button"
 msgstr "Secundaire knop"
 
 #: events/blocks/concert-hero/src/index.js:82
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:81
 #: events/blocks/next-concert/src/index.js:85
 msgid "Link"
 msgstr "Link"
@@ -961,57 +963,57 @@ msgstr "Verbergen in de evenementenkalender"
 msgid "The dates of this event are left out of the events calendar, in every view."
 msgstr "De datums van dit evenement staan in geen enkele weergave van de evenementenkalender."
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:160
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:180
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:187
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:161
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:181
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:188
 msgid "Invoice this event"
 msgstr "Factureer dit evenement"
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:173
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:174
 msgid "Invoice"
 msgstr "Factuur"
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:194
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:195
 msgid "Choose the period and the dates to invoice, then download the invoice as a Word document."
 msgstr "Kies de periode en de data die je wilt factureren en download daarna de factuur als Word-document."
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:201
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:202
 #: events/blocks/event-reservation-popup/src/components/request-card.js:93
 msgid "From"
 msgstr "Van"
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:207
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:208
 #: events/blocks/event-reservation-popup/src/components/request-card.js:97
 msgid "Until"
 msgstr "Tot"
 
 #. translators: %s: number of hours, e.g. 2,50
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:233
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:242
 #, js-format
 msgid "%s hours"
 msgstr "%s uur"
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:242
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:251
 msgid "No dates in the chosen period."
 msgstr "Geen data in de gekozen periode."
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:249
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:258
 msgid "Hourly rate (€)"
 msgstr "Uurtarief (€)"
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:258
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:267
 msgid "VAT"
 msgstr "Btw"
 
 #. translators: %d: number of selected dates
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:272
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:281
 #, js-format
 msgid "%d date selected"
 msgid_plural "%d dates selected"
 msgstr[0] "%d datum geselecteerd"
 msgstr[1] "%d data geselecteerd"
 
-#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:282
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:291
 msgid "Download invoice"
 msgstr "Download factuur"
 
@@ -1133,7 +1135,7 @@ msgstr "Selecteer een optie"
 msgid "Use"
 msgstr "Gebruiken"
 
-#: events/blocks/create-event/src/index.js:21
+#: events/blocks/create-event/src/index.js:22
 msgid "Create Event"
 msgstr "Evenement aanmaken"
 
@@ -1321,6 +1323,7 @@ msgstr "aanvraag %1$d: %2$s"
 msgid "Open in e-mail"
 msgstr "Openen in e-mail"
 
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:89
 #: events/blocks/event-reservation-popup/src/components/reservation-tool.js:161
 msgid "Copied"
 msgstr "Gekopieerd"
@@ -1606,3 +1609,182 @@ msgstr "Filter op orkest"
 #, js-format
 msgid "%1$s +%2$d"
 msgstr "%1$s +%2$d"
+
+#: events/blocks/event-cancel-dates/index.php:61
+#: events/blocks/event-cancel-dates/src/index.js:8
+msgid "Open this page through the cancellation link you received from Soli."
+msgstr "Open deze pagina via de annuleringslink die je van Soli hebt gekregen."
+
+#: events/blocks/event-cancel-dates/index.php:66
+#: events/blocks/event-cancel-dates/src/index.js:9
+msgid "This link is not valid (anymore). Ask Soli for a new link."
+msgstr "Deze link is niet (meer) geldig. Vraag Soli om een nieuwe link."
+
+#: events/blocks/event-cancel-dates/index.php:71
+msgid "This event has no dates."
+msgstr "Dit evenement heeft geen data."
+
+#: events/blocks/create-event/src/components/invoice-button/invoice-button.js:236
+msgid "Cancelled"
+msgstr "Geannuleerd"
+
+#: events/blocks/event-cancel-dates/index.php:105
+msgid "Cancelled by Soli"
+msgstr "Geannuleerd door Soli"
+
+#. translators: 1: number of dates that go ahead, 2: number of dates in the month, 3: hours, e.g. 7,5
+#: events/blocks/event-cancel-dates/index.php:111
+#, php-format
+msgid "%1$s of %2$s dates go ahead · %3$s hours"
+msgstr "%1$s van %2$s data gaan door · %3$s uur"
+
+#. translators: %1$s: the date, e.g. "Tue 12 Aug 19:30–21:00"
+#: events/blocks/event-cancel-dates/index.php:114
+#, php-format
+msgid "%1$s is cancelled."
+msgstr "%1$s is geannuleerd."
+
+#. translators: %1$s: the date, e.g. "Tue 12 Aug 19:30–21:00"
+#: events/blocks/event-cancel-dates/index.php:116
+#, php-format
+msgid "%1$s goes ahead again."
+msgstr "%1$s gaat weer door."
+
+#: events/blocks/event-cancel-dates/index.php:122
+msgid "That did not work. Reload the page and try again."
+msgstr "Dat lukte niet. Herlaad de pagina en probeer het opnieuw."
+
+#: events/lib/cancel_link.php:181
+msgid "This link is not valid (anymore)."
+msgstr "Deze link is niet (meer) geldig."
+
+#: events/lib/cancel_link.php:190
+msgid "This date does not exist (anymore)."
+msgstr "Deze datum bestaat niet (meer)."
+
+#: events/lib/cancel_link.php:208
+msgid "Soli cancelled this date. Contact Soli to change it."
+msgstr "Soli heeft deze datum geannuleerd. Neem contact op met Soli om dit te wijzigen."
+
+#: events/lib/events_admin_log_page.php:55
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:56
+msgid "Cancellation link"
+msgstr "Annuleringslink"
+
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:48
+msgid "The current link stops working. Continue?"
+msgstr "De huidige link werkt dan niet meer. Doorgaan?"
+
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:59
+msgid "Save the event first."
+msgstr "Sla het evenement eerst op."
+
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:66
+msgid "Allow cancelling through a link"
+msgstr "Annuleren via een link toestaan"
+
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:67
+msgid "Anyone with the link can cancel dates of this event, and undo that, without logging in. Cancelled dates are crossed out on the invoice."
+msgstr "Iedereen met de link kan data van dit evenement annuleren, en dat ongedaan maken, zonder in te loggen. Geannuleerde data worden op de factuur doorgestreept."
+
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:74
+msgid "No published page has the \"Cancel event dates\" block yet. Add it to a page; the link appears here."
+msgstr "Nog geen gepubliceerde pagina heeft het blok \"Evenementdata annuleren\". Voeg het toe aan een pagina; de link verschijnt dan hier."
+
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:91
+msgid "Open"
+msgstr "Openen"
+
+#: events/blocks/create-event/src/components/cancel-link-panel/cancel-link-panel.js:93
+msgid "Renew link"
+msgstr "Link vernieuwen"
+
+#: events/blocks/event-cancel-dates/src/index.js:14
+#: events/blocks/event-cancel-dates/src/index.js:54
+msgid "Cancel event dates"
+msgstr "Evenementdata annuleren"
+
+#: events/blocks/event-cancel-dates/src/index.js:15
+msgid "Lets someone without an account cancel dates of one event, through the secret link from that event's sidebar."
+msgstr "Laat iemand zonder account data van één evenement annuleren, via de geheime link uit de zijbalk van dat evenement."
+
+#: events/blocks/event-cancel-dates/src/index.js:56
+msgid "Visitors who open this page through an event's cancellation link see that event's dates per month and can cancel them. Without a valid link the page shows nothing of any event."
+msgstr "Bezoekers die deze pagina openen via de annuleringslink van een evenement zien de data van dat evenement per maand en kunnen ze annuleren. Zonder geldige link toont de pagina niets van een evenement."
+
+#: events/blocks/event-cancel-dates/index.php:99
+msgid "Cancel whole day"
+msgstr "Annuleer hele dag"
+
+#: events/blocks/event-cancel-dates/index.php:100
+msgid "Undo day"
+msgstr "Dag terugzetten"
+
+#. translators: %1$s: a date and time range, e.g. "Tue 12 Aug 19:30–21:00"
+#: events/blocks/event-cancel-dates/index.php:102
+#, php-format
+msgid "Cancel %1$s"
+msgstr "%1$s annuleren"
+
+#. translators: %1$s: a date and time range, e.g. "Tue 12 Aug 19:30–21:00"
+#: events/blocks/event-cancel-dates/index.php:104
+#, php-format
+msgid "Undo cancellation of %1$s"
+msgstr "Annulering van %1$s ongedaan maken"
+
+#. translators: %1$s: a day, e.g. "Tue 12 Aug"
+#: events/blocks/event-cancel-dates/index.php:107
+#, php-format
+msgid "Cancel all dates on %1$s"
+msgstr "Alle data op %1$s annuleren"
+
+#. translators: %1$s: a day, e.g. "Tue 12 Aug"
+#: events/blocks/event-cancel-dates/index.php:109
+#, php-format
+msgid "Undo all cancellations on %1$s"
+msgstr "Alle annuleringen op %1$s ongedaan maken"
+
+#. translators: %1$s: a day, e.g. "Tue 12 Aug"
+#: events/blocks/event-cancel-dates/index.php:118
+#, php-format
+msgid "All dates on %1$s are cancelled."
+msgstr "Alle data op %1$s zijn geannuleerd."
+
+#. translators: %1$s: a day, e.g. "Tue 12 Aug"
+#: events/blocks/event-cancel-dates/index.php:120
+#, php-format
+msgid "All dates on %1$s go ahead again."
+msgstr "Alle data op %1$s gaan weer door."
+
+#: events/blocks/event-cancel-dates/index.php:139
+#: events/blocks/event-cancel-dates/src/index.js:7
+msgid "Click a time to cancel it, or cancel a whole day. A cancelled date stays on the list and is not charged. Click it again to undo."
+msgstr "Klik op een tijd om die te annuleren, of annuleer een hele dag. Een geannuleerde datum blijft in de lijst staan en wordt niet in rekening gebracht. Klik er nog een keer op om dat ongedaan te maken."
+
+#: events/blocks/event-cancel-dates/index.php:121
+msgid "goes ahead"
+msgstr "gaat door"
+
+#: events/blocks/event-cancel-dates/src/index.js:59
+msgid "Turn the link on in the \"Cancellation link\" panel of an event's sidebar."
+msgstr "Zet de link aan in het paneel \"Annuleringslink\" in de zijbalk van een evenement."
+
+#: events/blocks/event-cancel-dates/index.php:112
+msgid "No dates this month."
+msgstr "Geen data deze maand."
+
+#: events/blocks/event-cancel-dates/src/index.js:61
+msgid "Intro above the calendar"
+msgstr "Intro boven de kalender"
+
+#: events/blocks/event-cancel-dates/src/index.js:62
+msgid "Page opened without a link"
+msgstr "Pagina geopend zonder link"
+
+#: events/blocks/event-cancel-dates/src/index.js:63
+msgid "Link that is not valid (anymore)"
+msgstr "Link die niet (meer) geldig is"
+
+#: events/blocks/event-cancel-dates/src/index.js:65
+msgid "Leave a text empty to use the default, which follows the site language."
+msgstr "Laat een tekst leeg voor de standaardtekst, die de taal van de site volgt."
