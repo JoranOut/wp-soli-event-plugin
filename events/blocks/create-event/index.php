@@ -18,7 +18,7 @@ class SoliBlockCreateEvent {
 
   function adminAssets() {
     wp_register_style('block-create-event-css', plugin_dir_url(__FILE__) . 'build/index.css', array(), $this->assetVersion('build/index.css'));
-    wp_register_script('block-create-event-js', plugin_dir_url(__FILE__) . 'build/index.js', array('wp-blocks', 'wp-element', 'wp-editor'), $this->assetVersion('build/index.js'), true);
+    wp_register_script('block-create-event-js', plugin_dir_url(__FILE__) . 'build/index.js', array('wp-blocks', 'wp-element', 'wp-editor', 'wp-plugins'), $this->assetVersion('build/index.js'), true);
     wp_localize_script('block-create-event-js', 'createEventPermissions', array(
         'canSeeAdminNotes' => current_user_can( 'soli_event_admin_notes' )
     ));

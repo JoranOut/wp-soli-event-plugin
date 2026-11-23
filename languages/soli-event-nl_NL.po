@@ -732,7 +732,7 @@ msgstr "Herhalen tot en met:"
 msgid "Use"
 msgstr "Gebruiken"
 
-#: events/blocks/create-event/src/index.js:20
+#: events/blocks/create-event/src/index.js:21
 msgid "Create Event"
 msgstr "Evenement aanmaken"
 
@@ -1443,3 +1443,15 @@ msgstr ""
 #: events/inc/values.php:56
 msgid "cancelled"
 msgstr "geannuleerd"
+
+#: events/blocks/create-event/src/components/hide-in-calendar-panel/hide-in-calendar-panel.js:25
+msgid "Calendar"
+msgstr "Agenda"
+
+#: events/blocks/create-event/src/components/hide-in-calendar-panel/hide-in-calendar-panel.js:30
+msgid "Hide in calendar"
+msgstr "Verbergen in de evenementenkalender"
+
+#: events/blocks/create-event/src/components/hide-in-calendar-panel/hide-in-calendar-panel.js:31
+msgid "The dates of this event are left out of the events calendar, in every view."
+msgstr "De datums van dit evenement staan in geen enkele weergave van de evenementenkalender."

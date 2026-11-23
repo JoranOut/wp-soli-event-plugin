@@ -19,10 +19,13 @@ divsToUpdate.forEach(function (div) {
 
     const showCategoryFilter = div.classList.contains("show-category-filter");
 
+    const showHiddenInCalendar = div.classList.contains("show-hidden-in-calendar");
+
     render(<CalendarWrapper className="alignwide"
                             calendarType={calendarType}
                             adjustable={adjustable}
                             onlyConcerts={onlyConcerts}
                             showRoomsFilter={showRoomsFilter}
-                            showCategoryFilter={showCategoryFilter}/>, div)
+                            showCategoryFilter={showCategoryFilter}
+                            showHiddenInCalendar={showHiddenInCalendar}/>, div)
 })

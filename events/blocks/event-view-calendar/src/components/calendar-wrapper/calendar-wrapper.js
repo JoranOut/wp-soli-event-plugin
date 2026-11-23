@@ -60,7 +60,7 @@ const setDefaultFilters = (onlyConcerts, onlyInternal) => {
     return [...concertFilter, ...internalFilter, ...ROOM_SLUGS];
 }
 
-export default function CalendarWrapper({calendarType, adjustable, onlyConcerts, showRoomsFilter, showCategoryFilter = false}) {
+export default function CalendarWrapper({calendarType, adjustable, onlyConcerts, showRoomsFilter, showCategoryFilter = false, showHiddenInCalendar = false}) {
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState();
     const [selectedEventBox, setSelectedEventBox] = useState();
@@ -88,6 +88,10 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
             setSelectedEvent(null);
         }
     }, [isSmallScreen]);
+
+    const visibleEvents = showHiddenInCalendar
+        ? events
+        : events.filter(event => !event.extendedProps.hideInCalendar);
 
     const handleDates = (rangeInfo) => {
         setRange(rangeInfo)
@@ -147,7 +151,7 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
                 datesSet={handleDates}
                 eventClick={handleClick}
                 weekends={true}
-                events={events}
+                events={visibleEvents}
                 locale={nlLocale}
                 dayMaxEvents={3}
                 // Block-style pills everywhere (never dot events), matching

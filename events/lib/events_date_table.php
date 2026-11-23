@@ -362,23 +362,30 @@ class EventsDatesTableHandler {
     // Viewer-aware masking + date-status filter (F4/F7). Any date in range shows
     // (past included); PRIVATE title masked only for not-logged-in visitors.
     $title_expr = EventVisibility::titleSelectExpr('d', 'w.post_title');
-    $params = array($startDate, $endDate, $startDate, $endDate, 'publish');
+    $params = array(SOLI_EVENT_HIDE_IN_CALENDAR_META_KEY, $startDate, $endDate, $startDate, $endDate, 'publish');
     $status_clause = EventVisibility::statusInClause('d', $params);
     $query = $this->wpdb->prepare("SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.is_concert,
        w.ID , w.post_author ,
        $title_expr AS post_title,
        w.post_status , w.post_name , w.post_modified , w.post_parent , w.guid , w.post_type,
-       l.id as location_id, l.name as location_name, l.address as location_address
+       l.id as location_id, l.name as location_name, l.address as location_address,
+       COALESCE(hm.meta_value = '1', 0) AS hide_in_calendar
         FROM $this->event_dates_table d
         LEFT JOIN $this->post_table w
             ON d.post_id = w.id
         LEFT JOIN $this->event_location_table l
             on d.location = l.id
+        LEFT JOIN $this->meta_table hm
+            ON hm.post_id = w.ID AND hm.meta_key = %s
         WHERE ((d.start_date between %s and %s) or (d.end_date between %s and %s))
               and w.post_status = %s
               and $status_clause;", $params);
     $results = $this->wpdb->get_results($query, ARRAY_A);
     $results = $this->appendGUID($results);
+    $results = array_map(function($date) {
+      $date['hide_in_calendar'] = (bool) $date['hide_in_calendar'];
+      return $date;
+    }, $results);
     return $this->castIsConcertToBoolean($results);
   }
 
