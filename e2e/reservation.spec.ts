@@ -400,6 +400,9 @@ test.describe('Room reservation block — requests', () => {
 
         // With an empty building the strip runs from 07:00 to 24:00.
         const track = tool.locator('.soli-reserve-track').nth(ROOM_INDEX['studio-1']);
+        // Raw mouse events only land inside the viewport, and the test site's
+        // page menu grows with every page the suite creates.
+        await track.scrollIntoViewIfNeeded();
         const box = (await track.boundingBox())!;
         const xAt = (hour: number) => box.x + ((hour - 7) / 17) * box.width;
         const y = box.y + box.height / 2;
