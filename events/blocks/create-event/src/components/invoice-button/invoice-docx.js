@@ -134,11 +134,11 @@ function cell(children, { width, borders, verticalAlign, margins } = {}) {
     });
 }
 
-function textCell(text, { width, align, color = BODY, bold = false, borders, size } = {}) {
+function textCell(text, { width, align, color = BODY, bold = false, borders, size, strike = false } = {}) {
     return cell(
         new Paragraph({
             alignment: align,
-            children: [new TextRun({ text, color, bold, size })],
+            children: [new TextRun({ text, color, bold, size, strike })],
         }),
         { width, borders }
     );
@@ -319,17 +319,22 @@ function invoiceTable(title, dates, hourlyRate, vatPercentage) {
     // Row 1 is the header, so the dates occupy rows 2..N+1.
     const firstDateRow = 2;
 
-    const totalHours = dates.reduce((sum, date) => sum + durationInHours(date), 0);
+    // Cancelled dates keep their row, crossed out, but stay out of every formula.
+    const billable = dates.filter((date) => !date.cancelled);
+    const totalHours = billable.reduce((sum, date) => sum + durationInHours(date), 0);
     const subtotal = totalHours * hourlyRate;
     const vat = (subtotal * vatPercentage) / 100;
 
-    const SUBTOTAL_EXPR = dates
-        .map((_, index) => `B${firstDateRow + index}*C${firstDateRow + index}`)
-        .join("+");
+    const SUBTOTAL_EXPR =
+        dates
+            .map((date, index) => (date.cancelled ? null : `B${firstDateRow + index}*C${firstDateRow + index}`))
+            .filter(Boolean)
+            .join("+") || "0";
     const VAT_CELL = `D${firstDateRow}`;
 
     const dateRows = dates.map((date, index) => {
         const row = firstDateRow + index;
+        const strike = !!date.cancelled;
         const start = dayjs(date.startDate).locale("nl");
         const end = dayjs(date.endDate).locale("nl");
         const sameDay = start.isSame(end, "day");
@@ -342,9 +347,12 @@ function invoiceTable(title, dates, hourlyRate, vatPercentage) {
             children: [
                 cell(
                     [
-                        new Paragraph({ children: [new TextRun({ text: title, color: BODY })] }),
+                        new Paragraph({ children: [new TextRun({ text: title, color: strike ? MUTED : BODY, strike })] }),
                         new Paragraph({
-                            children: [new TextRun({ text: when, color: MUTED, size: 17 })],
+                            children: [
+                                new TextRun({ text: when, color: MUTED, size: 17, strike }),
+                                ...(strike ? [new TextRun({ text: "  Geannuleerd", color: ACCENT, size: 17 })] : []),
+                            ],
                         }),
                     ],
                     { width: LINE_COLUMNS[0], borders: CELL_BODY }
@@ -353,11 +361,15 @@ function invoiceTable(title, dates, hourlyRate, vatPercentage) {
                     width: LINE_COLUMNS[1],
                     align: AlignmentType.RIGHT,
                     borders: CELL_BODY,
+                    color: strike ? MUTED : BODY,
+                    strike,
                 }),
                 textCell(nlNumber.format(hourlyRate), {
                     width: LINE_COLUMNS[2],
                     align: AlignmentType.RIGHT,
                     borders: CELL_BODY,
+                    color: strike ? MUTED : BODY,
+                    strike,
                 }),
                 // Accent-coloured as in the design, but a bare number: the VAT
                 // and total rows read this cell, and a "%" makes it unparseable.
@@ -367,18 +379,26 @@ function invoiceTable(title, dates, hourlyRate, vatPercentage) {
                     color: ACCENT,
                     borders: CELL_BODY,
                 }),
-                cell(
-                    new Paragraph({
-                        alignment: AlignmentType.RIGHT,
-                        children: [
-                            new SimpleField(
-                                `=B${row}*C${row} \\# "€ #.##0,00"`,
-                                `€ ${nlNumber.format(hours * hourlyRate)}`
-                            ),
-                        ],
-                    }),
-                    { width: LINE_COLUMNS[4], borders: CELL_BODY }
-                ),
+                strike
+                    ? textCell(`€ ${nlNumber.format(hours * hourlyRate)}`, {
+                          width: LINE_COLUMNS[4],
+                          align: AlignmentType.RIGHT,
+                          borders: CELL_BODY,
+                          color: MUTED,
+                          strike,
+                      })
+                    : cell(
+                          new Paragraph({
+                              alignment: AlignmentType.RIGHT,
+                              children: [
+                                  new SimpleField(
+                                      `=B${row}*C${row} \\# "€ #.##0,00"`,
+                                      `€ ${nlNumber.format(hours * hourlyRate)}`
+                                  ),
+                              ],
+                          }),
+                          { width: LINE_COLUMNS[4], borders: CELL_BODY }
+                      ),
             ],
         });
     });

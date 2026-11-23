@@ -34,6 +34,8 @@ class EventsDatesTableHandler {
         notes TEXT,
         admin_notes TEXT,
         is_concert BOOLEAN NOT NULL DEFAULT 0,
+        status_before_cancel TINYTEXT,
+        external_rev int(10) unsigned NOT NULL DEFAULT 0,
         PRIMARY KEY  (id)
     ) $this->charset;");
   }
@@ -270,6 +272,7 @@ class EventsDatesTableHandler {
   function loadEventDatesFromDb($event_id) {
     $query = $this->wpdb->prepare("
                 SELECT d.id, d.start_date, d.end_date, d.rooms, d.status, d.notes, d.admin_notes, d.is_concert,
+                       d.external_rev, (d.status_before_cancel IS NOT NULL) AS cancelled_externally,
                        l.id as location_id, l.name as location_name, l.address as location_address
                 FROM $this->event_dates_table d
                 LEFT JOIN $this->event_location_table l
@@ -463,8 +466,68 @@ class EventsDatesTableHandler {
       );
     }
 
+    $this->keepExternalCancellation($date, $data);
+
     $this->wpdb->update($this->event_dates_table, $data, array('id' => $date->id));
     return $date->id;
+  }
+
+  /**
+   * The editor sends every row of the event, also rows it loaded before someone used the cancellation
+   * link. A save whose external_rev differs from the stored one is stale for that row: keep the
+   * stored status instead of silently undoing the external (un)cancellation.
+   */
+  private function keepExternalCancellation($date, array &$data) {
+    $stored = $this->wpdb->get_row(
+      $this->wpdb->prepare("SELECT status, status_before_cancel, external_rev FROM $this->event_dates_table WHERE id = %d", $date->id),
+      ARRAY_A
+    );
+    if (!$stored) {
+      return;
+    }
+    if ((int) $stored['external_rev'] !== (int) ($date->external_rev ?? 0)) {
+      unset($data['status']);
+      return;
+    }
+    if ($data['status'] !== 'CANCELLED') {
+      $data['status_before_cancel'] = null;
+    }
+  }
+
+  /** Every date of the event, for the cancellation link page. Raw status, no visibility filter. */
+  function getDatesForCancelLink($post_id) {
+    $rows = $this->wpdb->get_results($this->wpdb->prepare(
+      "SELECT id, start_date, end_date, status, (status_before_cancel IS NOT NULL) AS cancelled_externally
+       FROM $this->event_dates_table WHERE post_id = %d ORDER BY start_date, id",
+      $post_id
+    ), ARRAY_A);
+    return is_array($rows) ? $rows : array();
+  }
+
+  function getDateForCancelLink($post_id, $date_id) {
+    return $this->wpdb->get_row($this->wpdb->prepare(
+      "SELECT id, start_date, end_date, status, (status_before_cancel IS NOT NULL) AS cancelled_externally
+       FROM $this->event_dates_table WHERE id = %d AND post_id = %d",
+      $date_id, $post_id
+    ), ARRAY_A);
+  }
+
+  /**
+   * Cancels or restores one date through the cancellation link. Single conditional UPDATEs, so two
+   * concurrent clicks cannot stack; MySQL assigns left to right, hence status_before_cancel first.
+   * Only a date cancelled through the link can be restored; a date an editor cancelled stays put.
+   */
+  function setCancelledThroughLink($post_id, $date_id, $cancelled) {
+    if ($cancelled) {
+      $sql = "UPDATE $this->event_dates_table
+              SET status_before_cancel = status, status = 'CANCELLED', external_rev = external_rev + 1
+              WHERE id = %d AND post_id = %d AND status <> 'CANCELLED'";
+    } else {
+      $sql = "UPDATE $this->event_dates_table
+              SET status = status_before_cancel, status_before_cancel = NULL, external_rev = external_rev + 1
+              WHERE id = %d AND post_id = %d AND status = 'CANCELLED' AND status_before_cancel IS NOT NULL";
+    }
+    return (int) $this->wpdb->query($this->wpdb->prepare($sql, $date_id, $post_id));
   }
 
   function validateDates($dates): bool {
@@ -485,6 +548,10 @@ class EventsDatesTableHandler {
   private function castIsConcertToBoolean($results) {
     return array_map(function($date) {
       $date['is_concert'] = (bool) $date['is_concert'];
+      if (array_key_exists('external_rev', $date)) {
+        $date['external_rev'] = (int) $date['external_rev'];
+        $date['cancelled_externally'] = (bool) $date['cancelled_externally'];
+      }
       return $date;
     }, $results);
   }

@@ -51,9 +51,13 @@ function soli_events_render_log_table() {
     $title = $log['post_title'] !== null && $log['post_title'] !== ''
       ? $log['post_title']
       : __('(deleted event)', 'soli-event');
-    $user = $log['display_name'] !== null && $log['display_name'] !== ''
-      ? $log['display_name']
-      : __('(unknown user)', 'soli-event');
+    if ((int) $log['user_id'] === 0) {
+      $user = __('Cancellation link', 'soli-event');
+    } else {
+      $user = $log['display_name'] !== null && $log['display_name'] !== ''
+        ? $log['display_name']
+        : __('(unknown user)', 'soli-event');
+    }
     $edit_link = get_edit_post_link($log['post_id']);
 
     echo '<tr>';

@@ -148,7 +148,7 @@ export default function EventsProvider({
                 if (!canMutate) return;
                 const source = stateRef.current.events[index];
                 if (!source) return;
-                const {id, ...copy} = source;
+                const {id, externalRev, cancelledExternally, ...copy} = source;
                 dispatch({
                     type: ActionTypes.ADD_EVENT,
                     payload: {event: copy, index: index + 1},

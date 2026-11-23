@@ -83,3 +83,16 @@
         }
     }
 }
+
+.invoice-date-row.is-cancelled {
+  .invoice-date-label,
+  .invoice-date-duration {
+    text-decoration: line-through;
+    color: #8a94a6;
+  }
+}
+
+.invoice-date-cancelled {
+  color: #aa2a2a;
+  font-size: 0.85em;
+}

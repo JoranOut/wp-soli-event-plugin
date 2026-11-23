@@ -94,6 +94,7 @@ function InvoiceButton() {
                     key: event.id != null ? `id-${event.id}` : `new-${index}`,
                     startDate: event.startDate,
                     endDate: event.endDate,
+                    cancelled: event.status === "CANCELLED",
                     start: dayjs(event.startDate),
                 }))
                 .filter((row) => row.start.isValid())
@@ -216,7 +217,10 @@ function InvoiceButton() {
                                 const end = dayjs(row.endDate).locale("nl");
                                 const sameDay = start.isSame(end, "day");
                                 return (
-                                    <label key={row.key} className="invoice-date-row">
+                                    <label
+                                        key={row.key}
+                                        className={"invoice-date-row" + (row.cancelled ? " is-cancelled" : "")}
+                                    >
                                         <Checkbox
                                             size="small"
                                             checked={!excluded.has(row.key)}
@@ -227,6 +231,11 @@ function InvoiceButton() {
                                             {" - "}
                                             {sameDay ? end.format("HH:mm") : end.format("dd DD-MM-YYYY HH:mm")}
                                         </span>
+                                        {row.cancelled && (
+                                            <span className="invoice-date-cancelled">
+                                                {__("Cancelled", "soli-event")}
+                                            </span>
+                                        )}
                                         <span className="invoice-date-duration">
                                             {sprintf(
                                                 /* translators: %s: number of hours, e.g. 2,50 */
