@@ -137,6 +137,22 @@ with the *editing* user's assignments). Markup reuses the theme's `.soli-flat-pa
 class names so the theme restyles it; the block ships equivalent scoped fallback styles (calendar glyph
 inlined; the theme's `--soli-ic` wins when set).
 
+### Room reservation block (`soli/event-reservation-popup`)
+
+Inline tool for outside renters (`events/blocks/event-reservation-popup/`). The block name still says
+"popup" for backwards compatibility with saved content; it no longer opens one. A visitor adds one or more
+requests (day, from/until, optionally ending on a later day) and picks rooms on a per-day strip that shows
+occupancy from `GET /events?start_date&end_date`, one fetch per day. The strip shows rooms as "in use"
+without event titles, and an overlap with a selected room is a warning, not a blocker. Output is a mailto
+link and a copyable text; nothing is stored.
+
+Block attributes, all optional and set in the editor sidebar: `recipient` (falls back to the
+`soli_event_reservation_email` option and the `soli_event_reservation_recipient` filter), `subject`,
+`template` (tokens `{reservations}`, `{note}`, `{name}`; an empty `{note}` drops its line) and
+`notePlaceholder`. Empty texts fall back to the translated defaults in `src/lib/requests.js`, so an
+unconfigured block follows the site language. Styling takes the soli.nl block theme's presets with the
+same values as fallbacks. No MUI, FullCalendar or Bootstrap in this block. Spec: `e2e/reservation.spec.ts`.
+
 ### Hide in calendar
 
 Per-event post meta `soli_event_hide_in_calendar` (boolean), set with the "Hide in calendar" checkbox in the

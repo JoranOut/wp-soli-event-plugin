@@ -1,7 +1,7 @@
 {
   "name": "event-reservation-popup",
   "version": "1.0.0",
-  "description": "",
+  "description": "Room reservation block: builds an e-mail request and shows room occupancy.",
   "main": "test.js",
   "scripts": {
     "build": "wp-scripts build src/index.js src/frontend.js",
@@ -14,25 +14,5 @@
   "license": "ISC",
   "devDependencies": {
     "@wordpress/scripts": "^37.0.0"
-  },
-  "dependencies": {
-    "@emotion/cache": "^11.14.0",
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@fullcalendar/bootstrap5": "^7.0.0",
-    "@fullcalendar/core": "^7.0.0",
-    "@fullcalendar/react": "^7.0.0",
-    "@mui/material": "^9.0.0",
-    "@mui/x-date-pickers": "^9.0.0",
-    "@reduxjs/toolkit": "^2.5.0",
-    "bootstrap": "^5.3.3",
-    "bootstrap-icons": "^1.11.3",
-    "dayjs": "^1.11.6",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-redux": "^9.2.0",
-    "reselect": "^5.1.1",
-    "temporal-polyfill": "^1.0.8",
-    "uuid": "^14.0.0"
   }
 }

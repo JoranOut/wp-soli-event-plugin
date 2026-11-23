@@ -1,2 +1,799 @@
-.soli-block-event-reservation-popup {
+// Room reservation tool. Takes its tokens from the soli.nl block theme
+// (wp-soli-gutenberg-theme) and falls back to the same values elsewhere.
+.soli-reserve {
+  --sr-maroon: var(--wp--preset--color--maroon, #7a1f2b);
+  --sr-maroon-dark: var(--wp--preset--color--maroon-dark, #5a1620);
+  --sr-gold: var(--wp--preset--color--gold, #c9a24a);
+  --sr-ink: var(--wp--preset--color--ink, #1a1a2e);
+  --sr-muted: var(--wp--preset--color--muted, #5a5a5e);
+  --sr-cream: var(--wp--preset--color--cream, #faf6ee);
+  --sr-paper: var(--wp--preset--color--paper, #f5efe6);
+  --sr-sand: var(--wp--preset--color--sand, #e8dcc6);
+  --sr-line: var(--wp--preset--color--line, #e6e2da);
+  --sr-white: var(--wp--preset--color--white, #fff);
+  --sr-display: var(--wp--preset--font-family--display, "Playfair Display", Georgia, serif);
+  --sr-serif: var(--wp--preset--font-family--serif, "Source Serif 4", Georgia, serif);
+  --sr-sans: var(--wp--preset--font-family--sans, "Inter", system-ui, -apple-system, sans-serif);
+  --sr-corner: 10px 10px 3px 10px;
+  --sr-input-border: color-mix(in srgb, var(--sr-ink) 42%, var(--sr-white));
+  --sr-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  container-type: inline-size;
+  color: var(--sr-ink);
+  font-family: var(--sr-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--sr-maroon) 22%, transparent);
+    color: var(--sr-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--sr-maroon);
+    outline-offset: 2px;
+  }
+
+  button,
+  input,
+  textarea {
+    font: inherit;
+    color: inherit;
+    margin: 0;
+  }
+
+  .screen-reader-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+.soli-reserve-icon {
+  flex: none;
+}
+
+// Layout: requests beside the letter on wide containers, stacked below that.
+
+.soli-reserve__layout {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+
+@container (min-width: 900px) {
+  .soli-reserve__layout {
+    grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr);
+    gap: 32px;
+  }
+
+  .soli-reserve__summary {
+    position: sticky;
+    top: 24px;
+  }
+}
+
+.soli-reserve__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+// Request card
+
+.soli-reserve-card {
+  margin: 0;
+  padding: 20px 22px 18px;
+  background: var(--sr-white);
+  border: 1px solid var(--sr-line);
+  border-radius: var(--sr-corner);
+  box-shadow: 0 1px 2px rgba(26, 26, 46, 0.04), 0 10px 24px rgba(26, 26, 46, 0.06);
+  animation: soli-reserve-in 260ms var(--sr-ease);
+}
+
+@keyframes soli-reserve-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.soli-reserve-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.soli-reserve-card__number {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--sr-maroon);
+  color: var(--sr-cream);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.soli-reserve-card__title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--sr-display);
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--sr-ink);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.soli-reserve-card__actions {
+  display: flex;
+  gap: 4px;
+}
+
+.soli-reserve-icon-button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--sr-muted);
+  cursor: pointer;
+  transition: background-color 160ms, color 160ms;
+
+  &:hover:not(:disabled) {
+    background: var(--sr-paper);
+    color: var(--sr-ink);
+  }
+
+  &.is-destructive:hover {
+    background: color-mix(in srgb, var(--sr-maroon) 10%, var(--sr-white));
+    color: var(--sr-maroon);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+// Fields
+
+.soli-reserve-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 14px;
+  align-items: end;
+}
+
+.soli-reserve-field {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+
+  > span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--sr-muted);
+
+    em {
+      font-style: normal;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: none;
+    }
+  }
+
+  &.is-date {
+    flex: 1 1 11rem;
+  }
+
+  &.is-time {
+    flex: 0 1 7.5rem;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 9px 12px;
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+    background: var(--sr-white);
+    border: 1px solid var(--sr-input-border);
+    border-radius: 8px;
+    transition: border-color 160ms, box-shadow 160ms;
+
+    &:hover {
+      border-color: var(--sr-ink);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--sr-maroon);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--sr-maroon) 18%, transparent);
+    }
+
+    &::placeholder {
+      color: color-mix(in srgb, var(--sr-ink) 52%, var(--sr-white));
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    line-height: 1.45;
+  }
+
+  input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+}
+
+.soli-reserve-toggle {
+  flex-basis: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--sr-muted);
+  cursor: pointer;
+
+  input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--sr-maroon);
+  }
+}
+
+// Rooms and the day strip
+
+.soli-reserve-rooms {
+  margin: 20px 0 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+
+  legend {
+    float: left;
+    padding: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--sr-muted);
+  }
+}
+
+.soli-reserve-rooms__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.soli-reserve-link {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--sr-maroon);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--sr-maroon-dark);
+    text-decoration-thickness: 2px;
+  }
+}
+
+.soli-reserve-strip {
+  --label: minmax(8rem, 10rem);
+
+  & + & {
+    margin-top: 14px;
+  }
+}
+
+.soli-reserve-strip__day {
+  margin: 0 0 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--sr-ink);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.soli-reserve-strip__grid {
+  display: grid;
+  grid-template-columns: var(--label) minmax(0, 1fr);
+  gap: 6px 10px;
+}
+
+.soli-reserve-axis {
+  grid-column: 2;
+  position: relative;
+  height: 16px;
+}
+
+.soli-reserve-axis__tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 16px;
+  color: var(--sr-muted);
+}
+
+.soli-reserve-row {
+  display: contents;
+}
+
+.soli-reserve-room {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 12px 0 9px;
+  border: 1px solid var(--sr-line);
+  border-radius: 999px;
+  background: var(--sr-white);
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 160ms, border-color 160ms;
+
+  &:hover {
+    border-color: var(--sr-input-border);
+  }
+
+  &[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--sr-maroon) 8%, var(--sr-white));
+    border-color: var(--sr-maroon);
+    font-weight: 600;
+  }
+}
+
+.soli-reserve-room__check {
+  flex: none;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--room, var(--sr-muted));
+  transition: background-color 160ms;
+
+  [aria-pressed="true"] > & {
+    background: var(--room, var(--sr-maroon));
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 1px;
+      width: 5px;
+      height: 9px;
+      border: solid var(--sr-white);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+.soli-reserve-room__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.soli-reserve-track {
+  position: relative;
+  min-height: 38px;
+  border-radius: 6px;
+  background-color: var(--sr-cream);
+  background-image: linear-gradient(to right, var(--sr-line) 1px, transparent 1px);
+  background-size: calc(100% / var(--hours, 17)) 100%;
+  box-shadow: inset 0 0 0 1px var(--sr-line);
+  overflow: hidden;
+
+  &.is-draggable {
+    cursor: crosshair;
+    touch-action: pan-y;
+    user-select: none;
+  }
+
+  > span {
+    position: absolute;
+    pointer-events: none;
+  }
+}
+
+.soli-reserve-busy {
+  top: 6px;
+  bottom: 6px;
+  border-radius: 4px;
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--sr-ink) 30%, transparent) 0 1.5px, transparent 1.5px 6px),
+    color-mix(in srgb, var(--sr-ink) 10%, var(--sr-cream));
+}
+
+.soli-reserve-slot {
+  top: 2px;
+  bottom: 2px;
+  border-radius: 5px;
+  border: 1.5px dashed color-mix(in srgb, var(--sr-maroon) 45%, transparent);
+  transition: left 200ms var(--sr-ease), width 200ms var(--sr-ease), background-color 160ms;
+
+  &.is-selected {
+    border: 2px solid var(--sr-maroon);
+    background: color-mix(in srgb, var(--sr-maroon) 16%, transparent);
+  }
+}
+
+.soli-reserve-clash {
+  top: 2px;
+  bottom: 2px;
+  background: repeating-linear-gradient(135deg, var(--sr-maroon) 0 4px, var(--sr-maroon-dark) 4px 8px);
+  opacity: 0.85;
+}
+
+.is-loading .soli-reserve-track {
+  background-image: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--sr-sand) 70%, transparent) 50%, transparent 100%);
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  animation: soli-reserve-shimmer 1.4s linear infinite;
+}
+
+@keyframes soli-reserve-shimmer {
+  from {
+    background-position: -50% 0;
+  }
+
+  to {
+    background-position: 150% 0;
+  }
+}
+
+.soli-reserve-strip__note {
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  color: var(--sr-muted);
+}
+
+.soli-reserve-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 12px 0 0;
+  font-size: 0.8125rem;
+  color: var(--sr-muted);
+}
+
+.soli-reserve-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  &::before {
+    content: "";
+    width: 22px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  &.is-busy::before {
+    background:
+      repeating-linear-gradient(135deg, color-mix(in srgb, var(--sr-ink) 30%, transparent) 0 1.5px, transparent 1.5px 6px),
+      color-mix(in srgb, var(--sr-ink) 10%, var(--sr-cream));
+  }
+
+  &.is-slot::before {
+    border: 2px solid var(--sr-maroon);
+    background: color-mix(in srgb, var(--sr-maroon) 16%, transparent);
+  }
+
+  &.is-clash::before {
+    background: repeating-linear-gradient(135deg, var(--sr-maroon) 0 4px, var(--sr-maroon-dark) 4px 8px);
+  }
+}
+
+.soli-reserve-legend__hint {
+  margin-left: auto;
+}
+
+// Messages
+
+.soli-reserve-card__messages {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.soli-reserve-message {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+
+  > svg {
+    margin-top: 2px;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  ul {
+    margin: 4px 0 6px;
+    padding-left: 18px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &.is-error {
+    background: color-mix(in srgb, var(--sr-maroon) 8%, var(--sr-white));
+    color: var(--sr-maroon-dark);
+  }
+
+  &.is-warning {
+    background: color-mix(in srgb, var(--sr-gold) 18%, var(--sr-white));
+    color: var(--sr-ink);
+
+    > svg {
+      color: color-mix(in srgb, var(--sr-gold) 55%, var(--sr-ink));
+    }
+  }
+}
+
+// Add button
+
+.soli-reserve-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 56px;
+  margin-top: 16px;
+  border: 1.5px dashed color-mix(in srgb, var(--sr-maroon) 45%, transparent);
+  border-radius: var(--sr-corner);
+  background: transparent;
+  color: var(--sr-maroon);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms, border-color 160ms;
+
+  &:hover {
+    background: var(--sr-cream);
+    border-color: var(--sr-maroon);
+  }
+}
+
+// Summary and letter
+
+.soli-reserve__summary {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  background: var(--sr-paper);
+  border-radius: var(--sr-corner);
+}
+
+.soli-reserve__summary-title {
+  margin: 0;
+  font-family: var(--sr-display);
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.soli-reserve-letter {
+  margin: 4px 0 0;
+  background: var(--sr-white);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(26, 26, 46, 0.06), 0 8px 20px rgba(26, 26, 46, 0.08);
+}
+
+.soli-reserve-letter__meta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 12px;
+  margin: 0;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--sr-line);
+  font-size: 0.8125rem;
+
+  dt {
+    color: var(--sr-muted);
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-weight: 600;
+
+    em {
+      font-style: normal;
+      font-weight: 400;
+      color: var(--sr-muted);
+    }
+  }
+}
+
+.soli-reserve-letter__body {
+  max-height: 24rem;
+  overflow: auto;
+  padding: 16px 18px 20px;
+  font-family: var(--sr-serif);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+
+.soli-reserve-todo {
+  font-size: 0.875rem;
+  color: var(--sr-maroon-dark);
+
+  p {
+    margin: 0 0 2px;
+    font-weight: 600;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  li::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.soli-reserve-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.soli-reserve-button {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 11px 22px;
+  border: 1px solid var(--sr-maroon);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--sr-maroon);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 160ms, color 160ms, border-color 160ms;
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--sr-maroon) 8%, transparent);
+  }
+
+  &.is-primary {
+    background: var(--sr-maroon);
+    color: var(--sr-cream);
+
+    &:hover:not(:disabled) {
+      background: var(--sr-maroon-dark);
+      border-color: var(--sr-maroon-dark);
+      color: var(--sr-cream);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.soli-reserve-footnote {
+  margin: -4px 0 0;
+  font-size: 0.8125rem;
+  color: var(--sr-muted);
+}
+
+// Narrow containers
+
+@container (max-width: 560px) {
+  .soli-reserve-card {
+    padding: 16px 14px 14px;
+  }
+
+  .soli-reserve-strip {
+    --label: 8.25rem;
+  }
+
+  .soli-reserve-strip__grid {
+    column-gap: 8px;
+  }
+
+  .soli-reserve-room {
+    gap: 6px;
+    padding: 0 8px 0 6px;
+    font-size: 0.8125rem;
+  }
+
+  .soli-reserve-room__check {
+    width: 16px;
+    height: 16px;
+
+    [aria-pressed="true"] > &::after {
+      left: 3.5px;
+      top: 0.5px;
+    }
+  }
+
+  .soli-reserve-axis__tick.is-odd {
+    display: none;
+  }
+
+  .soli-reserve-legend__hint {
+    margin-left: 0;
+  }
+
+  .soli-reserve__summary {
+    padding: 18px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soli-reserve-card,
+  .is-loading .soli-reserve-track {
+    animation: none;
+  }
+
+  .soli-reserve-slot {
+    transition: none;
+  }
 }
