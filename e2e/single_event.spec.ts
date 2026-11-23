@@ -181,7 +181,7 @@ test.describe('Event Tests',  () => {
         await expect(eventLink).toBeVisible();
     });
 
-    test('Calendar page reservation popup shows correct event details', async ({ admin, page, editor }) => {
+    test('Calendar page reservation tool shows the event room as in use', async ({ admin, page, editor }) => {
         const eventCtx = await createSingleEvent(
             { admin, page },
             {
@@ -194,16 +194,16 @@ test.describe('Event Tests',  () => {
 
         await createCalendarPage({ admin, page, editor });
 
-        // Open reservation popup. The tool lists every event, so scope to the
-        // link for our unique event rather than assuming a single result.
-        await page.getByRole('button', { name: 'Reserve' }).click();
-        const detail = page.getByRole('link').filter({ hasText: eventCtx.title });
-        await expect(detail).toContainText(
-            `${eventCtx.title} - Grote zaal`,
+        // The tool shows occupancy per room without event titles; other tests
+        // may book the same room today, so only check that our range is listed.
+        const today = new Date();
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const tool = page.locator('.soli-reserve');
+        await tool.getByLabel('Day', { exact: true })
+            .fill(`${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`);
+        await expect(tool.getByRole('button', { name: /^Grote zaal/ })).toContainText(
+            `${eventCtx.startTime}–${eventCtx.endTime}`,
             { timeout: 30000 }
-        );
-        await expect(detail).toContainText(
-            timeRange(eventCtx.startTime, eventCtx.endTime)
         );
     });
 
