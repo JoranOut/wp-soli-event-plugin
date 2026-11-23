@@ -37,6 +37,10 @@ class SoliBlockEventViewCalendar {
     if (!empty($attributes['show_rooms_filter'])) {
         $classes[] = 'show-rooms-filter';
     }
+    // Defaults to on; WordPress omits an attribute that equals its default.
+    if (!isset($attributes['show_category_filter']) || $attributes['show_category_filter']) {
+        $classes[] = 'show-category-filter';
+    }
 
     ob_start();?>
     <div class="<?php echo esc_attr(implode(' ', $classes)); ?>"></div>

@@ -76,6 +76,15 @@ being public. Workflow states (`PENDING_APPROVAL` / `PLANNED` / `OPTION`) and `C
 - Data via `EventsDatesTableHandler::getBuildingFutureDatesForFeed($room_slugs)`. The seeder fixes the token
   to `viz-building-token`; spec in `e2e/ical-building-feed.spec.ts`.
 
+### Calendar orchestra filter
+
+The event-view-calendar block shows an "All orchestras" multi-select listing every category under the
+`orkesten` parent (`OrkestenCategories::terms()`, via `GET /soli_event/v1/orkesten-categories`). Nothing
+ticked means no filter; otherwise a date shows when its event is in any ticked category. Filtering is
+client-side: `GET /events?start_date&end_date` returns `category_ids` per row. The block attribute
+`show_category_filter` defaults to on (PHP treats a missing attribute as on); the admin Calendar View always
+shows it. A site without an `orkesten` parent renders no dropdown. Spec: `e2e/calendar-category-filter.spec.ts`.
+
 ### calendar-subscribe block (`soli/calendar-subscribe`)
 
 Interactive promo widget (`events/blocks/calendar-subscribe/`) that builds a live `/ical` subscribe URL. The

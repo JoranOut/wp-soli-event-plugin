@@ -185,6 +185,27 @@ $catalogue['mg-a-planned'] = $make_cat_event('mg-a-planned', $cat_mg_a, 'PLANNED
 $catalogue['mg-a-public']  = $make_cat_event('mg-a-public', $cat_mg_a, 'PUBLIC', 3, false);
 $catalogue['mg-b-planned'] = $make_cat_event('mg-b-planned', $cat_mg_b, 'PLANNED', 2, false);
 
+/* ---- 3c2. Calendar orchestra filter ---------------------------------- */
+// Two orchestra categories under an 'orkesten' parent, each with one PUBLIC
+// non-concert date on the same day (so they share a calendar month and never
+// become the concert hero's "next concert").
+$ensure_child_cat = function ($slug, $name, $parent_id) {
+	$term = get_term_by('slug', $slug, 'category');
+	if ($term) {
+		wp_update_term((int) $term->term_id, 'category', array('parent' => $parent_id));
+		return (int) $term->term_id;
+	}
+	$res = wp_insert_term($name, 'category', array('slug' => $slug, 'parent' => $parent_id));
+	return is_wp_error($res) ? 0 : (int) $res['term_id'];
+};
+$cat_orkesten = $ensure_cat('orkesten', 'Orkesten');
+$cat_ork_a    = $ensure_child_cat('viz-ork-a', 'VIZ Orkest A', $cat_orkesten);
+$cat_ork_b    = $ensure_child_cat('viz-ork-b', 'VIZ Orkest B', $cat_orkesten);
+
+$catalogue['ork-a'] = $make_cat_event('ork-a', $cat_ork_a, 'PUBLIC', 1, false);
+$catalogue['ork-b'] = $make_cat_event('ork-b', $cat_ork_b, 'PUBLIC', 1, false);
+$catalogue['_categories'] += array('orkesten' => $cat_orkesten, 'viz-ork-a' => $cat_ork_a, 'viz-ork-b' => $cat_ork_b);
+
 /* ---- 3d. Location-map fixtures --------------------------------------- */
 // Two seeded venues with pre-cached coordinates (geocoded_address matches the
 // address, so rendering never calls the remote geocoder in tests) and one

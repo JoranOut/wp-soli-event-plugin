@@ -54,8 +54,9 @@ test.describe('Concert Hero Block', () => {
 
     test('never shows an Orchestra row for categories outside the orkesten parent', async ({ admin, page, editor }) => {
         // The run env seeds several categories (viz-mg-a, nc1, ...) and assigns
-        // them to concert events, but none of them live under an 'orkesten'
-        // parent - no such parent even exists here. Whatever concert the hero
+        // them to concert events, but none of them live under the 'orkesten'
+        // parent; the seeded orkesten children only carry non-concert dates.
+        // Whatever concert the hero
         // resolves as "next", those categories are not orchestras, so the card
         // must never grow an Orchestra row.
         await createSingleEvent({ admin, page }, { title: uniqueTitle('Hero No Orchestra') });
