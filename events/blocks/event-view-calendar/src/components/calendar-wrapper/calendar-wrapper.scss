@@ -31,6 +31,16 @@
     --fc-classic-event-contrast: #fff;
   }
 
+  /* FullCalendar sets each event's text to --fc-event-contrast-color, which
+     resolves this token on the event itself. Black or white per background
+     (sand, maroon, or a room color in the rooms view), in every view. The
+     doubled class matches the concert rule above, so this one wins. */
+  @supports (color: contrast-color(red)) {
+    .soli-event.soli-event {
+      --fc-classic-event-contrast: contrast-color(var(--fc-event-color));
+    }
+  }
+
   .soli-event.private-event .soli-cal-event-title {
     padding-left: 17px;
     position: relative;
@@ -156,9 +166,11 @@
   }
 
   /* --- event pills ---------------------------------------------------------
-     Sand pill with ink text; concerts flip to maroon with white text. */
+     The pill takes FullCalendar's per-event --fc-event-color (sand, maroon for
+     concerts, or a room color) and its contrast color from the token above. */
   .soli-cal-row-event.soli-event {
-    background: var(--soli-cal-sand);
+    background: var(--fc-event-color);
+    color: var(--fc-event-contrast-color);
     border: 0;
     border-radius: 5px;
     padding: 0.18rem 0.4rem;
@@ -167,7 +179,6 @@
     font-size: 11.5px;
     font-weight: 400;
     line-height: 1.25;
-    color: var(--soli-cal-ink);
 
     * {
       color: inherit;
@@ -178,11 +189,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-
-    &.concert-event {
-      background: var(--soli-cal-maroon);
-      color: #fff;
     }
 
     /* Replace the theme's focus outline with a subtle maroon ring. */
