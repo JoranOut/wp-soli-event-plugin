@@ -15,13 +15,14 @@ wp.blocks.registerBlockType("soli/event-view-calendar", {
         adjustable: { type: 'boolean', default: false },
         only_concerts: { type: 'boolean', default: false },
         show_rooms_filter: { type: 'boolean', default: false },
+        show_category_filter: { type: 'boolean', default: true },
     },
     edit: EditComponent
 })
 
 function EditComponent({ attributes, setAttributes }) {
     const blockProps = useBlockProps();
-    const { calendar_type, adjustable, only_concerts, show_rooms_filter } = attributes;
+    const { calendar_type, adjustable, only_concerts, show_rooms_filter, show_category_filter } = attributes;
 
     return (
         <div {...blockProps}>
@@ -52,6 +53,11 @@ function EditComponent({ attributes, setAttributes }) {
                         checked={!!show_rooms_filter}
                         onChange={(value) => setAttributes({ show_rooms_filter: value })}
                     />
+                    <ToggleControl
+                        label={__("Show orchestra filter", "soli-event")}
+                        checked={!!show_category_filter}
+                        onChange={(value) => setAttributes({ show_category_filter: value })}
+                    />
                 </PanelBody>
             </InspectorControls>
 
@@ -62,6 +68,7 @@ function EditComponent({ attributes, setAttributes }) {
                     adjustable={adjustable}
                     onlyConcerts={only_concerts}
                     showRoomsFilter={show_rooms_filter}
+                    showCategoryFilter={show_category_filter}
                 />
             </EditorStyleScope>
         </div>

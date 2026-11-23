@@ -3,13 +3,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Soli Event Plugin 1.1.3\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-soli-event-plugin\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/app\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-23T08:38:02+00:00\n"
+"POT-Creation-Date: 2026-11-23T20:53:44+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: soli-event\n"
@@ -448,7 +448,7 @@ msgstr ""
 msgid "This page displays various calendar views for managing your events."
 msgstr ""
 
-#: events/lib/events_endpoints.php:44
+#: events/lib/events_endpoints.php:56
 #: events/lib/location_endpoints.php:69
 msgid "Invalid request arguments."
 msgstr ""
@@ -591,7 +591,7 @@ msgid "You are not allowed to do this."
 msgstr ""
 
 #: events/lib/plugin_settings_page.php:83
-#: events/blocks/event-view-calendar/src/index.js:29
+#: events/blocks/event-view-calendar/src/index.js:30
 #: events/blocks/event-view-list/src/index.js:32
 msgid "Settings"
 msgstr ""
@@ -832,7 +832,7 @@ msgstr ""
 
 #: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:192
 #: events/blocks/create-event/src/components/events-provider/events-provider.js:32
-#: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:119
+#: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:125
 #: events/blocks/event-view-list/src/components/events-provider/events-provider.js:45
 #, js-format
 msgid "Error: %s"
@@ -1219,7 +1219,7 @@ msgid "First day"
 msgstr ""
 
 #: events/blocks/event-reservation-popup/src/components/request-card.js:80
-#: events/blocks/event-view-calendar/src/index.js:36
+#: events/blocks/event-view-calendar/src/index.js:37
 msgid "Day"
 msgstr ""
 
@@ -1450,12 +1450,26 @@ msgstr ""
 msgid "[Your name]"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:45
+#: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:49
 msgid "Concerts only"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:51
+#: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:55
 msgid "Music centre only"
+msgstr ""
+
+#: events/blocks/event-view-calendar/src/components/category-dropdown/category-dropdown.js:51
+msgid "All orchestras"
+msgstr ""
+
+#. translators: 1: first selected orchestra, 2: number of other selected orchestras
+#: events/blocks/event-view-calendar/src/components/category-dropdown/category-dropdown.js:57
+#, js-format
+msgid "%1$s +%2$d"
+msgstr ""
+
+#: events/blocks/event-view-calendar/src/components/category-dropdown/category-dropdown.js:69
+msgid "Filter by orchestra"
 msgstr ""
 
 #: events/blocks/event-view-calendar/src/components/event-detail-pop-up/event-detail-pop-up.js:80
@@ -1466,7 +1480,7 @@ msgstr ""
 msgid "View event →"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:131
+#: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:137
 msgid "Loading events…"
 msgstr ""
 
@@ -1474,29 +1488,33 @@ msgstr ""
 msgid "Event View Calendar"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:31
+#: events/blocks/event-view-calendar/src/index.js:32
 msgid "Default view"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:34
+#: events/blocks/event-view-calendar/src/index.js:35
 msgid "Month"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:35
+#: events/blocks/event-view-calendar/src/index.js:36
 msgid "Week"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:41
+#: events/blocks/event-view-calendar/src/index.js:42
 msgid "Allow switching views"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:46
+#: events/blocks/event-view-calendar/src/index.js:47
 #: events/blocks/next-concert/src/index.js:53
 msgid "Only concerts"
 msgstr ""
 
-#: events/blocks/event-view-calendar/src/index.js:51
+#: events/blocks/event-view-calendar/src/index.js:52
 msgid "Show rooms filter"
+msgstr ""
+
+#: events/blocks/event-view-calendar/src/index.js:57
+msgid "Show orchestra filter"
 msgstr ""
 
 #: events/blocks/event-view-list/src/components/event-list-item/event-list-item.js:29

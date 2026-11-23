@@ -448,7 +448,7 @@ msgstr "Kalenderweergave"
 msgid "This page displays various calendar views for managing your events."
 msgstr "Deze pagina toont verschillende kalenderweergaven om je evenementen te beheren."
 
-#: events/lib/events_endpoints.php:44
+#: events/lib/events_endpoints.php:56
 #: events/lib/location_endpoints.php:69
 msgid "Invalid request arguments."
 msgstr "Ongeldige aanvraagparameters."
@@ -591,7 +591,7 @@ msgid "You are not allowed to do this."
 msgstr "Je hebt geen toestemming om dit te doen."
 
 #: events/lib/plugin_settings_page.php:83
-#: events/blocks/event-view-calendar/src/index.js:29
+#: events/blocks/event-view-calendar/src/index.js:30
 #: events/blocks/event-view-list/src/index.js:32
 msgid "Settings"
 msgstr "Instellingen"
@@ -832,7 +832,7 @@ msgstr "Evenementgegevens zijn opgeslagen, maar konden niet opnieuw worden gelad
 
 #: events/blocks/create-event/src/components/events-provider/admin-events-provider.js:192
 #: events/blocks/create-event/src/components/events-provider/events-provider.js:32
-#: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:119
+#: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:125
 #: events/blocks/event-view-list/src/components/events-provider/events-provider.js:45
 #, js-format
 msgid "Error: %s"
@@ -1219,7 +1219,7 @@ msgid "First day"
 msgstr "Eerste dag"
 
 #: events/blocks/event-reservation-popup/src/components/request-card.js:80
-#: events/blocks/event-view-calendar/src/index.js:36
+#: events/blocks/event-view-calendar/src/index.js:37
 msgid "Day"
 msgstr "Dag"
 
@@ -1450,11 +1450,11 @@ msgstr "[zalen nog te kiezen]"
 msgid "[Your name]"
 msgstr "[Je naam]"
 
-#: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:45
+#: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:49
 msgid "Concerts only"
 msgstr "Alleen concerten"
 
-#: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:51
+#: events/blocks/event-view-calendar/src/components/calendar-filter/calendar-filter.js:55
 msgid "Music centre only"
 msgstr "Alleen muziekcentrum"
 
@@ -1466,7 +1466,7 @@ msgstr "Activiteit"
 msgid "View event →"
 msgstr "Bekijk evenement →"
 
-#: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:131
+#: events/blocks/event-view-calendar/src/components/events-provider/events-provider.js:137
 msgid "Loading events…"
 msgstr "Evenementen laden…"
 
@@ -1474,28 +1474,28 @@ msgstr "Evenementen laden…"
 msgid "Event View Calendar"
 msgstr "Evenementenkalender"
 
-#: events/blocks/event-view-calendar/src/index.js:31
+#: events/blocks/event-view-calendar/src/index.js:32
 msgid "Default view"
 msgstr "Standaardweergave"
 
-#: events/blocks/event-view-calendar/src/index.js:34
+#: events/blocks/event-view-calendar/src/index.js:35
 msgid "Month"
 msgstr "Maand"
 
-#: events/blocks/event-view-calendar/src/index.js:35
+#: events/blocks/event-view-calendar/src/index.js:36
 msgid "Week"
 msgstr "Week"
 
-#: events/blocks/event-view-calendar/src/index.js:41
+#: events/blocks/event-view-calendar/src/index.js:42
 msgid "Allow switching views"
 msgstr "Wisselen van weergave toestaan"
 
-#: events/blocks/event-view-calendar/src/index.js:46
+#: events/blocks/event-view-calendar/src/index.js:47
 #: events/blocks/next-concert/src/index.js:53
 msgid "Only concerts"
 msgstr "Alleen concerten"
 
-#: events/blocks/event-view-calendar/src/index.js:51
+#: events/blocks/event-view-calendar/src/index.js:52
 msgid "Show rooms filter"
 msgstr "Ruimtefilter tonen"
 
@@ -1588,3 +1588,21 @@ msgstr "Inleidende tekst"
 #: events/blocks/next-concert/src/index.js:79
 msgid "Button"
 msgstr "Knop"
+
+#: events/blocks/event-view-calendar/src/index.js:57
+msgid "Show orchestra filter"
+msgstr "Orkestfilter tonen"
+
+#: events/blocks/event-view-calendar/src/components/category-dropdown/category-dropdown.js:51
+msgid "All orchestras"
+msgstr "Alle orkesten"
+
+#: events/blocks/event-view-calendar/src/components/category-dropdown/category-dropdown.js:69
+msgid "Filter by orchestra"
+msgstr "Filter op orkest"
+
+#. translators: 1: first selected orchestra, 2: number of other selected orchestras
+#: events/blocks/event-view-calendar/src/components/category-dropdown/category-dropdown.js:57
+#, js-format
+msgid "%1$s +%2$d"
+msgstr "%1$s +%2$d"

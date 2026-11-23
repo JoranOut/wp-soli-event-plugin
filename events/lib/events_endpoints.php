@@ -6,6 +6,7 @@ function soli_event_rest_api() {
   buildGETEventDatesFromEvent();
   buildGETFutureEventsByPageAndItemsPerPage();
   buildGETFeedCategories();
+  buildGETOrkestenCategories();
   buildPOSTEventDates();
 }
 
@@ -26,6 +27,17 @@ function buildGETFeedCategories() {
         );
       }, is_array($categories) ? $categories : array());
       return new WP_REST_Response($categories, 200);
+    },
+  ));
+}
+
+// Orchestra categories for the calendar block's category filter.
+function buildGETOrkestenCategories() {
+  register_rest_route('soli_event/v1', '/orkesten-categories', array(
+    'methods' => 'GET',
+    'permission_callback' => '__return_true', // *always set a permission callback
+    'callback' => function () {
+      return new WP_REST_Response(\Soli\Events\OrkestenCategories::terms(), 200);
     },
   ));
 }

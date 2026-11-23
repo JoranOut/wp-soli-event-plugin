@@ -5,8 +5,9 @@ import Switch from '@mui/material/Switch';
 import {useState} from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import RoomsDropdown from "../rooms-dropdown/rooms-dropdown";
+import CategoryDropdown from "../category-dropdown/category-dropdown";
 
-export default function CalendarFilter({filters, onChange, showRoomFilters}) {
+export default function CalendarFilter({filters, onChange, showRoomFilters, showCategoryFilter, categoryIds, onCategoryChange}) {
     const [_concertOnly, setConcertOnly] = useState(filters ? filters.includes("only-concerts") : false);
     const [_internalEventsOnly, setInternalEventsOnly] = useState(filters ? filters.includes("only-internal") : false);
 
@@ -40,6 +41,9 @@ export default function CalendarFilter({filters, onChange, showRoomFilters}) {
 
     return (
         <FormGroup className={"calendar-filter"}>
+            {showCategoryFilter && (
+                <CategoryDropdown categoryIds={categoryIds} onChange={onCategoryChange}/>
+            )}
             <FormControlLabel
                 control={<Switch checked={_concertOnly} onChange={(e) => updateConcertOnly(e.target.checked)} />}
                 label={__("Concerts only", "soli-event")}

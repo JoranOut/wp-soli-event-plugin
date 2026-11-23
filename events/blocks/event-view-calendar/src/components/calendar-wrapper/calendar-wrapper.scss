@@ -346,18 +346,41 @@
    zero-height row that overflows onto the toolbar below keeps every ancestor
    unpositioned: the event-detail popup positions itself with document
    coordinates and must not gain a positioned ancestor. */
-@media (min-width: 768px) {
-  .block-event-view-calendar:not(.show-rooms-filter) {
-    .calendar-filter.calendar-filter {
-      height: 0;
-      overflow: visible;
-      align-items: center;
-      z-index: 1;
+@mixin lifted-filter-row {
+  .calendar-filter.calendar-filter {
+    height: 0;
+    overflow: visible;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    padding: 0;
 
-      > * {
-        height: 38px;
-        margin: 0;
-      }
+    /* Positioned children paint above the toolbar that overlaps them. */
+    > * {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      height: 38px;
+      margin: 0;
     }
   }
+}
+
+@media (min-width: 768px) {
+  .block-event-view-calendar:not(.show-rooms-filter):not(.show-category-filter) {
+    @include lifted-filter-row;
+  }
+}
+
+/* The orchestra dropdown only fits beside the title on a wide toolbar;
+   narrower, the filter row stays above the toolbar. */
+@media (min-width: 1100px) {
+  .block-event-view-calendar.show-category-filter:not(.show-rooms-filter) {
+    @include lifted-filter-row;
+  }
+}
+
+/* Above the toolbar, the row needs space of its own. */
+.block-event-view-calendar .calendar-filter.calendar-filter {
+  padding-bottom: 1.2rem;
 }
