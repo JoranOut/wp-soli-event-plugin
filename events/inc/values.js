@@ -48,7 +48,7 @@ export const EVENT_STATUS_COLOR = {
 
 export const ROOM_COLORS = {
     "grote-zaal": "#2d7d8e",
-    "spiegelzaal": "#5a8e2b",
+    "spiegelzaal": "#4c7a24",
     "garderobe": "#845d95",
     "studio-1": "#936a50",
     "studio-2": "#455787",
