@@ -385,8 +385,11 @@ class EventsDatesTableHandler {
               and $status_clause;", $params);
     $results = $this->wpdb->get_results($query, ARRAY_A);
     $results = $this->appendGUID($results);
-    $results = array_map(function($date) {
+    $logged_in = is_user_logged_in();
+    $results = array_map(function($date) use ($logged_in) {
       $date['hide_in_calendar'] = (bool) $date['hide_in_calendar'];
+      // Lets the admin Calendar View offer an edit link only where it works.
+      $date['can_edit'] = $logged_in && current_user_can('edit_post', (int) $date['ID']);
       return $date;
     }, $results);
     return $this->castIsConcertToBoolean($results);

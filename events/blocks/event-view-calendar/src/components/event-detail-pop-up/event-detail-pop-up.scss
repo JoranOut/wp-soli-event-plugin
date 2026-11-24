@@ -123,4 +123,27 @@
       color: #fff;
     }
   }
+
+  .popup-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+
+    .popup-link {
+      margin-top: 0;
+    }
+  }
+
+  // Secondary to "View event": outlined instead of filled.
+  .popup-edit-link {
+    background: transparent;
+    color: var(--soli-pop-maroon);
+    box-shadow: inset 0 0 0 1px var(--soli-pop-maroon);
+
+    &:hover {
+      background: var(--soli-pop-maroon);
+      color: #fff;
+    }
+  }
 }

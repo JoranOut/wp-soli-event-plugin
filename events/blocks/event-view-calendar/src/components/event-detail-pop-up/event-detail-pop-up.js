@@ -91,12 +91,28 @@ export default function EventDetailPopUp(props) {
                                 ? <p className="popup-location">{location}</p>
                                 : null;
                         })()}
-                        <a className="popup-link" href={props.event.url}>{__('View event →', 'soli-event')}</a>
+                        <div className="popup-links">
+                            <a className="popup-link" href={props.event.url}>{__('View event →', 'soli-event')}</a>
+                            {props.editUrl && props.event.extendedProps?.canEdit && (
+                                <a className="popup-link popup-edit-link" href={editLink(props.editUrl, props.event)}>
+                                    {__('Edit', 'soli-event')}
+                                </a>
+                            )}
+                        </div>
                     </div>
                 </div>
             }
         </>
     );
+}
+
+// Opens the post editor with the create-event block's date list on this date.
+function editLink(editUrl, event) {
+    const url = new URL(editUrl, window.location.href);
+    url.searchParams.set('post', event.extendedProps.postId);
+    url.searchParams.set('action', 'edit');
+    url.searchParams.set('soli_event_date', event.extendedProps.dateId);
+    return url.toString();
 }
 
 const useOutsideClick = (ref, callback) => {

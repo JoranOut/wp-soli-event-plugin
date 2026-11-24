@@ -10,6 +10,8 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import {renderTimeViewClock} from '@mui/x-date-pickers/timeViewRenderers';
 
+dayjs.extend(customParseFormat);
+
 // MUI X 8+ keeps a half-typed field only while its `value` prop follows every
 // onChange, invalid dates included. The range below ignores invalid dates, so
 // each picker holds its own input value and resyncs when the range changes.
@@ -38,8 +40,6 @@ function DateRangePicker(props) {
 
     const [validStartDate, setValidStartDate] = useState(true);
     const [validEndDate, setValidEndDate] = useState(true);
-
-    dayjs.extend(customParseFormat);
 
     const dateInput1 = useRef();
     const dateInput2 = useRef();

@@ -21,11 +21,15 @@ divsToUpdate.forEach(function (div) {
 
     const showHiddenInCalendar = div.classList.contains("show-hidden-in-calendar");
 
+    // Only the admin Calendar View sets this; the public block has no edit link.
+    const editUrl = div.dataset.editUrl || null;
+
     render(<CalendarWrapper className="alignwide"
                             calendarType={calendarType}
                             adjustable={adjustable}
                             onlyConcerts={onlyConcerts}
                             showRoomsFilter={showRoomsFilter}
                             showCategoryFilter={showCategoryFilter}
-                            showHiddenInCalendar={showHiddenInCalendar}/>, div)
+                            showHiddenInCalendar={showHiddenInCalendar}
+                            editUrl={editUrl}/>, div)
 })

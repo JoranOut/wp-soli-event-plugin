@@ -55,7 +55,16 @@ function AdminSaveBridge({postId, persistedHash, onPersisted}) {
                 unlockPostSaving(INVALID_SAVE_LOCK);
             }
         };
-        const observer = new MutationObserver(sync);
+        // Picker focus and hover flip classes constantly; check once per frame.
+        let frame = 0;
+        const scheduleSync = () => {
+            if (frame) return;
+            frame = requestAnimationFrame(() => {
+                frame = 0;
+                sync();
+            });
+        };
+        const observer = new MutationObserver(scheduleSync);
         observer.observe(document.body, {
             subtree: true,
             attributes: true,
@@ -64,6 +73,7 @@ function AdminSaveBridge({postId, persistedHash, onPersisted}) {
         sync();
         return () => {
             observer.disconnect();
+            cancelAnimationFrame(frame);
             unlockPostSaving(INVALID_SAVE_LOCK);
         };
     }, [lockPostSaving, unlockPostSaving]);

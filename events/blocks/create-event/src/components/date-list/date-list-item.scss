@@ -18,6 +18,12 @@
     }
   }
 
+  // The date opened from the admin Calendar View.
+  &.highlighted {
+    background: #fff8e1;
+    box-shadow: inset 3px 0 0 #f0b849;
+  }
+
   &:last-child {
     border: none;
   }
