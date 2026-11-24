@@ -297,6 +297,43 @@ test.describe('Create-event block with many dates', () => {
         await expect(canvas.locator('.date-list-range')).toHaveText('Dates 101–120 of 300');
     });
 
+    test('the cog menu closes on an outside click or Escape, not while its modal is open', async ({ admin, page, requestUtils }) => {
+        const { postId, rows } = await seed(requestUtils, 0, 3);
+        const canvas = await openEditor(admin, page, postId);
+        const row = canvas.locator(`.date-list-item[data-date-id="${rows[1].id}"]`);
+        const cog = row.locator('.more-dropdown > .image-button');
+        const menu = row.locator('.more-dropdown-options');
+
+        // A click elsewhere in the editor canvas.
+        await cog.click();
+        await expect(menu).toBeVisible();
+        await canvas.getByRole('heading', { name: 'All dates' }).click();
+        await expect(menu).toBeHidden();
+
+        // A click in the editor chrome, outside the canvas iframe.
+        await cog.click();
+        await expect(menu).toBeVisible();
+        await page.locator('.editor-header').click({ position: { x: 5, y: 5 } });
+        await expect(menu).toBeHidden();
+
+        await cog.click();
+        await page.keyboard.press('Escape');
+        await expect(menu).toBeHidden();
+
+        // Clicks inside the notes modal keep the menu, and with it the modal, open.
+        await cog.click();
+        await menu.getByRole('button', { name: 'Add notes' }).click();
+        const modal = page.getByRole('dialog', { name: 'Notepad' });
+        await expect(modal).toBeVisible();
+        await modal.getByText('These notes will only be visible in the admin area.').click();
+        await expect(modal).toBeVisible();
+        await modal.getByRole('button', { name: 'Close', exact: true }).last().click();
+        await expect(modal).toBeHidden();
+        await expect(menu).toBeVisible();
+        await canvas.getByRole('heading', { name: 'All dates' }).click();
+        await expect(menu).toBeHidden();
+    });
+
     test('a date without a status the dropdown offers shows OPTION', async ({ admin, page, requestUtils }) => {
         // PLANNED is the table default; the dropdown has no entry for it or for an empty status.
         const dates = weekly(0, 3).map((d, i) => ({ ...d, status: ['PLANNED', '', 'PUBLIC'][i] }));

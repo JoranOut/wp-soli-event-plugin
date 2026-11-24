@@ -12,24 +12,34 @@ export default function MoreDropdown({label, children, dropdownActive}) {
         setOpen(!open);
     };
 
-    // Close when clicking outside
+    // Close on a click outside or Escape. The block renders in the editor
+    // iframe, so listen on its own document and on the top document (sidebar,
+    // header). An option's open modal pauses this until it closes.
     useEffect(() => {
+        if (!open || isOptionOpen) return;
+
+        const close = () => {
+            dropdownActive(false);
+            setOpen(false);
+        };
         const handleOutsideClick = (e) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-                dropdownActive(false);
-                setOpen(false);
+                close();
             }
         };
-
-        if (open && !isOptionOpen) {
-            document.addEventListener('mousedown', handleOutsideClick);
-        } else {
-            document.removeEventListener('mousedown', handleOutsideClick);
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleOutsideClick);
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') close();
         };
+
+        const docs = [...new Set([dropdownRef.current?.ownerDocument, document].filter(Boolean))];
+        docs.forEach((doc) => {
+            doc.addEventListener('mousedown', handleOutsideClick);
+            doc.addEventListener('keydown', handleKeyDown);
+        });
+        return () => docs.forEach((doc) => {
+            doc.removeEventListener('mousedown', handleOutsideClick);
+            doc.removeEventListener('keydown', handleKeyDown);
+        });
     }, [open, isOptionOpen]);
 
     return (
