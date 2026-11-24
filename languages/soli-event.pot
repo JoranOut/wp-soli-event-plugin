@@ -647,6 +647,7 @@ msgid "No locations yet."
 msgstr ""
 
 #: events/lib/locations_admin_page.php:146
+#: events/blocks/event-view-calendar/src/components/event-detail-pop-up/event-detail-pop-up.js
 msgid "Edit"
 msgstr ""
 
@@ -965,6 +966,48 @@ msgstr ""
 #: events/blocks/create-event/src/components/date-list/date-list.js:57
 msgid "All dates"
 msgstr ""
+
+#. translators: 1: first shown date number, 2: last shown date number, 3: total number of dates
+#: events/blocks/create-event/src/components/date-list/date-list.js
+#, js-format
+msgid "Dates %1$d–%2$d of %3$d"
+msgstr ""
+
+#: events/blocks/create-event/src/components/date-list/date-list.js
+msgid "Go to date"
+msgstr ""
+
+#: events/blocks/create-event/src/components/date-list/date-list.js
+msgid "Upcoming"
+msgstr ""
+
+#: events/blocks/create-event/src/components/date-list/date-list.js
+msgid "Show all"
+msgstr ""
+
+#. translators: %d: number of dates not shown
+#: events/blocks/create-event/src/components/date-list/date-list.js
+#, js-format
+msgid "%d hidden"
+msgid_plural "%d hidden"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of dates that become visible
+#: events/blocks/create-event/src/components/date-list/date-list.js
+#, js-format
+msgid "Show %d earlier date"
+msgid_plural "Show %d earlier dates"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of dates that become visible
+#: events/blocks/create-event/src/components/date-list/date-list.js
+#, js-format
+msgid "Show %d later date"
+msgid_plural "Show %d later dates"
+msgstr[0] ""
+msgstr[1] ""
 
 #: events/blocks/create-event/src/components/daterange-picker/daterange-picker.js:125
 msgid "to"

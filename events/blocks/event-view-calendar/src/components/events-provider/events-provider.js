@@ -37,6 +37,7 @@ export default function EventsProvider({setEvents, range, filters, categoryIds =
                 return {
                     ...event,
                     id: `${event.id}.${index}`,
+                    date_id: event.id,
                     post_title: `${event.post_title} - ${roomName}`,
                     rooms: JSON.stringify([room]),
                     color: ROOM_COLORS[room]

@@ -26,7 +26,7 @@ const setDefaultFilters = (onlyConcerts, onlyInternal) => {
     return [...concertFilter, ...internalFilter, ...ROOM_SLUGS];
 }
 
-export default function CalendarWrapper({calendarType, adjustable, onlyConcerts, showRoomsFilter, showCategoryFilter = false, showHiddenInCalendar = false}) {
+export default function CalendarWrapper({calendarType, adjustable, onlyConcerts, showRoomsFilter, showCategoryFilter = false, showHiddenInCalendar = false, editUrl = null}) {
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState();
     const [selectedEventBox, setSelectedEventBox] = useState();
@@ -135,6 +135,7 @@ export default function CalendarWrapper({calendarType, adjustable, onlyConcerts,
                 <EventDetailPopUp
                     boundingBox={selectedEventBox}
                     event={selectedEvent}
+                    editUrl={editUrl}
                     clearEvent={() => setSelectedEvent(null)}
                 />
             }

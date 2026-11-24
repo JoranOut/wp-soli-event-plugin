@@ -23,7 +23,10 @@ function fromDateDto(dateDto) {
             ...getRoomClassList(dateDto)
         ].filter(Boolean).join(" "),
         extendedProps: {
-            postId: dateDto.post_id,
+            postId: dateDto.post_id ?? dateDto.ID,
+            // The row id: a date split per room gets an id per room ("12338.0").
+            dateId: dateDto.date_id ?? dateDto.id,
+            canEdit: !!dateDto.can_edit,
             isConcert: dateDto.is_concert,
             hideInCalendar: !!dateDto.hide_in_calendar,
             postStatus: dateDto.status,

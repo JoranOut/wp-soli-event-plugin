@@ -533,6 +533,7 @@ msgid "No locations yet."
 msgstr "Nog geen locaties."
 
 #: events/lib/locations_admin_page.php:146
+#: events/blocks/event-view-calendar/src/components/event-detail-pop-up/event-detail-pop-up.js
 msgid "Edit"
 msgstr "Bewerken"
 
@@ -818,6 +819,48 @@ msgstr "herstellen"
 #: events/blocks/create-event/src/components/date-list/date-list.js:57
 msgid "All dates"
 msgstr "Alle data"
+
+#. translators: 1: first shown date number, 2: last shown date number, 3: total number of dates
+#: events/blocks/create-event/src/components/date-list/date-list.js
+#, js-format
+msgid "Dates %1$d–%2$d of %3$d"
+msgstr "Data %1$d–%2$d van %3$d"
+
+#: events/blocks/create-event/src/components/date-list/date-list.js
+msgid "Go to date"
+msgstr "Ga naar datum"
+
+#: events/blocks/create-event/src/components/date-list/date-list.js
+msgid "Upcoming"
+msgstr "Komende"
+
+#: events/blocks/create-event/src/components/date-list/date-list.js
+msgid "Show all"
+msgstr "Toon alles"
+
+#. translators: %d: number of dates not shown
+#: events/blocks/create-event/src/components/date-list/date-list.js
+#, js-format
+msgid "%d hidden"
+msgid_plural "%d hidden"
+msgstr[0] "%d verborgen"
+msgstr[1] "%d verborgen"
+
+#. translators: %d: number of dates that become visible
+#: events/blocks/create-event/src/components/date-list/date-list.js
+#, js-format
+msgid "Show %d earlier date"
+msgid_plural "Show %d earlier dates"
+msgstr[0] "Toon %d eerdere datum"
+msgstr[1] "Toon %d eerdere data"
+
+#. translators: %d: number of dates that become visible
+#: events/blocks/create-event/src/components/date-list/date-list.js
+#, js-format
+msgid "Show %d later date"
+msgid_plural "Show %d later dates"
+msgstr[0] "Toon %d latere datum"
+msgstr[1] "Toon %d latere data"
 
 #: events/blocks/create-event/src/components/daterange-picker/daterange-picker.js:125
 msgid "to"

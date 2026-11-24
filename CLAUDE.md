@@ -215,6 +215,27 @@ such as weekly rehearsals. `GET /events?start_date&end_date` returns `hide_in_ca
 block drops those dates in every view (month, week, day, list, phone list). The admin Calendar View passes `show-hidden-in-calendar` and shows everything. This is presentation only,
 not visibility: the dates stay in every other feed. Spec: `e2e/hide-in-calendar.spec.ts`.
 
+### Date list paging (create-event block)
+
+An event with more than 20 dates shows 20 at a time in the block's date list
+(`create-event/src/components/date-list/`, window logic in `date-window.js`). It opens on the next date
+ending today or later; an event with only past dates opens on its last 20. "Show N earlier/later dates"
+extends the window by 20, "Go to date" (an MUI `DatePicker`, like the rows) jumps to the first date ending on or after the chosen day,
+"Upcoming" goes back to the opening page, "Show all" shows everything. Hidden dates stay in the events context and are
+saved like the rest; only rendering is paged. Copying a date grows the window by one so the copy appears
+next to its source. A row whose edit sorts it outside the window stays on screen (pinned by state index)
+until the window moves or a row is added or deleted. Rows carry `data-date-id`, and rows are memoised, so an
+edit re-renders one row. Spec: `e2e/create-event-many-dates.spec.ts`.
+
+**Edit link from the Calendar View.** The admin Calendar View's event popup has an "Edit" link next to
+"View event" when the viewer may edit that event: `GET /events?start_date&end_date` returns `can_edit` per row
+(`edit_post`, false for anonymous visitors), and only the admin page passes `data-edit-url`, so the public
+block never shows it. The link is `post.php?post=<id>&action=edit&soli_event_date=<date id>`; the date list
+opens on that date, highlights the row and fills "Go to date". The block reads the parameter when its script
+loads, because the editor rewrites the URL before the list mounts. Dates split per room carry the row id as
+`date_id`, because their FullCalendar id is `<id>.<room index>`. An unknown id falls back to the default page.
+Spec: `e2e/admin-calendar-edit-link.spec.ts`.
+
 ### Invoice dialog ("Invoice this event")
 
 Editor-only surface belonging to the create-event block

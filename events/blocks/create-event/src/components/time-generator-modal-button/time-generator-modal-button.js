@@ -31,6 +31,7 @@ import NumberedInput from "./numbered-input";
 import DateRangePicker from "../daterange-picker/daterange-picker";
 import LocationPicker from "../location-picker/location-picker";
 import EventStatusSelector from "../event-status-selector/event-status-selector";
+import {selectableStatus} from "../event-status-selector/event-status-selector";
 import ImageButton from "../image-button/image-button";
 
 function DateViewToggle(props) {
@@ -107,7 +108,7 @@ function TimeGeneratorModalButton(props) {
     const [endDate, setEndDate] = useState(props.date ? dayjs(props.date.endDate) : dayjs());
     const [location, setLocation] = useState(props.date ? props.date.location : null);
     const [rooms, setRooms] = useState(props.date ? props.date.rooms : []);
-    const [status, setStatus] = useState(props.date ? props.date.status : []);
+    const [status, setStatus] = useState(selectableStatus(props.date?.status));
     const [notes, setNotes] = useState(props.date ? props.date.notes : []);
     const [useNotes, setUseNotes] = useState(false);
     const [frequency, setFrequency] = useState(null);
@@ -146,7 +147,7 @@ function TimeGeneratorModalButton(props) {
         setEndDate(props.date ? dayjs(props.date.endDate) : dayjs())
         setLocation(props.date ? props.date.location : null);
         setRooms(props.date ? props.date.rooms : []);
-        setStatus(props.date ? props.date.status : []);
+        setStatus(selectableStatus(props.date?.status));
         setNotes(props.date ? props.date.notes : []);
     }, [props]);
 
