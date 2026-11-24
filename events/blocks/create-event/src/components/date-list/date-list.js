@@ -115,20 +115,17 @@ export default function DateList() {
 
             <div className="date-list" ref={listRef}>
                 <div className="date-list-header">
-                    <div className="date-list-title">
-                        <h3>{__('All dates', 'soli-event')}</h3>
-                        {total > PAGE_SIZE && (
-                            <span className="date-list-range">
-                                {sprintf(
-                                    /* translators: 1: first shown date number, 2: last shown date number, 3: total number of dates */
-                                    __('Dates %1$d–%2$d of %3$d', 'soli-event'),
-                                    start + 1,
-                                    end,
-                                    total
-                                )}
-                            </span>
-                        )}
-                    </div>
+                    <h3 className="date-list-title">
+                        {start === 0 && end === total
+                            ? __('All dates', 'soli-event')
+                            : sprintf(
+                                /* translators: 1: first shown date number, 2: last shown date number, 3: total number of dates */
+                                __('Dates %1$d–%2$d of %3$d', 'soli-event'),
+                                start + 1,
+                                end,
+                                total
+                            )}
+                    </h3>
                     {total > PAGE_SIZE && (
                         <div className="date-list-tools">
                             <div className="date-list-goto">

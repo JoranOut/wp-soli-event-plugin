@@ -124,7 +124,7 @@ test.describe('Create-event block with many dates', () => {
         const canvas = await openEditor(admin, page, postId);
 
         expect(await visibleIds(canvas)).toEqual(idsOf(rows.slice(40, 60)));
-        await expect(canvas.locator('.date-list-range')).toHaveText('Dates 41–60 of 100');
+        await expect(canvas.locator('.date-list-title')).toHaveText('Dates 41–60 of 100');
         await expect(canvas.locator('.date-list-more-earlier')).toContainText('40 hidden');
         await expect(canvas.locator('.date-list-more-later')).toContainText('40 hidden');
         // Only the shown rows mount their date pickers.
@@ -152,6 +152,7 @@ test.describe('Create-event block with many dates', () => {
 
         await canvas.getByRole('button', { name: 'Show all' }).click();
         expect(await visibleIds(canvas)).toEqual(idsOf(rows));
+        await expect(canvas.locator('.date-list-title')).toHaveText('All dates');
     });
 
     test('go to date jumps to the first date on or after it', async ({ admin, page, requestUtils }) => {
@@ -177,6 +178,7 @@ test.describe('Create-event block with many dates', () => {
 
         expect(await visibleIds(canvas)).toEqual(idsOf(rows));
         await expect(canvas.locator('.date-list-tools')).toHaveCount(0);
+        await expect(canvas.locator('.date-list-title')).toHaveText('All dates');
         await expect(canvas.locator('.date-list-more')).toHaveCount(0);
     });
 
@@ -229,7 +231,7 @@ test.describe('Create-event block with many dates', () => {
         await canvas.locator(`.date-list-item[data-date-id="${target.id}"] .delete-button`).click();
         // The next date moves up into the window.
         expect(await visibleIds(canvas)).toEqual(idsOf([...rows.slice(40, 50), ...rows.slice(51, 61)]));
-        await expect(canvas.locator('.date-list-range')).toHaveText('Dates 41–60 of 99');
+        await expect(canvas.locator('.date-list-title')).toHaveText('Dates 41–60 of 99');
         await save(page);
 
         await expect.poll(async () => (await storedRows(requestUtils, postId)).length).toBe(99);
@@ -241,9 +243,9 @@ test.describe('Create-event block with many dates', () => {
         const canvas = await openEditor(admin, page, postId);
 
         await canvas.locator(`.date-list-item[data-date-id="${rows[42].id}"] .delete-button`).click();
-        await expect(canvas.locator('.date-list-range')).toHaveText('Dates 41–60 of 99');
+        await expect(canvas.locator('.date-list-title')).toHaveText('Dates 41–60 of 99');
         await canvas.getByRole('button', { name: 'undo' }).click();
-        await expect(canvas.locator('.date-list-range')).toHaveText(/of 100$/);
+        await expect(canvas.locator('.date-list-title')).toHaveText(/of 100$/);
         expect(await visibleIds(canvas)).toContain(String(rows[42].id));
     });
 
@@ -294,7 +296,7 @@ test.describe('Create-event block with many dates', () => {
         const canvas = await openEditor(admin, page, postId);
 
         expect(await visibleIds(canvas)).toEqual(idsOf(rows.slice(100, 120)));
-        await expect(canvas.locator('.date-list-range')).toHaveText('Dates 101–120 of 300');
+        await expect(canvas.locator('.date-list-title')).toHaveText('Dates 101–120 of 300');
     });
 
     test('the cog menu closes on an outside click or Escape, not while its modal is open', async ({ admin, page, requestUtils }) => {
