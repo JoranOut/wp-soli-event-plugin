@@ -76,6 +76,7 @@ archive.glob('**/*', {
         '.gitignore',
         '*.zip',
         'publish.js',
+        'bin/**',
         'e2e/**',
         'test-results/**',
         'playwright-report/**',

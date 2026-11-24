@@ -4,7 +4,7 @@
   "description": "Recurring event management for concerts, rehearsals, and performances.",
   "main": "test.js",
   "scripts": {
-    "wp-env:start": "wp-env start --debug",
+    "wp-env:start": "node bin/wp-env-start.js --debug",
     "wp-env:stop": "wp-env stop",
     "build": "npm run build --workspaces --if-present",
     "publish": "npm run build && node ./publish.js",
