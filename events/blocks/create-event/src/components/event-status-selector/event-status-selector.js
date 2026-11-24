@@ -6,8 +6,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
+// The dropdown has no entry for PLANNED (the table default, equal to OPTION),
+// an empty status or anything else unknown; those show as OPTION.
+export function selectableStatus(status) {
+    return EVENT_STATUS.includes(status) ? status : EVENT_STATUS[0];
+}
+
 export default function EventStatusSelector({status, onChange}) {
-    const [_status, setStatus] = useState((status && status.length > 0) ? status : EVENT_STATUS[0]);
+    const [_status, setStatus] = useState(selectableStatus(status));
 
     const handleChange = (event) => {
         setStatus(event.target.value);
@@ -15,7 +21,7 @@ export default function EventStatusSelector({status, onChange}) {
     };
 
     useEffect(() => {
-        setStatus((status && status.length > 0) ? status : EVENT_STATUS[0]);
+        setStatus(selectableStatus(status));
     }, [status])
 
     return (
@@ -25,7 +31,7 @@ export default function EventStatusSelector({status, onChange}) {
                 value={_status}
                 onChange={handleChange}
                 sx={{fontSize: '13px', borderRadius: 0,
-                    color: EVENT_STATUS_COLOR[status]}}
+                    color: EVENT_STATUS_COLOR[_status]}}
             >
                 {EVENT_STATUS.map((s, i) => {
                     return (

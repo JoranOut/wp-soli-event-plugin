@@ -296,4 +296,14 @@ test.describe('Create-event block with many dates', () => {
         expect(await visibleIds(canvas)).toEqual(idsOf(rows.slice(100, 120)));
         await expect(canvas.locator('.date-list-range')).toHaveText('Dates 101–120 of 300');
     });
+
+    test('a date without a status the dropdown offers shows OPTION', async ({ admin, page, requestUtils }) => {
+        // PLANNED is the table default; the dropdown has no entry for it or for an empty status.
+        const dates = weekly(0, 3).map((d, i) => ({ ...d, status: ['PLANNED', '', 'PUBLIC'][i] }));
+        const postId = await createEvent(requestUtils, dates);
+        created.push(postId);
+        const canvas = await openEditor(admin, page, postId);
+
+        await expect(canvas.locator('.event-status-selector').getByRole('combobox')).toHaveText(['OPTION', 'OPTION', 'PUBLIC']);
+    });
 });
