@@ -16,7 +16,9 @@
  * panel on the front end.
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
-import { pageFor } from './fixtures/roles';
+import { addDays, format } from 'date-fns';
+import { apiFor, pageFor } from './fixtures/roles';
+import { SEED_PREFIX } from './fixtures/catalogue';
 
 // Build a page holding a my-groups block; return its permalink so any role can
 // view the server-rendered output.
@@ -53,15 +55,20 @@ test.describe('my-groups — SSO group panel', () => {
         await expect(rows.nth(2).locator('.soli-ork-name')).toHaveText('VIZ Mijn Groep C');
 
         // Group A's next date is the PUBLIC +3d one, not the PLANNED +1d one.
-        // The seeder derives its dates from current_time() and the block renders
-        // them in the site timezone (Europe/Amsterdam, set in .wp-env-script.sh),
-        // so the expected day number has to be computed in that timezone too:
-        // taking it from UTC made this assertion fail every day between 22:00
-        // and 24:00 UTC, when the two calendars disagree about the date.
-        const expectedDay = new Intl.DateTimeFormat('en-GB', {
-            timeZone: 'Europe/Amsterdam',
-            day: 'numeric',
-        }).format(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000));
+        // The expected day comes from the seeded row, not from "now + 3 days":
+        // a run seeded just before midnight and tested just after expects the
+        // next day. The block prints the stored local time without conversion.
+        const api = await apiFor('subscriber');
+        const res = await api.get(
+            `/wp-json/soli_event/v1/events?start_date=${format(addDays(new Date(), -1), 'yyyy-MM-dd')}` +
+                `&end_date=${format(addDays(new Date(), 6), 'yyyy-MM-dd')}`
+        );
+        expect(res.status()).toBe(200);
+        const rowsA = (await res.json()) as Array<{ post_title: string; start_date: string }>;
+        const seededA = rowsA.find((r) => r.post_title === `${SEED_PREFIX}mg-a-public`);
+        expect(seededA, 'seeded mg-a-public date').toBeTruthy();
+        const expectedDay = String(Number(seededA!.start_date.slice(8, 10)));
+        await api.dispose();
         const metaA = rows.nth(0).locator('.soli-ork-meet');
         await expect(metaA).toContainText(` ${expectedDay} `);
         await expect(metaA).toContainText('·');
